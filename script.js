@@ -160,7 +160,7 @@ function speakPokemonName(pokemon) {
         const utterance = new SpeechSynthesisUtterance(pokemon.name);
 
         // Configurar el idioma y velocidad
-        utterance.lang = 'es-ES'; // Español
+        utterance.lang = 'en-US'; // Inglés
         utterance.rate = 0.9; // Velocidad normal
         utterance.pitch = 1; // Tono normal
         utterance.volume = 1; // Volumen al 100%
