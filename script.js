@@ -16,6 +16,9 @@ const pageInfo = document.getElementById('pageInfo');
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modalBody');
 const closeModal = document.querySelector('.close');
+const splashScreen = document.getElementById('splashScreen');
+const musicToggle = document.getElementById('musicToggle');
+const backgroundMusic = document.getElementById('backgroundMusic');
 
 // Traducciones de estadísticas
 const statTranslations = {
@@ -29,8 +32,14 @@ const statTranslations = {
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
+    // Mostrar splash screen por 3 segundos
+    setTimeout(() => {
+        splashScreen.classList.remove('active');
+    }, 3000);
+
     loadPokemon();
     setupEventListeners();
+    setupMusicControl();
 });
 
 // Event Listeners
@@ -46,6 +55,29 @@ function setupEventListeners() {
     window.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.remove('active');
     });
+}
+
+// Control de Música
+let isMusicMuted = false;
+
+function setupMusicControl() {
+    musicToggle.addEventListener('click', toggleMusic);
+}
+
+function toggleMusic() {
+    isMusicMuted = !isMusicMuted;
+
+    if (isMusicMuted) {
+        // Silenciar música
+        backgroundMusic.src = '';
+        musicToggle.classList.add('muted');
+        musicToggle.textContent = '🔇';
+    } else {
+        // Reanudar música
+        backgroundMusic.src = 'https://www.youtube.com/embed/PROqm2uqKbM?autoplay=1&loop=1&playlist=PROqm2uqKbM&controls=0&showinfo=0&rel=0';
+        musicToggle.classList.remove('muted');
+        musicToggle.textContent = '🎵';
+    }
 }
 
 // Cargar Pokémon

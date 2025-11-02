@@ -4,9 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokédex</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff0000'/><circle cx='50' cy='50' r='35' fill='white'/><circle cx='50' cy='50' r='15' fill='%23333'/><rect x='0' y='45' width='100' height='10' fill='%23333'/></svg>">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pokédex">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff0000'/><circle cx='50' cy='50' r='35' fill='white'/><circle cx='50' cy='50' r='15' fill='%23333'/><rect x='0' y='45' width='100' height='10' fill='%23333'/></svg>">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="splash-screen active">
+        <div class="splash-content">
+            <div class="pokeball-splash">
+                <div class="pokeball-top"></div>
+                <div class="pokeball-middle"></div>
+                <div class="pokeball-bottom"></div>
+                <div class="pokeball-button"></div>
+            </div>
+            <h1 class="splash-title">Pokédex</h1>
+            <p class="splash-subtitle">Cargando...</p>
+        </div>
+    </div>
+
+    <!-- YouTube Music (Invisible) -->
+    <iframe
+        id="backgroundMusic"
+        width="0"
+        height="0"
+        src="https://www.youtube.com/embed/PROqm2uqKbM?autoplay=1&loop=1&playlist=PROqm2uqKbM&controls=0&showinfo=0&rel=0"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        style="display: none;">
+    </iframe>
+
+    <!-- Music Control Button -->
+    <button id="musicToggle" class="music-toggle" title="Música On/Off">
+        🎵
+    </button>
+
     <div class="container">
         <header>
             <h1>🔴 Pokédex 🔵</h1>

@@ -12,7 +12,10 @@ Una Pokédex interactiva y moderna creada con HTML, CSS y JavaScript vanilla que
 - 💬 **Pronunciación de Nombres**: Escucha el nombre del Pokémon hablado en inglés
 - 🎬 **Sprites Animados**: Visualiza GIFs animados oficiales de cada Pokémon
 - 🔗 **Cadena de Evolución**: Visualiza la línea evolutiva completa con niveles
+- 🎵 **Música de Fondo**: Música temática de Pokémon (YouTube embebido)
+- 🚀 **Splash Screen**: Pantalla de carga animada con Pokébola
 - 🎨 **Interfaz Moderna**: Diseño atractivo con gradientes y animaciones
+- 📱 **PWA Ready**: Guárdalo como app en tu dispositivo con ícono personalizado
 - 📖 **Información Completa**: Altura, peso, habilidades y descripción de cada Pokémon
 - 🌍 **Multiidioma**: Descripciones en español
 
@@ -79,6 +82,20 @@ Luego abre tu navegador en `http://localhost:8000`
 ### Navegación
 - Usa los botones "Anterior" y "Siguiente" para navegar entre páginas
 - Se muestran 20 Pokémon por página
+
+### Música y Efectos
+- **Splash Screen**: Al cargar la página verás una animación de Pokébola por 3 segundos
+- **Música de Fondo**: La música comienza automáticamente al cargar
+- **Control de Música**: Botón flotante rojo en la esquina inferior derecha
+  - 🎵 = Música activada
+  - 🔇 = Música silenciada
+  - Haz clic para alternar on/off
+
+### Guardar como App
+- **En iOS**: Toca "Compartir" → "Agregar a pantalla de inicio"
+- **En Android**: Toca el menú → "Agregar a pantalla de inicio"
+- Verás el ícono de Pokébola en tu dispositivo
+- Se abre como una app independiente con splash screen
 
 ## 🛠️ Tecnologías Utilizadas
 
