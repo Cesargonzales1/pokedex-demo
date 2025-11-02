@@ -6,7 +6,8 @@ Una Pokédex interactiva y moderna creada con HTML, CSS y JavaScript vanilla que
 
 - 📱 **Diseño Responsivo**: Se adapta perfectamente a cualquier tamaño de pantalla
 - 🔍 **Búsqueda**: Busca Pokémon por nombre o número
-- 🏷️ **Filtros**: Filtra Pokémon por tipo (Fuego, Agua, Planta, etc.)
+- 🎮 **Todas las Generaciones**: Accede a todas las generaciones de Pokémon (Gen I-IX, 1-1025)
+- 🏷️ **Filtros**: Filtra Pokémon por tipo (Fuego, Agua, Planta, etc.) y generación
 - 📊 **Estadísticas Detalladas**: Visualiza las estadísticas base de cada Pokémon
 - 🔊 **Sonidos de Pokémon**: Escucha el grito característico de cada Pokémon
 - 💬 **Pronunciación de Nombres**: Escucha el nombre del Pokémon hablado en inglés
@@ -49,9 +50,25 @@ Luego abre tu navegador en `http://localhost:8000`
 - También puedes buscar por número (ej: "25" para Pikachu)
 - Presiona Enter o haz clic en "Buscar"
 
+### Selección de Generación
+- Usa el selector "Generación" para cambiar entre generaciones
+- **Generaciones disponibles**:
+  - Gen I - Kanto (1-151): Pokémon clásicos
+  - Gen II - Johto (152-251)
+  - Gen III - Hoenn (252-386)
+  - Gen IV - Sinnoh (387-493)
+  - Gen V - Unova (494-649)
+  - Gen VI - Kalos (650-721)
+  - Gen VII - Alola (722-809)
+  - Gen VIII - Galar (810-905)
+  - Gen IX - Paldea (906-1025)
+  - **Todas (1-1025)**: Ver todos los Pokémon
+- Al cambiar de generación, se resetean los filtros de tipo y búsqueda
+
 ### Filtrado por Tipo
 - Usa el menú desplegable para filtrar por tipo de Pokémon
 - Selecciona "Todos los tipos" para ver todos los Pokémon nuevamente
+- Los filtros funcionan dentro de la generación seleccionada
 
 ### Escuchar Sonidos y Pronunciación
 - **Pronunciar nombre** 💬: Haz clic en el botón verde en la esquina superior izquierda para escuchar el nombre del Pokémon pronunciado en inglés

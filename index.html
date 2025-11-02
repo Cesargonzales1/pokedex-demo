@@ -52,28 +52,46 @@
         </div>
 
         <div class="filter-container">
-            <label for="typeFilter">Filtrar por tipo:</label>
-            <select id="typeFilter">
-                <option value="">Todos los tipos</option>
-                <option value="normal">Normal</option>
-                <option value="fire">Fuego</option>
-                <option value="water">Agua</option>
-                <option value="grass">Planta</option>
-                <option value="electric">Eléctrico</option>
-                <option value="ice">Hielo</option>
-                <option value="fighting">Lucha</option>
-                <option value="poison">Veneno</option>
-                <option value="ground">Tierra</option>
-                <option value="flying">Volador</option>
-                <option value="psychic">Psíquico</option>
-                <option value="bug">Bicho</option>
-                <option value="rock">Roca</option>
-                <option value="ghost">Fantasma</option>
-                <option value="dragon">Dragón</option>
-                <option value="dark">Siniestro</option>
-                <option value="steel">Acero</option>
-                <option value="fairy">Hada</option>
-            </select>
+            <div class="filter-group">
+                <label for="generationFilter">Generación:</label>
+                <select id="generationFilter">
+                    <option value="all">Todas (1-1025)</option>
+                    <option value="1" selected>Gen I - Kanto (1-151)</option>
+                    <option value="2">Gen II - Johto (152-251)</option>
+                    <option value="3">Gen III - Hoenn (252-386)</option>
+                    <option value="4">Gen IV - Sinnoh (387-493)</option>
+                    <option value="5">Gen V - Unova (494-649)</option>
+                    <option value="6">Gen VI - Kalos (650-721)</option>
+                    <option value="7">Gen VII - Alola (722-809)</option>
+                    <option value="8">Gen VIII - Galar (810-905)</option>
+                    <option value="9">Gen IX - Paldea (906-1025)</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="typeFilter">Filtrar por tipo:</label>
+                <select id="typeFilter">
+                    <option value="">Todos los tipos</option>
+                    <option value="normal">Normal</option>
+                    <option value="fire">Fuego</option>
+                    <option value="water">Agua</option>
+                    <option value="grass">Planta</option>
+                    <option value="electric">Eléctrico</option>
+                    <option value="ice">Hielo</option>
+                    <option value="fighting">Lucha</option>
+                    <option value="poison">Veneno</option>
+                    <option value="ground">Tierra</option>
+                    <option value="flying">Volador</option>
+                    <option value="psychic">Psíquico</option>
+                    <option value="bug">Bicho</option>
+                    <option value="rock">Roca</option>
+                    <option value="ghost">Fantasma</option>
+                    <option value="dragon">Dragón</option>
+                    <option value="dark">Siniestro</option>
+                    <option value="steel">Acero</option>
+                    <option value="fairy">Hada</option>
+                </select>
+            </div>
         </div>
 
         <div class="loading" id="loading">

@@ -4,12 +4,27 @@ let currentPage = 1;
 let allPokemon = [];
 let filteredPokemon = [];
 
+// Rangos de generaciones
+const GENERATION_RANGES = {
+    'all': { start: 1, end: 1025 },
+    '1': { start: 1, end: 151 },
+    '2': { start: 152, end: 251 },
+    '3': { start: 252, end: 386 },
+    '4': { start: 387, end: 493 },
+    '5': { start: 494, end: 649 },
+    '6': { start: 650, end: 721 },
+    '7': { start: 722, end: 809 },
+    '8': { start: 810, end: 905 },
+    '9': { start: 906, end: 1025 }
+};
+
 // Elementos del DOM
 const pokemonContainer = document.getElementById('pokemonContainer');
 const loading = document.getElementById('loading');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const typeFilter = document.getElementById('typeFilter');
+const generationFilter = document.getElementById('generationFilter');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
@@ -49,6 +64,7 @@ function setupEventListeners() {
         if (e.key === 'Enter') handleSearch();
     });
     typeFilter.addEventListener('change', handleTypeFilter);
+    generationFilter.addEventListener('change', handleGenerationChange);
     prevBtn.addEventListener('click', () => changePage(-1));
     nextBtn.addEventListener('click', () => changePage(1));
     closeModal.addEventListener('click', () => modal.classList.remove('active'));
@@ -113,11 +129,15 @@ function toggleMusic() {
 }
 
 // Cargar Pokémon
-async function loadPokemon() {
+async function loadPokemon(generation = '1') {
     showLoading(true);
     try {
-        // Cargar los primeros 151 Pokémon (primera generación)
-        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
+        const range = GENERATION_RANGES[generation];
+        const limit = range.end - range.start + 1;
+        const offset = range.start - 1;
+
+        // Cargar Pokémon de la generación seleccionada
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
         const data = await response.json();
 
         // Obtener detalles de cada Pokémon
@@ -135,6 +155,15 @@ async function loadPokemon() {
     } finally {
         showLoading(false);
     }
+}
+
+// Cambiar generación
+function handleGenerationChange() {
+    const selectedGeneration = generationFilter.value;
+    currentPage = 1;
+    typeFilter.value = ''; // Resetear filtro de tipo
+    searchInput.value = ''; // Resetear búsqueda
+    loadPokemon(selectedGeneration);
 }
 
 // Mostrar/ocultar loading
