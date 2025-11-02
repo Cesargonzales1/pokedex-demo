@@ -85,11 +85,12 @@ Luego abre tu navegador en `http://localhost:8000`
 
 ### Música y Efectos
 - **Splash Screen**: Al cargar la página verás una animación de Pokébola por 3 segundos
-- **Música de Fondo**: La música comienza automáticamente al cargar
+- **Música de Fondo**: La música comienza automáticamente al cargar usando YouTube IFrame API
+- **Volumen Optimizado**: Configurado al 30% para una experiencia agradable
 - **Control de Música**: Botón flotante rojo en la esquina inferior derecha
-  - 🎵 = Música activada
-  - 🔇 = Música silenciada
-  - Haz clic para alternar on/off
+  - 🎵 = Música activada (reproduciendo)
+  - 🔇 = Música pausada
+  - Haz clic para pausar/reanudar
 
 ### Guardar como App
 - **En iOS**: Toca "Compartir" → "Agregar a pantalla de inicio"

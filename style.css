@@ -782,20 +782,46 @@ header h1 {
 
     .evolution-chain {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
+        padding: 15px;
     }
 
     .evolution-item {
         flex-direction: column;
-        gap: 10px;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .evolution-arrow {
+        width: 100%;
+        padding: 10px 0;
     }
 
     .evolution-arrow span {
         transform: rotate(90deg);
+        font-size: 1.5rem;
+    }
+
+    .evolution-level {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .evolution-pokemon {
+        min-width: 100px;
+        padding: 10px;
     }
 
     .evolution-pokemon img {
         width: 70px;
         height: 70px;
+    }
+
+    .evolution-name {
+        font-size: 0.85rem;
+    }
+
+    .evolution-id {
+        font-size: 0.75rem;
     }
 }

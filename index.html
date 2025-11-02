@@ -33,16 +33,7 @@
     </div>
 
     <!-- YouTube Music (Invisible) -->
-    <iframe
-        id="backgroundMusic"
-        width="0"
-        height="0"
-        src="https://www.youtube.com/embed/PROqm2uqKbM?autoplay=1&loop=1&playlist=PROqm2uqKbM&controls=0&showinfo=0&rel=0"
-        frameborder="0"
-        allow="autoplay; encrypted-media"
-        allowfullscreen
-        style="display: none;">
-    </iframe>
+    <div id="backgroundMusic" style="display: none;"></div>
 
     <!-- Music Control Button -->
     <button id="musicToggle" class="music-toggle" title="Música On/Off">
@@ -106,6 +97,8 @@
         </div>
     </div>
 
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
 </body>
 </html>

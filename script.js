@@ -57,26 +57,58 @@ function setupEventListeners() {
     });
 }
 
-// Control de Música
-let isMusicMuted = false;
+// Control de Música con YouTube IFrame API
+let player;
+let isMusicPlaying = true;
+
+// Esta función es llamada por la YouTube API cuando está lista
+window.onYouTubeIframeAPIReady = function() {
+    player = new YT.Player('backgroundMusic', {
+        height: '0',
+        width: '0',
+        videoId: 'PROqm2uqKbM',
+        playerVars: {
+            'autoplay': 1,
+            'loop': 1,
+            'playlist': 'PROqm2uqKbM',
+            'controls': 0,
+            'showinfo': 0,
+            'rel': 0,
+            'modestbranding': 1,
+            'playsinline': 1
+        },
+        events: {
+            'onReady': onPlayerReady
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    // Establecer volumen bajo (30% en lugar de 100%)
+    event.target.setVolume(30);
+    // Reproducir automáticamente
+    event.target.playVideo();
+}
 
 function setupMusicControl() {
     musicToggle.addEventListener('click', toggleMusic);
 }
 
 function toggleMusic() {
-    isMusicMuted = !isMusicMuted;
+    if (!player) return;
 
-    if (isMusicMuted) {
-        // Silenciar música
-        backgroundMusic.src = '';
+    if (isMusicPlaying) {
+        // Pausar música
+        player.pauseVideo();
         musicToggle.classList.add('muted');
         musicToggle.textContent = '🔇';
+        isMusicPlaying = false;
     } else {
         // Reanudar música
-        backgroundMusic.src = 'https://www.youtube.com/embed/PROqm2uqKbM?autoplay=1&loop=1&playlist=PROqm2uqKbM&controls=0&showinfo=0&rel=0';
+        player.playVideo();
         musicToggle.classList.remove('muted');
         musicToggle.textContent = '🎵';
+        isMusicPlaying = true;
     }
 }
 
