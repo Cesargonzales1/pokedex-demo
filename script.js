@@ -193,6 +193,10 @@ async function showPokemonDetail(pokemon) {
     const imageUrl = pokemon.sprites.other['official-artwork'].front_default ||
                      pokemon.sprites.front_default;
 
+    // Obtener sprite animado (GIF)
+    const animatedSprite = pokemon.sprites.versions?.['generation-v']?.['black-white']?.animated?.front_default ||
+                          pokemon.sprites.front_default;
+
     const types = pokemon.types.map(type =>
         `<span class="type-badge type-${type.type.name}">${type.type.name}</span>`
     ).join('');
@@ -221,7 +225,16 @@ async function showPokemonDetail(pokemon) {
 
         modalBody.innerHTML = `
             <div class="modal-pokemon-header">
-                <img src="${imageUrl}" alt="${pokemon.name}">
+                <div class="pokemon-image-gallery">
+                    <div class="gallery-item">
+                        <img src="${imageUrl}" alt="${pokemon.name}">
+                        <p class="gallery-label">Oficial</p>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="${animatedSprite}" alt="${pokemon.name} animado" class="animated-sprite">
+                        <p class="gallery-label">Animado</p>
+                    </div>
+                </div>
                 <h2 class="modal-pokemon-name">${pokemon.name}</h2>
                 <p class="modal-pokemon-id">#${String(pokemon.id).padStart(3, '0')}</p>
                 <div class="pokemon-types">${types}</div>

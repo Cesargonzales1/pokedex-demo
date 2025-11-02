@@ -10,6 +10,7 @@ Una Pokédex interactiva y moderna creada con HTML, CSS y JavaScript vanilla que
 - 📊 **Estadísticas Detalladas**: Visualiza las estadísticas base de cada Pokémon
 - 🔊 **Sonidos de Pokémon**: Escucha el grito característico de cada Pokémon
 - 💬 **Pronunciación de Nombres**: Escucha el nombre del Pokémon hablado en inglés
+- 🎬 **Sprites Animados**: Visualiza GIFs animados oficiales de cada Pokémon
 - 🎨 **Interfaz Moderna**: Diseño atractivo con gradientes y animaciones
 - 📖 **Información Completa**: Altura, peso, habilidades y descripción de cada Pokémon
 - 🌍 **Multiidioma**: Descripciones en español
@@ -58,7 +59,7 @@ Luego abre tu navegador en `http://localhost:8000`
 ### Ver Detalles
 - Haz clic en cualquier tarjeta de Pokémon para ver información detallada
 - La ventana modal mostrará:
-  - Imagen oficial del Pokémon
+  - **Galería de Imágenes**: Imagen oficial + Sprite animado (GIF)
   - Tipos
   - Altura y peso
   - Habilidades

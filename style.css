@@ -402,6 +402,50 @@ header h1 {
     margin-bottom: 20px;
 }
 
+.pokemon-image-gallery {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.gallery-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+}
+
+.gallery-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.animated-sprite {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.gallery-label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 .modal-pokemon-header img {
     width: 200px;
     height: 200px;
@@ -506,5 +550,14 @@ header h1 {
 
     .search-container {
         flex-direction: column;
+    }
+
+    .pokemon-image-gallery {
+        gap: 15px;
+    }
+
+    .gallery-item img {
+        width: 120px;
+        height: 120px;
     }
 }
