@@ -40,6 +40,11 @@
         🎵
     </button>
 
+    <!-- Memory Game Button -->
+    <button id="gameToggle" class="game-toggle" title="Juego de Memoria">
+        🎮
+    </button>
+
     <div class="container">
         <header>
             <h1>🔴 Pokédex 🔵</h1>
@@ -112,6 +117,51 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Memory Game Modal -->
+    <div id="gameModal" class="game-modal">
+        <div class="game-modal-content">
+            <span class="game-close">&times;</span>
+            <h2 class="game-title">🎮 Juego de Memoria Pokémon</h2>
+
+            <div id="gameMenu" class="game-menu">
+                <p class="game-instructions">¡Encuentra todas las parejas de Pokémon!</p>
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn" data-level="easy">
+                        🟢 Fácil<br><span>12 tarjetas</span>
+                    </button>
+                    <button class="difficulty-btn" data-level="medium">
+                        🟡 Medio<br><span>16 tarjetas</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="gameBoard" class="game-board-container" style="display: none;">
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">⏱️ Tiempo:</span>
+                        <span id="gameTimer" class="stat-value">0:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🔢 Movimientos:</span>
+                        <span id="gameMoves" class="stat-value">0</span>
+                    </div>
+                    <button id="resetGame" class="reset-btn">🔄 Reiniciar</button>
+                </div>
+                <div id="cardsGrid" class="cards-grid"></div>
+            </div>
+
+            <div id="victoryScreen" class="victory-screen" style="display: none;">
+                <h2 class="victory-title">🎉 ¡Felicidades!</h2>
+                <p class="victory-message">¡Has encontrado todas las parejas!</p>
+                <div class="victory-stats">
+                    <p>⏱️ Tiempo: <span id="victoryTime"></span></p>
+                    <p>🔢 Movimientos: <span id="victoryMoves"></span></p>
+                </div>
+                <button id="playAgain" class="play-again-btn">🎮 Jugar de Nuevo</button>
+            </div>
         </div>
     </div>
 

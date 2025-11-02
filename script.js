@@ -655,3 +655,294 @@ function updatePagination() {
     prevBtn.disabled = currentPage === 1;
     nextBtn.disabled = currentPage >= totalPages;
 }
+
+// ==================== JUEGO DE MEMORIA ====================
+
+// Variables del juego
+let gameCards = [];
+let flippedCards = [];
+let matchedPairs = 0;
+let moves = 0;
+let gameTimer = null;
+let gameSeconds = 0;
+let currentDifficulty = null;
+
+// Elementos del DOM del juego
+const gameToggle = document.getElementById('gameToggle');
+const gameModal = document.getElementById('gameModal');
+const gameClose = document.querySelector('.game-close');
+const gameMenu = document.getElementById('gameMenu');
+const gameBoard = document.getElementById('gameBoard');
+const cardsGrid = document.getElementById('cardsGrid');
+const gameTimerDisplay = document.getElementById('gameTimer');
+const gameMovesDisplay = document.getElementById('gameMoves');
+const resetGameBtn = document.getElementById('resetGame');
+const victoryScreen = document.getElementById('victoryScreen');
+const playAgainBtn = document.getElementById('playAgain');
+const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+
+// Event listeners del juego
+gameToggle.addEventListener('click', openGameModal);
+gameClose.addEventListener('click', closeGameModal);
+window.addEventListener('click', (e) => {
+    if (e.target === gameModal) closeGameModal();
+});
+
+difficultyBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const level = btn.getAttribute('data-level');
+        startGame(level);
+    });
+});
+
+resetGameBtn.addEventListener('click', () => startGame(currentDifficulty));
+playAgainBtn.addEventListener('click', () => {
+    victoryScreen.style.display = 'none';
+    gameMenu.style.display = 'block';
+});
+
+// Abrir modal del juego
+function openGameModal() {
+    gameModal.classList.add('active');
+    gameMenu.style.display = 'block';
+    gameBoard.style.display = 'none';
+    victoryScreen.style.display = 'none';
+}
+
+// Cerrar modal del juego
+function closeGameModal() {
+    gameModal.classList.remove('active');
+    stopGameTimer();
+}
+
+// Iniciar juego
+function startGame(difficulty) {
+    currentDifficulty = difficulty;
+    const pairsCount = difficulty === 'easy' ? 6 : 8;
+
+    // Resetear variables
+    gameCards = [];
+    flippedCards = [];
+    matchedPairs = 0;
+    moves = 0;
+    gameSeconds = 0;
+
+    // Mostrar tablero de juego
+    gameMenu.style.display = 'none';
+    gameBoard.style.display = 'block';
+    victoryScreen.style.display = 'none';
+
+    // Actualizar displays
+    gameMovesDisplay.textContent = '0';
+    gameTimerDisplay.textContent = '0:00';
+
+    // Generar cartas
+    generateGameCards(pairsCount);
+
+    // Iniciar timer
+    startGameTimer();
+}
+
+// Generar cartas del juego
+function generateGameCards(pairsCount) {
+    // Seleccionar Pokémon aleatorios de allPokemon
+    const selectedPokemon = [];
+    const availablePokemon = [...allPokemon];
+
+    for (let i = 0; i < pairsCount; i++) {
+        if (availablePokemon.length === 0) break;
+        const randomIndex = Math.floor(Math.random() * availablePokemon.length);
+        selectedPokemon.push(availablePokemon[randomIndex]);
+        availablePokemon.splice(randomIndex, 1);
+    }
+
+    // Crear parejas
+    const cardPairs = [];
+    selectedPokemon.forEach((pokemon, index) => {
+        const imageUrl = pokemon.sprites.other['official-artwork']?.front_default ||
+                        pokemon.sprites.front_default;
+
+        cardPairs.push({
+            id: index,
+            pokemon: pokemon.name,
+            image: imageUrl,
+            matched: false
+        });
+
+        cardPairs.push({
+            id: index,
+            pokemon: pokemon.name,
+            image: imageUrl,
+            matched: false
+        });
+    });
+
+    // Barajar cartas
+    gameCards = shuffleArray(cardPairs);
+
+    // Renderizar cartas
+    renderGameCards();
+}
+
+// Barajar array (Fisher-Yates shuffle)
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Renderizar cartas en el tablero
+function renderGameCards() {
+    cardsGrid.innerHTML = '';
+    const gridClass = currentDifficulty === 'easy' ? 'grid-easy' : 'grid-medium';
+    cardsGrid.className = `cards-grid ${gridClass}`;
+
+    gameCards.forEach((card, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'memory-card';
+        cardElement.setAttribute('data-index', index);
+
+        cardElement.innerHTML = `
+            <div class="card-inner">
+                <div class="card-front">
+                    <div class="pokeball-icon">
+                        <div class="pokeball-top"></div>
+                        <div class="pokeball-middle"></div>
+                        <div class="pokeball-bottom"></div>
+                    </div>
+                </div>
+                <div class="card-back">
+                    <img src="${card.image}" alt="${card.pokemon}">
+                </div>
+            </div>
+        `;
+
+        cardElement.addEventListener('click', () => flipCard(index));
+        cardsGrid.appendChild(cardElement);
+    });
+}
+
+// Voltear carta
+function flipCard(index) {
+    // No permitir voltear si ya hay 2 cartas volteadas
+    if (flippedCards.length >= 2) return;
+
+    const card = gameCards[index];
+    const cardElement = cardsGrid.children[index];
+
+    // No voltear si ya está volteada o ya fue emparejada
+    if (card.flipped || card.matched) return;
+
+    // Voltear carta
+    card.flipped = true;
+    cardElement.classList.add('flipped');
+    flippedCards.push({ index, card });
+
+    // Si hay 2 cartas volteadas, comprobar
+    if (flippedCards.length === 2) {
+        moves++;
+        gameMovesDisplay.textContent = moves;
+        checkMatch();
+    }
+}
+
+// Comprobar si hay match
+function checkMatch() {
+    const [first, second] = flippedCards;
+
+    if (first.card.id === second.card.id) {
+        // Match! ✅
+        setTimeout(() => {
+            first.card.matched = true;
+            second.card.matched = true;
+
+            const firstElement = cardsGrid.children[first.index];
+            const secondElement = cardsGrid.children[second.index];
+
+            firstElement.classList.add('matched');
+            secondElement.classList.add('matched');
+
+            flippedCards = [];
+            matchedPairs++;
+
+            // Verificar victoria
+            if (matchedPairs === gameCards.length / 2) {
+                setTimeout(() => showVictory(), 500);
+            }
+        }, 600);
+    } else {
+        // No match ❌
+        setTimeout(() => {
+            first.card.flipped = false;
+            second.card.flipped = false;
+
+            const firstElement = cardsGrid.children[first.index];
+            const secondElement = cardsGrid.children[second.index];
+
+            firstElement.classList.remove('flipped');
+            secondElement.classList.remove('flipped');
+
+            flippedCards = [];
+        }, 1000);
+    }
+}
+
+// Timer del juego
+function startGameTimer() {
+    stopGameTimer();
+    gameTimer = setInterval(() => {
+        gameSeconds++;
+        const minutes = Math.floor(gameSeconds / 60);
+        const seconds = gameSeconds % 60;
+        gameTimerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+function stopGameTimer() {
+    if (gameTimer) {
+        clearInterval(gameTimer);
+        gameTimer = null;
+    }
+}
+
+// Mostrar pantalla de victoria
+function showVictory() {
+    stopGameTimer();
+
+    const minutes = Math.floor(gameSeconds / 60);
+    const seconds = gameSeconds % 60;
+    const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+    document.getElementById('victoryTime').textContent = timeString;
+    document.getElementById('victoryMoves').textContent = moves;
+
+    gameBoard.style.display = 'none';
+    victoryScreen.style.display = 'block';
+
+    // Crear confeti
+    createConfetti();
+}
+
+// Crear efecto confetti
+function createConfetti() {
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+    const confettiCount = 50;
+
+    for (let i = 0; i < confettiCount; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 0.5 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+
+            victoryScreen.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 4000);
+        }, i * 30);
+    }
+}
