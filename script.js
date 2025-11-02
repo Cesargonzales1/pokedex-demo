@@ -446,10 +446,22 @@ async function showPokemonDetail(pokemon) {
         evolutionPokemons.forEach(evoElement => {
             evoElement.addEventListener('click', async () => {
                 const pokemonId = evoElement.getAttribute('data-pokemon-id');
-                const selectedPokemon = allPokemon.find(p => p.id == pokemonId);
-                if (selectedPokemon) {
-                    await showPokemonDetail(selectedPokemon);
+
+                // Buscar primero en allPokemon (misma generación)
+                let selectedPokemon = allPokemon.find(p => p.id == pokemonId);
+
+                // Si no está en allPokemon, cargarlo desde la API (otra generación)
+                if (!selectedPokemon) {
+                    try {
+                        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+                        selectedPokemon = await response.json();
+                    } catch (error) {
+                        console.error('Error al cargar Pokémon:', error);
+                        return;
+                    }
                 }
+
+                await showPokemonDetail(selectedPokemon);
             });
         });
 
