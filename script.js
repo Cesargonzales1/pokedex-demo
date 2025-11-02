@@ -122,11 +122,40 @@ function createPokemonCard(pokemon) {
         <p class="pokemon-id">#${String(pokemon.id).padStart(3, '0')}</p>
         <h3 class="pokemon-name">${pokemon.name}</h3>
         <div class="pokemon-types">${types}</div>
+        <button class="sound-btn" title="Escuchar grito">🔊</button>
     `;
 
-    card.addEventListener('click', () => showPokemonDetail(pokemon));
+    // Evento para abrir detalles (excepto en el botón de sonido)
+    card.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('sound-btn')) {
+            showPokemonDetail(pokemon);
+        }
+    });
+
+    // Evento para reproducir sonido
+    const soundBtn = card.querySelector('.sound-btn');
+    soundBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playPokemonSound(pokemon);
+    });
 
     return card;
+}
+
+// Reproducir sonido del Pokémon
+function playPokemonSound(pokemon) {
+    // La API de PokeAPI proporciona sonidos en pokemon.cries
+    const soundUrl = pokemon.cries?.latest || pokemon.cries?.legacy;
+
+    if (soundUrl) {
+        const audio = new Audio(soundUrl);
+        audio.volume = 0.5; // Volumen al 50%
+        audio.play().catch(error => {
+            console.error('Error al reproducir sonido:', error);
+        });
+    } else {
+        console.log('No hay sonido disponible para este Pokémon');
+    }
 }
 
 // Mostrar detalle del Pokémon
@@ -166,6 +195,7 @@ async function showPokemonDetail(pokemon) {
                 <h2 class="modal-pokemon-name">${pokemon.name}</h2>
                 <p class="modal-pokemon-id">#${String(pokemon.id).padStart(3, '0')}</p>
                 <div class="pokemon-types">${types}</div>
+                <button class="sound-btn-large" title="Escuchar grito">🔊 Escuchar Grito</button>
             </div>
 
             <div class="pokemon-info">
@@ -193,6 +223,10 @@ async function showPokemonDetail(pokemon) {
                 ${stats}
             </div>
         `;
+
+        // Agregar evento al botón de sonido del modal
+        const modalSoundBtn = modalBody.querySelector('.sound-btn-large');
+        modalSoundBtn.addEventListener('click', () => playPokemonSound(pokemon));
 
         modal.classList.add('active');
     } catch (error) {
