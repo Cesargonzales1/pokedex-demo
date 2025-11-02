@@ -281,6 +281,133 @@ function playPokemonSound(pokemon) {
     }
 }
 
+// Construir carrusel de formas alternativas y mega evoluciones
+async function buildFormsCarousel(varieties, baseName) {
+    const forms = [];
+
+    // Filtrar y obtener datos de formas alternativas
+    for (const variety of varieties) {
+        const varietyName = variety.pokemon.name;
+
+        // Incluir mega evoluciones, formas alternativas, pero excluir la forma base
+        if (varietyName !== baseName && !varietyName.includes('totem')) {
+            try {
+                const pokemonResponse = await fetch(variety.pokemon.url);
+                const pokemonData = await pokemonResponse.json();
+
+                const imageUrl = pokemonData.sprites.other['official-artwork']?.front_default ||
+                               pokemonData.sprites.front_default;
+
+                if (imageUrl) {
+                    // Determinar el tipo de forma
+                    let formLabel = 'Forma Alternativa';
+                    if (varietyName.includes('mega')) {
+                        formLabel = varietyName.includes('mega-x') ? 'Mega Evolución X' :
+                                   varietyName.includes('mega-y') ? 'Mega Evolución Y' :
+                                   'Mega Evolución';
+                    } else if (varietyName.includes('alola')) {
+                        formLabel = 'Forma Alola';
+                    } else if (varietyName.includes('galar')) {
+                        formLabel = 'Forma Galar';
+                    } else if (varietyName.includes('hisui')) {
+                        formLabel = 'Forma Hisui';
+                    } else if (varietyName.includes('paldea')) {
+                        formLabel = 'Forma Paldea';
+                    } else if (varietyName.includes('gmax') || varietyName.includes('gigantamax')) {
+                        formLabel = 'Forma Gigamax';
+                    }
+
+                    forms.push({
+                        name: varietyName,
+                        image: imageUrl,
+                        label: formLabel
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar forma:', error);
+            }
+        }
+    }
+
+    // Si no hay formas alternativas, no mostrar el carrusel
+    if (forms.length === 0) {
+        return '';
+    }
+
+    // Construir HTML del carrusel
+    const carouselItems = forms.map((form, index) => `
+        <div class="carousel-item ${index === 0 ? 'active' : ''}" data-index="${index}">
+            <img src="${form.image}" alt="${form.name}">
+            <p class="form-label">${form.label}</p>
+            <p class="form-name">${form.name.replace(/-/g, ' ')}</p>
+        </div>
+    `).join('');
+
+    return `
+        <div class="pokemon-forms">
+            <h3>Formas Alternativas y Mega Evoluciones</h3>
+            <div class="forms-carousel-container">
+                <button class="carousel-btn prev-btn" onclick="changeCarouselSlide(-1)">‹</button>
+                <div class="forms-carousel">
+                    ${carouselItems}
+                </div>
+                <button class="carousel-btn next-btn" onclick="changeCarouselSlide(1)">›</button>
+            </div>
+            <div class="carousel-indicators">
+                ${forms.map((_, index) => `<span class="indicator ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>`).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Variables globales para el carrusel
+let currentSlideIndex = 0;
+
+// Cambiar slide del carrusel
+function changeCarouselSlide(direction) {
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const indicators = document.querySelectorAll('.indicator');
+
+    if (carouselItems.length === 0) return;
+
+    // Ocultar slide actual
+    carouselItems[currentSlideIndex].classList.remove('active');
+    indicators[currentSlideIndex].classList.remove('active');
+
+    // Calcular nuevo índice
+    currentSlideIndex += direction;
+
+    // Loop al inicio/final
+    if (currentSlideIndex < 0) {
+        currentSlideIndex = carouselItems.length - 1;
+    } else if (currentSlideIndex >= carouselItems.length) {
+        currentSlideIndex = 0;
+    }
+
+    // Mostrar nuevo slide
+    carouselItems[currentSlideIndex].classList.add('active');
+    indicators[currentSlideIndex].classList.add('active');
+}
+
+// Ir a slide específico
+function goToSlide(index) {
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const indicators = document.querySelectorAll('.indicator');
+
+    if (carouselItems.length === 0) return;
+
+    // Ocultar slide actual
+    carouselItems[currentSlideIndex].classList.remove('active');
+    indicators[currentSlideIndex].classList.remove('active');
+
+    // Ir al nuevo slide
+    currentSlideIndex = index;
+
+    // Mostrar nuevo slide
+    carouselItems[currentSlideIndex].classList.add('active');
+    indicators[currentSlideIndex].classList.add('active');
+}
+
 // Construir cadena de evolución
 async function buildEvolutionChain(chain) {
     const evolutions = [];
@@ -380,6 +507,9 @@ async function showPokemonDetail(pokemon) {
         const evolutionChainData = await evolutionChainResponse.json();
         const evolutionChainHTML = await buildEvolutionChain(evolutionChainData.chain);
 
+        // Obtener formas alternativas y mega evoluciones
+        const formsCarouselHTML = await buildFormsCarousel(speciesData.varieties, pokemon.name);
+
         modalBody.innerHTML = `
             <div class="modal-pokemon-header">
                 <div class="pokemon-image-gallery">
@@ -420,6 +550,8 @@ async function showPokemonDetail(pokemon) {
                     <span class="info-value" style="text-transform: none;">${description}</span>
                 </div>
             </div>
+
+            ${formsCarouselHTML}
 
             <div class="pokemon-stats">
                 <h3>Estadísticas Base</h3>
@@ -464,6 +596,9 @@ async function showPokemonDetail(pokemon) {
                 await showPokemonDetail(selectedPokemon);
             });
         });
+
+        // Resetear índice del carrusel al abrir nuevo Pokémon
+        currentSlideIndex = 0;
 
         modal.classList.add('active');
     } catch (error) {

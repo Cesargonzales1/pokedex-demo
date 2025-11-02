@@ -13,6 +13,7 @@ Una Pokédex interactiva y moderna creada con HTML, CSS y JavaScript vanilla que
 - 💬 **Pronunciación de Nombres**: Escucha el nombre del Pokémon hablado en inglés
 - 🎬 **Sprites Animados**: Visualiza GIFs animados oficiales de cada Pokémon
 - 🔗 **Cadena de Evolución**: Visualiza la línea evolutiva completa con niveles
+- 🎭 **Mega Evoluciones y Formas**: Carrusel interactivo con mega evoluciones y formas alternativas (Alola, Galar, Hisui, etc.)
 - 🎵 **Música de Fondo**: Música temática de Pokémon (YouTube embebido)
 - 🚀 **Splash Screen**: Pantalla de carga animada con Pokébola
 - 🎨 **Interfaz Moderna**: Diseño atractivo con gradientes y animaciones
@@ -95,6 +96,20 @@ Luego abre tu navegador en `http://localhost:8000`
 - **Clickeable**: Haz clic en cualquier evolución para ver sus detalles
 - Ejemplo: Bulbasaur → Ivysaur (Nv. 16) → Venusaur (Nv. 32)
 - Si el Pokémon no evoluciona, se mostrará un mensaje indicándolo
+
+### Mega Evoluciones y Formas Alternativas
+- **Carrusel Interactivo**: Navega entre diferentes formas del Pokémon
+- **Formas incluidas**:
+  - Mega Evoluciones (Mega, Mega X, Mega Y)
+  - Formas Regionales (Alola, Galar, Hisui, Paldea)
+  - Formas Gigamax
+  - Otras formas alternativas
+- **Controles**:
+  - Flechas izquierda/derecha (‹ ›) para navegar
+  - Indicadores en la parte inferior (puntos) - haz clic para ir a una forma específica
+  - Animación suave al cambiar de forma
+- Solo aparece si el Pokémon tiene formas alternativas
+- Ejemplo: Charizard mostrará Mega Charizard X y Mega Charizard Y
 
 ### Navegación
 - Usa los botones "Anterior" y "Siguiente" para navegar entre páginas
