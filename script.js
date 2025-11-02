@@ -122,14 +122,22 @@ function createPokemonCard(pokemon) {
         <p class="pokemon-id">#${String(pokemon.id).padStart(3, '0')}</p>
         <h3 class="pokemon-name">${pokemon.name}</h3>
         <div class="pokemon-types">${types}</div>
+        <button class="speech-btn" title="Pronunciar nombre">💬</button>
         <button class="sound-btn" title="Escuchar grito">🔊</button>
     `;
 
-    // Evento para abrir detalles (excepto en el botón de sonido)
+    // Evento para abrir detalles (excepto en botones)
     card.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('sound-btn')) {
+        if (!e.target.classList.contains('sound-btn') && !e.target.classList.contains('speech-btn')) {
             showPokemonDetail(pokemon);
         }
+    });
+
+    // Evento para pronunciar nombre
+    const speechBtn = card.querySelector('.speech-btn');
+    speechBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        speakPokemonName(pokemon);
     });
 
     // Evento para reproducir sonido
@@ -140,6 +148,28 @@ function createPokemonCard(pokemon) {
     });
 
     return card;
+}
+
+// Pronunciar nombre del Pokémon
+function speakPokemonName(pokemon) {
+    // Verificar si el navegador soporta Web Speech API
+    if ('speechSynthesis' in window) {
+        // Cancelar cualquier pronunciación anterior
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(pokemon.name);
+
+        // Configurar el idioma y velocidad
+        utterance.lang = 'es-ES'; // Español
+        utterance.rate = 0.9; // Velocidad normal
+        utterance.pitch = 1; // Tono normal
+        utterance.volume = 1; // Volumen al 100%
+
+        window.speechSynthesis.speak(utterance);
+    } else {
+        console.log('Tu navegador no soporta síntesis de voz');
+        alert('Tu navegador no soporta la función de pronunciación');
+    }
 }
 
 // Reproducir sonido del Pokémon
@@ -195,7 +225,10 @@ async function showPokemonDetail(pokemon) {
                 <h2 class="modal-pokemon-name">${pokemon.name}</h2>
                 <p class="modal-pokemon-id">#${String(pokemon.id).padStart(3, '0')}</p>
                 <div class="pokemon-types">${types}</div>
-                <button class="sound-btn-large" title="Escuchar grito">🔊 Escuchar Grito</button>
+                <div class="modal-buttons">
+                    <button class="speech-btn-large" title="Pronunciar nombre">💬 Pronunciar Nombre</button>
+                    <button class="sound-btn-large" title="Escuchar grito">🔊 Escuchar Grito</button>
+                </div>
             </div>
 
             <div class="pokemon-info">
@@ -224,8 +257,11 @@ async function showPokemonDetail(pokemon) {
             </div>
         `;
 
-        // Agregar evento al botón de sonido del modal
+        // Agregar eventos a los botones del modal
+        const modalSpeechBtn = modalBody.querySelector('.speech-btn-large');
         const modalSoundBtn = modalBody.querySelector('.sound-btn-large');
+
+        modalSpeechBtn.addEventListener('click', () => speakPokemonName(pokemon));
         modalSoundBtn.addEventListener('click', () => playPokemonSound(pokemon));
 
         modal.classList.add('active');

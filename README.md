@@ -9,6 +9,7 @@ Una Pokédex interactiva y moderna creada con HTML, CSS y JavaScript vanilla que
 - 🏷️ **Filtros**: Filtra Pokémon por tipo (Fuego, Agua, Planta, etc.)
 - 📊 **Estadísticas Detalladas**: Visualiza las estadísticas base de cada Pokémon
 - 🔊 **Sonidos de Pokémon**: Escucha el grito característico de cada Pokémon
+- 💬 **Pronunciación de Nombres**: Escucha el nombre del Pokémon hablado en español
 - 🎨 **Interfaz Moderna**: Diseño atractivo con gradientes y animaciones
 - 📖 **Información Completa**: Altura, peso, habilidades y descripción de cada Pokémon
 - 🌍 **Multiidioma**: Descripciones en español
@@ -47,10 +48,12 @@ Luego abre tu navegador en `http://localhost:8000`
 - Usa el menú desplegable para filtrar por tipo de Pokémon
 - Selecciona "Todos los tipos" para ver todos los Pokémon nuevamente
 
-### Escuchar Sonidos
-- Haz clic en el botón 🔊 en la esquina superior derecha de cada tarjeta
-- También puedes escuchar el sonido desde el modal de detalles
+### Escuchar Sonidos y Pronunciación
+- **Pronunciar nombre** 💬: Haz clic en el botón verde en la esquina superior izquierda para escuchar el nombre del Pokémon pronunciado en español
+- **Grito del Pokémon** 🔊: Haz clic en el botón morado en la esquina superior derecha para escuchar el grito característico del Pokémon
+- También puedes usar ambos botones desde el modal de detalles
 - Los sonidos son los gritos oficiales de los Pokémon de la API
+- La pronunciación usa la Web Speech API del navegador
 
 ### Ver Detalles
 - Haz clic en cualquier tarjeta de Pokémon para ver información detallada
@@ -61,7 +64,7 @@ Luego abre tu navegador en `http://localhost:8000`
   - Habilidades
   - Descripción
   - Estadísticas base con barras de progreso
-  - Botón para escuchar el grito del Pokémon
+  - Botones para pronunciar el nombre y escuchar el grito del Pokémon
 
 ### Navegación
 - Usa los botones "Anterior" y "Siguiente" para navegar entre páginas

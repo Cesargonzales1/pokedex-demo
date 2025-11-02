@@ -183,6 +183,33 @@ header h1 {
     text-transform: capitalize;
 }
 
+/* Botón de pronunciar en las tarjetas */
+.speech-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.speech-btn:hover {
+    background-color: #218838;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.speech-btn:active {
+    transform: scale(0.95);
+}
+
 /* Botón de sonido en las tarjetas */
 .sound-btn {
     position: absolute;
@@ -210,9 +237,41 @@ header h1 {
     transform: scale(0.95);
 }
 
+/* Contenedor de botones en el modal */
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+/* Botón de pronunciar grande en el modal */
+.speech-btn-large {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.speech-btn-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.speech-btn-large:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 /* Botón de sonido grande en el modal */
 .sound-btn-large {
-    margin-top: 15px;
     padding: 12px 25px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
