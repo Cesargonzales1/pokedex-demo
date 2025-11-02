@@ -11,6 +11,7 @@ Una Pokédex interactiva y moderna creada con HTML, CSS y JavaScript vanilla que
 - 🔊 **Sonidos de Pokémon**: Escucha el grito característico de cada Pokémon
 - 💬 **Pronunciación de Nombres**: Escucha el nombre del Pokémon hablado en inglés
 - 🎬 **Sprites Animados**: Visualiza GIFs animados oficiales de cada Pokémon
+- 🔗 **Cadena de Evolución**: Visualiza la línea evolutiva completa con niveles
 - 🎨 **Interfaz Moderna**: Diseño atractivo con gradientes y animaciones
 - 📖 **Información Completa**: Altura, peso, habilidades y descripción de cada Pokémon
 - 🌍 **Multiidioma**: Descripciones en español
@@ -65,7 +66,15 @@ Luego abre tu navegador en `http://localhost:8000`
   - Habilidades
   - Descripción
   - Estadísticas base con barras de progreso
+  - **Cadena de Evolución**: Línea evolutiva completa con niveles requeridos
   - Botones para pronunciar el nombre y escuchar el grito del Pokémon
+
+### Cadena de Evolución
+- Visualiza la línea evolutiva completa del Pokémon
+- Muestra el nivel requerido para cada evolución
+- **Clickeable**: Haz clic en cualquier evolución para ver sus detalles
+- Ejemplo: Bulbasaur → Ivysaur (Nv. 16) → Venusaur (Nv. 32)
+- Si el Pokémon no evoluciona, se mostrará un mensaje indicándolo
 
 ### Navegación
 - Usa los botones "Anterior" y "Siguiente" para navegar entre páginas

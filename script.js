@@ -188,6 +188,65 @@ function playPokemonSound(pokemon) {
     }
 }
 
+// Construir cadena de evolución
+async function buildEvolutionChain(chain) {
+    const evolutions = [];
+
+    // Función recursiva para procesar la cadena
+    async function processChain(chainLink) {
+        if (!chainLink) return;
+
+        const speciesName = chainLink.species.name;
+        const speciesId = chainLink.species.url.split('/').filter(Boolean).pop();
+
+        // Obtener datos del Pokémon para la imagen
+        const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${speciesId}`);
+        const pokemonData = await pokemonResponse.json();
+        const imageUrl = pokemonData.sprites.other['official-artwork'].front_default ||
+                        pokemonData.sprites.front_default;
+
+        evolutions.push({
+            name: speciesName,
+            id: speciesId,
+            image: imageUrl,
+            minLevel: chainLink.evolution_details[0]?.min_level || null
+        });
+
+        // Procesar solo la primera evolución (para simplicidad)
+        if (chainLink.evolves_to.length > 0) {
+            await processChain(chainLink.evolves_to[0]);
+        }
+    }
+
+    await processChain(chain);
+
+    // Construir HTML
+    if (evolutions.length === 1) {
+        return '<p class="no-evolution">Este Pokémon no evoluciona</p>';
+    }
+
+    return evolutions.map((evo, index) => {
+        const isLast = index === evolutions.length - 1;
+        const nextEvo = evolutions[index + 1];
+
+        return `
+            <div class="evolution-item">
+                <div class="evolution-pokemon" data-pokemon-id="${evo.id}">
+                    <img src="${evo.image}" alt="${evo.name}">
+                    <p class="evolution-name">${evo.name}</p>
+                    <p class="evolution-id">#${String(evo.id).padStart(3, '0')}</p>
+                </div>
+                ${!isLast ? `
+                    <div class="evolution-arrow">
+                        <span>→</span>
+                        ${nextEvo.minLevel ? `<p class="evolution-level">Nv. ${nextEvo.minLevel}</p>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
 // Mostrar detalle del Pokémon
 async function showPokemonDetail(pokemon) {
     const imageUrl = pokemon.sprites.other['official-artwork'].front_default ||
@@ -222,6 +281,11 @@ async function showPokemonDetail(pokemon) {
         )?.flavor_text.replace(/\f/g, ' ') || 'Descripción no disponible.';
 
         const abilities = pokemon.abilities.map(ability => ability.ability.name).join(', ');
+
+        // Obtener cadena de evolución
+        const evolutionChainResponse = await fetch(speciesData.evolution_chain.url);
+        const evolutionChainData = await evolutionChainResponse.json();
+        const evolutionChainHTML = await buildEvolutionChain(evolutionChainData.chain);
 
         modalBody.innerHTML = `
             <div class="modal-pokemon-header">
@@ -268,6 +332,13 @@ async function showPokemonDetail(pokemon) {
                 <h3>Estadísticas Base</h3>
                 ${stats}
             </div>
+
+            <div class="pokemon-evolution">
+                <h3>Cadena de Evolución</h3>
+                <div class="evolution-chain">
+                    ${evolutionChainHTML}
+                </div>
+            </div>
         `;
 
         // Agregar eventos a los botones del modal
@@ -276,6 +347,18 @@ async function showPokemonDetail(pokemon) {
 
         modalSpeechBtn.addEventListener('click', () => speakPokemonName(pokemon));
         modalSoundBtn.addEventListener('click', () => playPokemonSound(pokemon));
+
+        // Hacer clickeable las evoluciones
+        const evolutionPokemons = modalBody.querySelectorAll('.evolution-pokemon');
+        evolutionPokemons.forEach(evoElement => {
+            evoElement.addEventListener('click', async () => {
+                const pokemonId = evoElement.getAttribute('data-pokemon-id');
+                const selectedPokemon = allPokemon.find(p => p.id == pokemonId);
+                if (selectedPokemon) {
+                    await showPokemonDetail(selectedPokemon);
+                }
+            });
+        });
 
         modal.classList.add('active');
     } catch (error) {
