@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔴 Pokédex 🔵</h1>
+            <p class="subtitle">Descubre información de tus Pokémon favoritos</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar Pokémon por nombre o número..." />
+            <button id="searchBtn">Buscar</button>
+        </div>
+
+        <div class="filter-container">
+            <label for="typeFilter">Filtrar por tipo:</label>
+            <select id="typeFilter">
+                <option value="">Todos los tipos</option>
+                <option value="normal">Normal</option>
+                <option value="fire">Fuego</option>
+                <option value="water">Agua</option>
+                <option value="grass">Planta</option>
+                <option value="electric">Eléctrico</option>
+                <option value="ice">Hielo</option>
+                <option value="fighting">Lucha</option>
+                <option value="poison">Veneno</option>
+                <option value="ground">Tierra</option>
+                <option value="flying">Volador</option>
+                <option value="psychic">Psíquico</option>
+                <option value="bug">Bicho</option>
+                <option value="rock">Roca</option>
+                <option value="ghost">Fantasma</option>
+                <option value="dragon">Dragón</option>
+                <option value="dark">Siniestro</option>
+                <option value="steel">Acero</option>
+                <option value="fairy">Hada</option>
+            </select>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="pokeball-loader"></div>
+            <p>Cargando Pokémon...</p>
+        </div>
+
+        <div id="pokemonContainer" class="pokemon-grid"></div>
+
+        <div class="pagination">
+            <button id="prevBtn" disabled>← Anterior</button>
+            <span id="pageInfo">Página 1</span>
+            <button id="nextBtn">Siguiente →</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
