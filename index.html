@@ -45,6 +45,11 @@
         🎮
     </button>
 
+    <!-- Dugtrio Game Button -->
+    <button id="dugtrioToggle" class="dugtrio-toggle" title="Juego de Dugtrío">
+        🔨
+    </button>
+
     <div class="container">
         <header>
             <h1>🔴 Pokédex 🔵</h1>
@@ -161,6 +166,110 @@
                     <p>🔢 Movimientos: <span id="victoryMoves"></span></p>
                 </div>
                 <button id="playAgain" class="play-again-btn">🎮 Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dugtrio Whac-A-Mole Game Modal -->
+    <div id="dugtrioModal" class="dugtrio-modal">
+        <div class="dugtrio-modal-content">
+            <span class="dugtrio-close">&times;</span>
+            <h2 class="dugtrio-title">🔨 ¡Golpea a Dugtrío!</h2>
+
+            <!-- Game Menu -->
+            <div id="dugtrioMenu" class="dugtrio-menu">
+                <p class="dugtrio-instructions">
+                    ¡Dugtrío está saliendo de sus agujeros! Haz clic en ellos antes de que se escondan.
+                    <br><br>
+                    🎯 +10 puntos por cada Dugtrío golpeado
+                    <br>
+                    ⏱️ Tienes 30 segundos
+                </p>
+                <button id="startDugtrio" class="start-dugtrio-btn">🔨 ¡Empezar!</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="dugtrioGameBoard" class="dugtrio-game-board" style="display: none;">
+                <!-- Game Stats -->
+                <div class="dugtrio-stats">
+                    <div class="dugtrio-stat-item">
+                        <span class="dugtrio-stat-label">⏱️ Tiempo</span>
+                        <span id="dugtrioTime" class="dugtrio-stat-value">30</span>
+                    </div>
+                    <div class="dugtrio-stat-item">
+                        <span class="dugtrio-stat-label">🎯 Puntos</span>
+                        <span id="dugtrioScore" class="dugtrio-stat-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Holes Grid -->
+                <div class="holes-grid">
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="0">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="1">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="2">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="3">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="4">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="5">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="6">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="7">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                    <div class="hole-container">
+                        <div class="hole"></div>
+                        <div class="dugtrio" data-hole="8">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png" alt="Dugtrío">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="dugtrioVictory" class="dugtrio-victory" style="display: none;">
+                <h3 class="dugtrio-victory-title">🏆 ¡Juego Terminado!</h3>
+                <p class="dugtrio-victory-message">¡Buen trabajo golpeando a Dugtrío!</p>
+                <div class="dugtrio-victory-stats">
+                    <p>🎯 Puntuación Final: <span id="dugtrioFinalScore"></span> puntos</p>
+                    <p>🔨 Dugtrío golpeados: <span id="dugtrioHits"></span></p>
+                </div>
+                <button id="dugtrioPlayAgain" class="dugtrio-play-again-btn">🔨 Jugar de Nuevo</button>
             </div>
         </div>
     </div>

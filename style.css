@@ -160,6 +160,32 @@ body {
     transform: scale(0.95);
 }
 
+/* Dugtrio Game Toggle Button */
+.dugtrio-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 190px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #C9A96E 0%, #8B6F47 100%);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+.dugtrio-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dugtrio-toggle:active {
+    transform: scale(0.95);
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -1291,6 +1317,294 @@ header h1 {
     }
 }
 
+/* ==========================================
+   DUGTRIO WHAC-A-MOLE GAME
+   ========================================== */
+
+/* Dugtrio Modal */
+.dugtrio-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dugtrio-modal.active {
+    display: block;
+}
+
+.dugtrio-modal-content {
+    background: linear-gradient(135deg, #FFE5B4 0%, #DEB887 100%);
+    margin: 3% auto;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 700px;
+    position: relative;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.dugtrio-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #8B6F47;
+    transition: all 0.3s;
+}
+
+.dugtrio-close:hover {
+    color: #5C4A31;
+    transform: scale(1.2);
+}
+
+.dugtrio-title {
+    text-align: center;
+    color: #8B6F47;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Game Menu */
+.dugtrio-menu {
+    text-align: center;
+}
+
+.dugtrio-instructions {
+    font-size: 1.2rem;
+    color: #5C4A31;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+.start-dugtrio-btn {
+    padding: 20px 40px;
+    background: linear-gradient(135deg, #C9A96E 0%, #8B6F47 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.start-dugtrio-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.start-dugtrio-btn:active {
+    transform: translateY(-2px);
+}
+
+/* Game Board */
+.dugtrio-game-board {
+    margin-top: 20px;
+}
+
+.dugtrio-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #C9A96E 0%, #8B6F47 100%);
+    border-radius: 15px;
+    color: white;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dugtrio-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.dugtrio-stat-label {
+    font-size: 1rem;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+.dugtrio-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Holes Grid */
+.holes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 30px;
+    background: linear-gradient(135deg, #8B7355 0%, #6B5A44 100%);
+    border-radius: 20px;
+    box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hole-container {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+/* Hole (Agujero) */
+.hole {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40%;
+    background: radial-gradient(ellipse at center, #2C1F15 0%, #1A120C 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.8);
+    z-index: 1;
+}
+
+/* Dugtrio */
+.dugtrio {
+    position: absolute;
+    bottom: -100%;
+    width: 80%;
+    height: 80%;
+    cursor: pointer;
+    z-index: 2;
+    transition: bottom 0.2s ease-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dugtrio.up {
+    bottom: 20%;
+}
+
+.dugtrio.whacked {
+    animation: whackAnimation 0.3s ease;
+}
+
+.dugtrio img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes whackAnimation {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(0.8) rotate(-10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Hit Effect */
+.hit-effect {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 10;
+    animation: hitEffectAnimation 0.5s ease;
+}
+
+@keyframes hitEffectAnimation {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -80%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(1);
+    }
+}
+
+/* Victory Screen */
+.dugtrio-victory {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.dugtrio-victory-title {
+    font-size: 2.5rem;
+    color: #8B6F47;
+    margin-bottom: 20px;
+}
+
+.dugtrio-victory-message {
+    font-size: 1.3rem;
+    color: #5C4A31;
+    margin-bottom: 30px;
+}
+
+.dugtrio-victory-stats {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.dugtrio-victory-stats p {
+    font-size: 1.3rem;
+    color: #5C4A31;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.dugtrio-victory-stats span {
+    color: #8B6F47;
+    font-size: 1.5rem;
+}
+
+.dugtrio-play-again-btn {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #C9A96E 0%, #8B6F47 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.dugtrio-play-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.dugtrio-play-again-btn:active {
+    transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -1501,6 +1815,71 @@ header h1 {
     }
 
     .play-again-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    /* Dugtrio Game Mobile Styles */
+    .dugtrio-toggle {
+        right: 160px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .dugtrio-modal-content {
+        margin: 5% 10px;
+        padding: 20px;
+    }
+
+    .dugtrio-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .dugtrio-instructions {
+        font-size: 1rem;
+    }
+
+    .start-dugtrio-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+
+    .holes-grid {
+        gap: 15px;
+        padding: 20px;
+    }
+
+    .dugtrio-stat-value {
+        font-size: 1.5rem;
+    }
+
+    .hit-effect {
+        font-size: 1.5rem;
+    }
+
+    .dugtrio-victory-title {
+        font-size: 2rem;
+    }
+
+    .dugtrio-victory-message {
+        font-size: 1.1rem;
+    }
+
+    .dugtrio-victory-stats {
+        padding: 20px;
+    }
+
+    .dugtrio-victory-stats p {
+        font-size: 1.1rem;
+    }
+
+    .dugtrio-victory-stats span {
+        font-size: 1.3rem;
+    }
+
+    .dugtrio-play-again-btn {
         padding: 12px 30px;
         font-size: 1rem;
     }

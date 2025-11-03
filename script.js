@@ -946,3 +946,172 @@ function createConfetti() {
         }, i * 30);
     }
 }
+
+// ==========================================
+// DUGTRIO WHAC-A-MOLE GAME
+// ==========================================
+
+const dugtrioToggle = document.getElementById('dugtrioToggle');
+const dugtrioModal = document.getElementById('dugtrioModal');
+const dugtrioClose = document.querySelector('.dugtrio-close');
+const dugtrioMenu = document.getElementById('dugtrioMenu');
+const startDugtrioBtn = document.getElementById('startDugtrio');
+const dugtrioGameBoard = document.getElementById('dugtrioGameBoard');
+const dugtrioVictoryScreen = document.getElementById('dugtrioVictory');
+const dugtrioPlayAgainBtn = document.getElementById('dugtrioPlayAgain');
+
+let dugtrioScore = 0;
+let dugtrioTimeLeft = 30;
+let dugtrioTimer = null;
+let dugtrioGameActive = false;
+let dugtrioSpawnInterval = null;
+let dugtrioHitCount = 0;
+
+// Open Dugtrio modal
+function openDugtrioModal() {
+    dugtrioModal.classList.add('active');
+    dugtrioMenu.style.display = 'block';
+    dugtrioGameBoard.style.display = 'none';
+    dugtrioVictoryScreen.style.display = 'none';
+}
+
+// Close Dugtrio modal
+function closeDugtrioModal() {
+    dugtrioModal.classList.remove('active');
+    resetDugtrioGame();
+}
+
+// Start Dugtrio game
+function startDugtrioGame() {
+    // Reset game state
+    dugtrioScore = 0;
+    dugtrioTimeLeft = 30;
+    dugtrioHitCount = 0;
+    dugtrioGameActive = true;
+
+    // Update UI
+    document.getElementById('dugtrioScore').textContent = dugtrioScore;
+    document.getElementById('dugtrioTime').textContent = dugtrioTimeLeft;
+
+    // Hide menu, show game board
+    dugtrioMenu.style.display = 'none';
+    dugtrioGameBoard.style.display = 'block';
+
+    // Hide all Dugtrios initially
+    const allDugtrios = document.querySelectorAll('.dugtrio');
+    allDugtrios.forEach(d => d.classList.remove('up', 'whacked'));
+
+    // Start game timer
+    dugtrioTimer = setInterval(() => {
+        dugtrioTimeLeft--;
+        document.getElementById('dugtrioTime').textContent = dugtrioTimeLeft;
+
+        if (dugtrioTimeLeft <= 0) {
+            endDugtrioGame();
+        }
+    }, 1000);
+
+    // Start spawning Dugtrios
+    spawnDugtrio();
+    dugtrioSpawnInterval = setInterval(spawnDugtrio, 800);
+}
+
+// Spawn a random Dugtrio
+function spawnDugtrio() {
+    if (!dugtrioGameActive) return;
+
+    const allDugtrios = document.querySelectorAll('.dugtrio');
+    const availableDugtrios = Array.from(allDugtrios).filter(d => !d.classList.contains('up'));
+
+    if (availableDugtrios.length === 0) return;
+
+    const randomDugtrio = availableDugtrios[Math.floor(Math.random() * availableDugtrios.length)];
+    const displayTime = Math.random() * 1000 + 800; // 800-1800ms
+
+    randomDugtrio.classList.add('up');
+    randomDugtrio.classList.remove('whacked');
+
+    // Auto hide after display time
+    setTimeout(() => {
+        if (randomDugtrio.classList.contains('up') && !randomDugtrio.classList.contains('whacked')) {
+            randomDugtrio.classList.remove('up');
+        }
+    }, displayTime);
+}
+
+// Hit a Dugtrio
+function hitDugtrio(dugtrio) {
+    if (!dugtrioGameActive) return;
+    if (!dugtrio.classList.contains('up')) return;
+    if (dugtrio.classList.contains('whacked')) return;
+
+    // Mark as whacked
+    dugtrio.classList.add('whacked');
+
+    // Update score
+    dugtrioScore += 10;
+    dugtrioHitCount++;
+    document.getElementById('dugtrioScore').textContent = dugtrioScore;
+
+    // Create hit effect
+    const hitEffect = document.createElement('div');
+    hitEffect.className = 'hit-effect';
+    hitEffect.textContent = '+10';
+    dugtrio.parentElement.appendChild(hitEffect);
+
+    setTimeout(() => hitEffect.remove(), 500);
+
+    // Hide Dugtrio after hit
+    setTimeout(() => {
+        dugtrio.classList.remove('up', 'whacked');
+    }, 300);
+}
+
+// End game
+function endDugtrioGame() {
+    dugtrioGameActive = false;
+    clearInterval(dugtrioTimer);
+    clearInterval(dugtrioSpawnInterval);
+
+    // Hide all Dugtrios
+    const allDugtrios = document.querySelectorAll('.dugtrio');
+    allDugtrios.forEach(d => d.classList.remove('up', 'whacked'));
+
+    // Show victory screen
+    dugtrioGameBoard.style.display = 'none';
+    dugtrioVictoryScreen.style.display = 'block';
+
+    document.getElementById('dugtrioFinalScore').textContent = dugtrioScore;
+    document.getElementById('dugtrioHits').textContent = dugtrioHitCount;
+}
+
+// Reset game
+function resetDugtrioGame() {
+    dugtrioGameActive = false;
+    clearInterval(dugtrioTimer);
+    clearInterval(dugtrioSpawnInterval);
+
+    const allDugtrios = document.querySelectorAll('.dugtrio');
+    allDugtrios.forEach(d => d.classList.remove('up', 'whacked'));
+}
+
+// Event listeners
+dugtrioToggle.addEventListener('click', openDugtrioModal);
+dugtrioClose.addEventListener('click', closeDugtrioModal);
+startDugtrioBtn.addEventListener('click', startDugtrioGame);
+dugtrioPlayAgainBtn.addEventListener('click', () => {
+    dugtrioVictoryScreen.style.display = 'none';
+    dugtrioMenu.style.display = 'block';
+});
+
+// Click on Dugtrios
+document.querySelectorAll('.dugtrio').forEach(dugtrio => {
+    dugtrio.addEventListener('click', () => hitDugtrio(dugtrio));
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target === dugtrioModal) {
+        closeDugtrioModal();
+    }
+});
