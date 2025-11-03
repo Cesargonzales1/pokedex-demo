@@ -702,8 +702,7 @@ gameCards.forEach(card => {
                 openFishingModal();
                 break;
             case 'runner':
-                // Will implement later
-                alert('¡Próximamente! ⚡');
+                openRunnerModal();
                 break;
             case 'puzzle':
                 // Will implement later
@@ -1602,5 +1601,215 @@ fishingPlayAgainBtn.addEventListener('click', () => {
 window.addEventListener('click', (e) => {
     if (e.target === fishingModal) {
         closeFishingModal();
+    }
+});
+
+// ==========================================
+// PIKACHU RUNNER GAME
+// ==========================================
+
+const runnerModal = document.getElementById('runnerModal');
+const runnerClose = document.querySelector('.runner-close');
+const runnerMenu = document.getElementById('runnerMenu');
+const startRunnerBtn = document.getElementById('startRunner');
+const runnerGameBoard = document.getElementById('runnerGameBoard');
+const runnerVictoryScreen = document.getElementById('runnerVictory');
+const runnerPlayAgainBtn = document.getElementById('runnerPlayAgain');
+const pikachu = document.getElementById('pikachu');
+const obstaclesContainer = document.getElementById('obstaclesContainer');
+const jumpBtn = document.getElementById('jumpBtn');
+
+let runnerScore = 0;
+let runnerDistance = 0;
+let runnerSpeed = 5;
+let runnerMaxSpeed = 5;
+let runnerIsJumping = false;
+let runnerGameActive = false;
+let runnerAnimationFrame = null;
+let runnerObstacles = [];
+let runnerObstacleInterval = null;
+
+// Open Runner modal
+function openRunnerModal() {
+    runnerModal.classList.add('active');
+    runnerMenu.style.display = 'block';
+    runnerGameBoard.style.display = 'none';
+    runnerVictoryScreen.style.display = 'none';
+}
+
+// Close Runner modal
+function closeRunnerModal() {
+    runnerModal.classList.remove('active');
+    resetRunnerGame();
+}
+
+// Start Runner game
+function startRunnerGame() {
+    // Reset game state
+    runnerScore = 0;
+    runnerDistance = 0;
+    runnerSpeed = 5;
+    runnerMaxSpeed = 5;
+    runnerIsJumping = false;
+    runnerGameActive = true;
+
+    // Update UI
+    document.getElementById('runnerScore').textContent = runnerScore;
+    document.getElementById('runnerDistance').textContent = '0m';
+
+    runnerMenu.style.display = 'none';
+    runnerGameBoard.style.display = 'block';
+
+    // Clear obstacles
+    obstaclesContainer.innerHTML = '';
+    runnerObstacles = [];
+
+    // Start spawning obstacles
+    spawnRunnerObstacle();
+    runnerObstacleInterval = setInterval(() => {
+        if (runnerGameActive) {
+            spawnRunnerObstacle();
+        }
+    }, 2000);
+
+    // Start game loop
+    updateRunnerGame();
+}
+
+// Spawn obstacle
+function spawnRunnerObstacle() {
+    const obstacle = document.createElement('div');
+    obstacle.className = 'obstacle';
+    obstacle.style.animationDuration = (3000 / runnerSpeed) + 'ms';
+    obstaclesContainer.appendChild(obstacle);
+
+    const obstacleData = {
+        element: obstacle,
+        passed: false
+    };
+
+    runnerObstacles.push(obstacleData);
+
+    // Remove obstacle after animation
+    setTimeout(() => {
+        if (obstacle.parentNode) {
+            obstacle.remove();
+            const index = runnerObstacles.findIndex(o => o.element === obstacle);
+            if (index > -1) {
+                runnerObstacles.splice(index, 1);
+            }
+        }
+    }, 3000);
+}
+
+// Jump
+function runnerJump() {
+    if (runnerIsJumping || !runnerGameActive) return;
+
+    runnerIsJumping = true;
+    pikachu.classList.add('jumping');
+
+    setTimeout(() => {
+        runnerIsJumping = false;
+        pikachu.classList.remove('jumping');
+    }, 500);
+}
+
+// Check collision
+function checkRunnerCollision() {
+    const pikachuRect = pikachu.getBoundingClientRect();
+
+    for (let obstacle of runnerObstacles) {
+        const obstacleRect = obstacle.element.getBoundingClientRect();
+
+        // Check if obstacle has passed Pikachu
+        if (!obstacle.passed && obstacleRect.right < pikachuRect.left) {
+            obstacle.passed = true;
+            runnerScore += 10;
+            runnerDistance++;
+            document.getElementById('runnerScore').textContent = runnerScore;
+            document.getElementById('runnerDistance').textContent = runnerDistance + 'm';
+
+            // Increase speed every 10 obstacles
+            if (runnerDistance % 10 === 0) {
+                runnerSpeed = Math.min(runnerSpeed + 0.5, 15);
+                if (runnerSpeed > runnerMaxSpeed) {
+                    runnerMaxSpeed = runnerSpeed;
+                }
+            }
+        }
+
+        // Check collision
+        if (obstacleRect.left < pikachuRect.right &&
+            obstacleRect.right > pikachuRect.left &&
+            obstacleRect.bottom > pikachuRect.top &&
+            obstacleRect.top < pikachuRect.bottom) {
+
+            // Game over
+            endRunnerGame();
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Update game
+function updateRunnerGame() {
+    if (!runnerGameActive) return;
+
+    const collision = checkRunnerCollision();
+
+    if (!collision) {
+        runnerAnimationFrame = requestAnimationFrame(updateRunnerGame);
+    }
+}
+
+// End game
+function endRunnerGame() {
+    runnerGameActive = false;
+    clearInterval(runnerObstacleInterval);
+    cancelAnimationFrame(runnerAnimationFrame);
+
+    // Show victory screen
+    runnerGameBoard.style.display = 'none';
+    runnerVictoryScreen.style.display = 'block';
+
+    document.getElementById('runnerFinalDistance').textContent = runnerDistance;
+    document.getElementById('runnerFinalScore').textContent = runnerScore;
+    document.getElementById('runnerMaxSpeed').textContent = runnerMaxSpeed.toFixed(1) + 'x';
+}
+
+// Reset game
+function resetRunnerGame() {
+    runnerGameActive = false;
+    clearInterval(runnerObstacleInterval);
+    cancelAnimationFrame(runnerAnimationFrame);
+    obstaclesContainer.innerHTML = '';
+    runnerObstacles = [];
+    pikachu.classList.remove('jumping');
+}
+
+// Event listeners
+runnerClose.addEventListener('click', closeRunnerModal);
+startRunnerBtn.addEventListener('click', startRunnerGame);
+runnerPlayAgainBtn.addEventListener('click', () => {
+    runnerVictoryScreen.style.display = 'none';
+    runnerMenu.style.display = 'block';
+});
+
+// Jump controls
+jumpBtn.addEventListener('click', runnerJump);
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && runnerGameActive) {
+        e.preventDefault();
+        runnerJump();
+    }
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === runnerModal) {
+        closeRunnerModal();
     }
 });

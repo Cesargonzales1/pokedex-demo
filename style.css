@@ -2276,6 +2276,287 @@ header h1 {
     transform: translateY(-1px);
 }
 
+/* ==========================================
+   PIKACHU RUNNER GAME
+   ========================================== */
+
+.runner-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.runner-modal.active {
+    display: block;
+}
+
+.runner-modal-content {
+    background: linear-gradient(135deg, #FDB99B 0%, #CF8BF3 100%);
+    margin: 3% auto;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 800px;
+    position: relative;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.runner-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s;
+}
+
+.runner-close:hover {
+    color: #f0f0f0;
+    transform: scale(1.2);
+}
+
+.runner-title {
+    text-align: center;
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Game Menu */
+.runner-menu {
+    text-align: center;
+}
+
+.runner-instructions {
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+.start-runner-btn {
+    padding: 20px 40px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #333;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.start-runner-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.start-runner-btn:active {
+    transform: translateY(-2px);
+}
+
+/* Game Board */
+.runner-game-board {
+    margin-top: 20px;
+}
+
+.runner-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    color: white;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.runner-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.runner-stat-label {
+    font-size: 0.9rem;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+.runner-stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Game Container */
+.runner-game-container {
+    position: relative;
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #8B7355 50%, #654321 100%);
+    border-radius: 15px;
+    height: 400px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Pikachu */
+.pikachu {
+    position: absolute;
+    bottom: 60px;
+    left: 100px;
+    width: 60px;
+    height: 60px;
+    background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
+    transition: bottom 0.3s;
+}
+
+.pikachu.jumping {
+    animation: jump 0.5s ease-out;
+}
+
+@keyframes jump {
+    0% {
+        bottom: 60px;
+    }
+    50% {
+        bottom: 200px;
+    }
+    100% {
+        bottom: 60px;
+    }
+}
+
+/* Ground */
+.runner-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom, #654321 0%, #4A3018 100%);
+    border-top: 3px solid #8B7355;
+}
+
+/* Obstacles */
+.obstacles-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.obstacle {
+    position: absolute;
+    bottom: 60px;
+    right: -50px;
+    width: 40px;
+    height: 60px;
+    background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/74.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: moveObstacle linear;
+}
+
+@keyframes moveObstacle {
+    0% {
+        right: -50px;
+    }
+    100% {
+        right: 100%;
+    }
+}
+
+/* Jump Button */
+.jump-btn {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #333;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.jump-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.jump-btn:active {
+    transform: scale(0.98);
+}
+
+/* Victory Screen */
+.runner-victory {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.runner-victory-title {
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.runner-victory-stats {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.runner-victory-stats p {
+    font-size: 1.3rem;
+    color: white;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.runner-victory-stats span {
+    color: #FFD700;
+    font-size: 1.5rem;
+}
+
+.runner-play-again-btn {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #333;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.runner-play-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.runner-play-again-btn:active {
+    transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -2689,6 +2970,63 @@ header h1 {
     }
 
     .fishing-play-again-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    /* Runner Game Mobile Styles */
+    .runner-modal-content {
+        margin: 5% 10px;
+        padding: 20px;
+    }
+
+    .runner-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .runner-instructions {
+        font-size: 1rem;
+    }
+
+    .start-runner-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+
+    .runner-game-container {
+        height: 300px;
+    }
+
+    .pikachu {
+        width: 50px;
+        height: 50px;
+        left: 50px;
+    }
+
+    .obstacle {
+        width: 35px;
+        height: 50px;
+    }
+
+    .jump-btn {
+        padding: 15px;
+        font-size: 1.1rem;
+    }
+
+    .runner-victory-title {
+        font-size: 2rem;
+    }
+
+    .runner-victory-stats p {
+        font-size: 1.1rem;
+    }
+
+    .runner-victory-stats span {
+        font-size: 1.3rem;
+    }
+
+    .runner-play-again-btn {
         padding: 12px 30px;
         font-size: 1rem;
     }

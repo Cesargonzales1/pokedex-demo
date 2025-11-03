@@ -447,6 +447,62 @@
         </div>
     </div>
 
+    <!-- Pikachu Runner Game Modal -->
+    <div id="runnerModal" class="runner-modal">
+        <div class="runner-modal-content">
+            <span class="runner-close">&times;</span>
+            <h2 class="runner-title">⚡ Pikachu Runner</h2>
+
+            <!-- Game Menu -->
+            <div id="runnerMenu" class="runner-menu">
+                <p class="runner-instructions">
+                    ¡Ayuda a Pikachu a correr y saltar obstáculos!
+                    <br><br>
+                    ⚡ Presiona ESPACIO o haz CLICK para saltar
+                    <br>
+                    🏃 La velocidad aumenta con el tiempo
+                </p>
+                <button id="startRunner" class="start-runner-btn">⚡ ¡Empezar a Correr!</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="runnerGameBoard" class="runner-game-board" style="display: none;">
+                <!-- Game Stats -->
+                <div class="runner-stats">
+                    <div class="runner-stat-item">
+                        <span class="runner-stat-label">🏃 Distancia</span>
+                        <span id="runnerDistance" class="runner-stat-value">0m</span>
+                    </div>
+                    <div class="runner-stat-item">
+                        <span class="runner-stat-label">🎯 Puntos</span>
+                        <span id="runnerScore" class="runner-stat-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Game Canvas -->
+                <div class="runner-game-container">
+                    <div id="pikachu" class="pikachu"></div>
+                    <div id="obstaclesContainer" class="obstacles-container"></div>
+                    <div class="runner-ground"></div>
+                </div>
+
+                <!-- Jump Button for Mobile -->
+                <button id="jumpBtn" class="jump-btn">⬆️ SALTAR</button>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="runnerVictory" class="runner-victory" style="display: none;">
+                <h3 class="runner-victory-title">💥 ¡Game Over!</h3>
+                <div class="runner-victory-stats">
+                    <p>🏃 Distancia Recorrida: <span id="runnerFinalDistance"></span>m</p>
+                    <p>🎯 Puntuación Final: <span id="runnerFinalScore"></span></p>
+                    <p>⚡ Velocidad Máxima: <span id="runnerMaxSpeed"></span></p>
+                </div>
+                <button id="runnerPlayAgain" class="runner-play-again-btn">🔄 Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
     <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
