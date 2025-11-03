@@ -1738,12 +1738,13 @@ function checkRunnerCollision() {
             }
         }
 
-        // Check collision
-        if (obstacleRect.left < pikachuRect.right &&
-            obstacleRect.right > pikachuRect.left &&
-            obstacleRect.bottom > pikachuRect.top &&
-            obstacleRect.top < pikachuRect.bottom) {
+        // Check collision - only if Pikachu is actually touching the obstacle
+        // If Pikachu's bottom is above obstacle's top (with tolerance), no collision
+        const horizontalCollision = obstacleRect.left < pikachuRect.right - 5 &&
+                                   obstacleRect.right > pikachuRect.left + 5;
+        const verticalCollision = pikachuRect.bottom > obstacleRect.top + 15; // More tolerance
 
+        if (horizontalCollision && verticalCollision) {
             // Game over
             endRunnerGame();
             return true;
