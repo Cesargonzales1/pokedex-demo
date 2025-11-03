@@ -384,6 +384,69 @@
         </div>
     </div>
 
+    <!-- Fishing Pokemon Game Modal -->
+    <div id="fishingModal" class="fishing-modal">
+        <div class="fishing-modal-content">
+            <span class="fishing-close">&times;</span>
+            <h2 class="fishing-title">🎣 Pesca Pokémon</h2>
+
+            <!-- Game Menu -->
+            <div id="fishingMenu" class="fishing-menu">
+                <p class="fishing-instructions">
+                    ¡Pokémon acuáticos están nadando! Presiona el botón en el momento correcto para pescarlos.
+                    <br><br>
+                    🐟 Diferentes Pokémon valen diferentes puntos
+                    <br>
+                    ⏱️ Tienes 60 segundos
+                </p>
+                <button id="startFishing" class="start-fishing-btn">🎣 ¡Empezar a Pescar!</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="fishingGameBoard" class="fishing-game-board" style="display: none;">
+                <!-- Game Stats -->
+                <div class="fishing-stats">
+                    <div class="fishing-stat-item">
+                        <span class="fishing-stat-label">⏱️ Tiempo</span>
+                        <span id="fishingTime" class="fishing-stat-value">60</span>
+                    </div>
+                    <div class="fishing-stat-item">
+                        <span class="fishing-stat-label">🎯 Puntos</span>
+                        <span id="fishingScore" class="fishing-stat-value">0</span>
+                    </div>
+                    <div class="fishing-stat-item">
+                        <span class="fishing-stat-label">🐟 Pescados</span>
+                        <span id="fishingCatches" class="fishing-stat-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Fishing Area -->
+                <div class="fishing-area">
+                    <div class="water-surface"></div>
+                    <div class="pokemon-container" id="pokemonContainer"></div>
+                    <div class="fishing-rod" id="fishingRod">
+                        <div class="rod-line"></div>
+                        <div class="rod-hook">🪝</div>
+                    </div>
+                </div>
+
+                <!-- Catch Button -->
+                <button id="catchBtn" class="catch-btn">🎣 ¡LANZAR CAÑA!</button>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="fishingVictory" class="fishing-victory" style="display: none;">
+                <h3 class="fishing-victory-title">🏆 ¡Fin de la Pesca!</h3>
+                <div class="fishing-victory-stats">
+                    <p>🎯 Puntuación Final: <span id="fishingFinalScore"></span> puntos</p>
+                    <p>🐟 Total Pescados: <span id="fishingTotalCatches"></span></p>
+                    <p>🎣 Precisión: <span id="fishingAccuracy"></span>%</p>
+                </div>
+                <button id="fishingPlayAgain" class="fishing-play-again-btn">🔄 Pescar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
     <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>

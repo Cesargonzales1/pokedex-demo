@@ -699,8 +699,7 @@ gameCards.forEach(card => {
                 openGuessModal();
                 break;
             case 'fishing':
-                // Will implement later
-                alert('¡Próximamente! 🎣');
+                openFishingModal();
                 break;
             case 'runner':
                 // Will implement later
@@ -1358,5 +1357,250 @@ guessPlayAgainBtn.addEventListener('click', () => {
 window.addEventListener('click', (e) => {
     if (e.target === guessModal) {
         closeGuessModal();
+    }
+});
+
+// ==========================================
+// FISHING POKEMON GAME
+// ==========================================
+
+const fishingModal = document.getElementById('fishingModal');
+const fishingClose = document.querySelector('.fishing-close');
+const fishingMenu = document.getElementById('fishingMenu');
+const startFishingBtn = document.getElementById('startFishing');
+const fishingGameBoard = document.getElementById('fishingGameBoard');
+const fishingVictoryScreen = document.getElementById('fishingVictory');
+const fishingPlayAgainBtn = document.getElementById('fishingPlayAgain');
+const pokemonContainer = document.getElementById('pokemonContainer');
+const fishingRod = document.getElementById('fishingRod');
+const catchBtn = document.getElementById('catchBtn');
+
+let fishingScore = 0;
+let fishingTimeLeft = 60;
+let fishingTimer = null;
+let fishingCatches = 0;
+let fishingAttempts = 0;
+let swimmingPokemon = [];
+let fishingAnimationFrame = null;
+
+// Water-type Pokemon IDs (common water Pokemon)
+const WATER_POKEMON_IDS = [7, 8, 9, 54, 55, 60, 61, 62, 72, 73, 79, 80, 86, 87, 90, 91, 98, 99, 116, 117, 118, 119, 120, 121, 129, 130, 131, 134, 138, 139, 140, 141];
+
+// Open Fishing modal
+function openFishingModal() {
+    fishingModal.classList.add('active');
+    fishingMenu.style.display = 'block';
+    fishingGameBoard.style.display = 'none';
+    fishingVictoryScreen.style.display = 'none';
+}
+
+// Close Fishing modal
+function closeFishingModal() {
+    fishingModal.classList.remove('active');
+    resetFishingGame();
+}
+
+// Start Fishing game
+function startFishingGame() {
+    // Reset game state
+    fishingScore = 0;
+    fishingTimeLeft = 60;
+    fishingCatches = 0;
+    fishingAttempts = 0;
+
+    // Update UI
+    document.getElementById('fishingScore').textContent = fishingScore;
+    document.getElementById('fishingTime').textContent = fishingTimeLeft;
+    document.getElementById('fishingCatches').textContent = fishingCatches;
+
+    fishingMenu.style.display = 'none';
+    fishingGameBoard.style.display = 'block';
+
+    // Start game timer
+    fishingTimer = setInterval(() => {
+        fishingTimeLeft--;
+        document.getElementById('fishingTime').textContent = fishingTimeLeft;
+
+        if (fishingTimeLeft <= 0) {
+            endFishingGame();
+        }
+    }, 1000);
+
+    // Start spawning Pokemon
+    spawnWaterPokemon();
+    updatePokemonPositions();
+}
+
+// Spawn water Pokemon
+function spawnWaterPokemon() {
+    const spawnInterval = setInterval(() => {
+        if (fishingTimeLeft <= 0) {
+            clearInterval(spawnInterval);
+            return;
+        }
+
+        // Get random water-type Pokemon
+        const waterPokemon = allPokemon.filter(p =>
+            p.types.some(t => t.type.name === 'water') ||
+            WATER_POKEMON_IDS.includes(p.id)
+        );
+
+        if (waterPokemon.length === 0) return;
+
+        const randomPokemon = waterPokemon[Math.floor(Math.random() * waterPokemon.length)];
+
+        // Random starting side (left or right)
+        const fromLeft = Math.random() > 0.5;
+        const startX = fromLeft ? -100 : window.innerWidth + 100;
+        const endX = fromLeft ? window.innerWidth + 100 : -100;
+
+        // Random Y position (between 40% and 80% of container height)
+        const yPosition = 40 + Math.random() * 40;
+
+        // Random speed (pixels per frame)
+        const speed = 2 + Math.random() * 3;
+
+        // Calculate points based on speed (faster = more points)
+        const points = Math.round(speed * 20);
+
+        const pokemonDiv = document.createElement('div');
+        pokemonDiv.className = 'swimming-pokemon';
+        if (!fromLeft) pokemonDiv.classList.add('flipped');
+        pokemonDiv.style.left = startX + 'px';
+        pokemonDiv.style.top = yPosition + '%';
+        pokemonDiv.innerHTML = `<img src="${randomPokemon.sprites.front_default}" alt="${randomPokemon.name}">`;
+
+        pokemonContainer.appendChild(pokemonDiv);
+
+        const pokemonData = {
+            element: pokemonDiv,
+            currentX: startX,
+            targetX: endX,
+            speed: speed,
+            fromLeft: fromLeft,
+            points: points,
+            name: randomPokemon.name
+        };
+
+        swimmingPokemon.push(pokemonData);
+
+    }, 2000); // Spawn every 2 seconds
+}
+
+// Update Pokemon positions
+function updatePokemonPositions() {
+    fishingAnimationFrame = requestAnimationFrame(updatePokemonPositions);
+
+    swimmingPokemon.forEach((pokemon, index) => {
+        if (pokemon.fromLeft) {
+            pokemon.currentX += pokemon.speed;
+        } else {
+            pokemon.currentX -= pokemon.speed;
+        }
+
+        pokemon.element.style.left = pokemon.currentX + 'px';
+
+        // Remove if out of bounds
+        if ((pokemon.fromLeft && pokemon.currentX > pokemon.targetX) ||
+            (!pokemon.fromLeft && pokemon.currentX < pokemon.targetX)) {
+            pokemon.element.remove();
+            swimmingPokemon.splice(index, 1);
+        }
+    });
+}
+
+// Catch Pokemon
+catchBtn.addEventListener('click', () => {
+    fishingAttempts++;
+    catchBtn.disabled = true;
+
+    // Show fishing rod
+    fishingRod.classList.add('active');
+
+    // Check if any Pokemon is near the center
+    const containerWidth = pokemonContainer.offsetWidth;
+    const centerX = containerWidth / 2;
+    const catchRange = 100; // pixels
+
+    let caught = false;
+    let caughtPokemon = null;
+
+    swimmingPokemon.forEach((pokemon, index) => {
+        const pokemonCenterX = pokemon.currentX + 40; // 40 is half of Pokemon width
+
+        if (Math.abs(pokemonCenterX - centerX) < catchRange && !caught) {
+            caught = true;
+            caughtPokemon = pokemon;
+
+            // Update score and catches
+            fishingScore += pokemon.points;
+            fishingCatches++;
+            document.getElementById('fishingScore').textContent = fishingScore;
+            document.getElementById('fishingCatches').textContent = fishingCatches;
+
+            // Show catch effect
+            const catchEffect = document.createElement('div');
+            catchEffect.className = 'catch-effect';
+            catchEffect.textContent = `+${pokemon.points} 🎣`;
+            catchEffect.style.left = centerX + 'px';
+            catchEffect.style.top = '40%';
+            pokemonContainer.appendChild(catchEffect);
+
+            setTimeout(() => catchEffect.remove(), 1000);
+
+            // Remove caught Pokemon
+            pokemon.element.remove();
+            swimmingPokemon.splice(index, 1);
+        }
+    });
+
+    // Hide fishing rod after animation
+    setTimeout(() => {
+        fishingRod.classList.remove('active');
+        catchBtn.disabled = false;
+    }, 1000);
+});
+
+// End game
+function endFishingGame() {
+    clearInterval(fishingTimer);
+    cancelAnimationFrame(fishingAnimationFrame);
+
+    // Clear all Pokemon
+    swimmingPokemon.forEach(p => p.element.remove());
+    swimmingPokemon = [];
+
+    // Show victory screen
+    fishingGameBoard.style.display = 'none';
+    fishingVictoryScreen.style.display = 'block';
+
+    const accuracy = fishingAttempts > 0 ? Math.round((fishingCatches / fishingAttempts) * 100) : 0;
+
+    document.getElementById('fishingFinalScore').textContent = fishingScore;
+    document.getElementById('fishingTotalCatches').textContent = fishingCatches;
+    document.getElementById('fishingAccuracy').textContent = accuracy;
+}
+
+// Reset game
+function resetFishingGame() {
+    clearInterval(fishingTimer);
+    cancelAnimationFrame(fishingAnimationFrame);
+    swimmingPokemon.forEach(p => p.element.remove());
+    swimmingPokemon = [];
+    fishingRod.classList.remove('active');
+    catchBtn.disabled = false;
+}
+
+// Event listeners
+fishingClose.addEventListener('click', closeFishingModal);
+startFishingBtn.addEventListener('click', startFishingGame);
+fishingPlayAgainBtn.addEventListener('click', () => {
+    fishingVictoryScreen.style.display = 'none';
+    fishingMenu.style.display = 'block';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === fishingModal) {
+        closeFishingModal();
     }
 });
