@@ -1369,7 +1369,7 @@ const startFishingBtn = document.getElementById('startFishing');
 const fishingGameBoard = document.getElementById('fishingGameBoard');
 const fishingVictoryScreen = document.getElementById('fishingVictory');
 const fishingPlayAgainBtn = document.getElementById('fishingPlayAgain');
-const pokemonContainer = document.getElementById('pokemonContainer');
+const fishingPokemonContainer = document.getElementById('fishingPokemonContainer');
 const fishingRod = document.getElementById('fishingRod');
 const catchBtn = document.getElementById('catchBtn');
 
@@ -1468,7 +1468,7 @@ function spawnWaterPokemon() {
         pokemonDiv.style.top = yPosition + '%';
         pokemonDiv.innerHTML = `<img src="${randomPokemon.sprites.front_default}" alt="${randomPokemon.name}">`;
 
-        pokemonContainer.appendChild(pokemonDiv);
+        fishingPokemonContainer.appendChild(pokemonDiv);
 
         const pokemonData = {
             element: pokemonDiv,
@@ -1516,7 +1516,7 @@ catchBtn.addEventListener('click', () => {
     fishingRod.classList.add('active');
 
     // Check if any Pokemon is near the center
-    const containerWidth = pokemonContainer.offsetWidth;
+    const containerWidth = fishingPokemonContainer.offsetWidth;
     const centerX = containerWidth / 2;
     const catchRange = 100; // pixels
 
@@ -1542,7 +1542,7 @@ catchBtn.addEventListener('click', () => {
             catchEffect.textContent = `+${pokemon.points} 🎣`;
             catchEffect.style.left = centerX + 'px';
             catchEffect.style.top = '40%';
-            pokemonContainer.appendChild(catchEffect);
+            fishingPokemonContainer.appendChild(catchEffect);
 
             setTimeout(() => catchEffect.remove(), 1000);
 
