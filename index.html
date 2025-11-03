@@ -168,6 +168,13 @@
                     <h3>Puzzle Pokémon</h3>
                     <p>Resuelve el rompecabezas</p>
                 </div>
+
+                <!-- Battle Game Card -->
+                <div class="game-card" data-game="battle">
+                    <div class="game-card-icon">⚔️</div>
+                    <h3>Batalla Pokémon</h3>
+                    <p>Combate por turnos</p>
+                </div>
             </div>
         </div>
     </div>
@@ -566,6 +573,115 @@
                     <p>🧩 Dificultad: <span id="puzzleFinalDifficulty"></span></p>
                 </div>
                 <button id="puzzlePlayAgain" class="puzzle-play-again-btn">🔄 Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Battle Game Modal -->
+    <div id="battleModal" class="battle-modal">
+        <div class="battle-modal-content">
+            <span class="battle-close">&times;</span>
+            <h2 class="battle-title">⚔️ Batalla Pokémon</h2>
+
+            <!-- Team Selection Screen -->
+            <div id="battleTeamSelection" class="battle-team-selection">
+                <p class="battle-instructions">¡Selecciona 3 Pokémon para tu equipo!</p>
+                <div id="battlePokemonGrid" class="battle-pokemon-grid"></div>
+                <div class="battle-selected-team">
+                    <h3>Tu Equipo (<span id="battleTeamCount">0</span>/3)</h3>
+                    <div id="battleSelectedPokemon" class="battle-selected-pokemon"></div>
+                </div>
+                <button id="startBattle" class="start-battle-btn" disabled>⚔️ ¡Comenzar Batalla!</button>
+            </div>
+
+            <!-- Battle Screen -->
+            <div id="battleGameBoard" class="battle-game-board" style="display: none;">
+                <!-- Battle Field -->
+                <div class="battle-field">
+                    <!-- Enemy Pokemon -->
+                    <div class="battle-pokemon enemy-pokemon">
+                        <div class="pokemon-info">
+                            <div class="pokemon-name-level">
+                                <span id="enemyPokemonName" class="pokemon-name-text">---</span>
+                                <span class="pokemon-level">Nv. <span id="enemyPokemonLevel">5</span></span>
+                            </div>
+                            <div class="hp-bar-container">
+                                <div class="hp-bar-bg">
+                                    <div id="enemyHPBar" class="hp-bar"></div>
+                                </div>
+                                <div class="hp-text">
+                                    <span id="enemyHP">0</span>/<span id="enemyMaxHP">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pokemon-sprite-container">
+                            <img id="enemyPokemonSprite" src="" alt="Enemy Pokemon" class="pokemon-battle-sprite">
+                        </div>
+                    </div>
+
+                    <!-- Player Pokemon -->
+                    <div class="battle-pokemon player-pokemon">
+                        <div class="pokemon-sprite-container">
+                            <img id="playerPokemonSprite" src="" alt="Player Pokemon" class="pokemon-battle-sprite">
+                        </div>
+                        <div class="pokemon-info">
+                            <div class="pokemon-name-level">
+                                <span id="playerPokemonName" class="pokemon-name-text">---</span>
+                                <span class="pokemon-level">Nv. <span id="playerPokemonLevel">5</span></span>
+                            </div>
+                            <div class="hp-bar-container">
+                                <div class="hp-bar-bg">
+                                    <div id="playerHPBar" class="hp-bar"></div>
+                                </div>
+                                <div class="hp-text">
+                                    <span id="playerHP">0</span>/<span id="playerMaxHP">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Battle Log -->
+                <div id="battleLog" class="battle-log"></div>
+
+                <!-- Battle Actions -->
+                <div id="battleActions" class="battle-actions">
+                    <button class="battle-action-btn" id="attackBtn">⚔️ ATACAR</button>
+                    <button class="battle-action-btn" id="switchBtn">🔄 CAMBIAR</button>
+                </div>
+
+                <!-- Attack Menu -->
+                <div id="attackMenu" class="attack-menu" style="display: none;">
+                    <div class="attack-grid" id="attackGrid"></div>
+                    <button class="back-btn" id="backToActions">← Atrás</button>
+                </div>
+
+                <!-- Switch Menu -->
+                <div id="switchMenu" class="switch-menu" style="display: none;">
+                    <div class="switch-grid" id="switchGrid"></div>
+                    <button class="back-btn" id="backToActionsSwitch">← Atrás</button>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="battleVictory" class="battle-victory" style="display: none;">
+                <h3 class="battle-victory-title">🏆 ¡VICTORIA!</h3>
+                <p class="battle-victory-message">¡Has derrotado a todos los Pokémon enemigos!</p>
+                <div class="battle-victory-stats">
+                    <p>⚔️ Batallas ganadas: <span id="battlesWon"></span></p>
+                    <p>💚 Pokémon restantes: <span id="pokemonRemaining"></span></p>
+                </div>
+                <button id="battlePlayAgain" class="battle-play-again-btn">🔄 Jugar de Nuevo</button>
+            </div>
+
+            <!-- Defeat Screen -->
+            <div id="battleDefeat" class="battle-defeat" style="display: none;">
+                <h3 class="battle-defeat-title">💀 DERROTA</h3>
+                <p class="battle-defeat-message">Todos tus Pokémon han sido derrotados...</p>
+                <div class="battle-defeat-stats">
+                    <p>⚔️ Pokémon enemigos derrotados: <span id="enemyDefeated"></span>/3</p>
+                </div>
+                <button id="battleTryAgain" class="battle-try-again-btn">🔄 Intentar de Nuevo</button>
             </div>
         </div>
     </div>
