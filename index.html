@@ -40,14 +40,9 @@
         🎵
     </button>
 
-    <!-- Memory Game Button -->
-    <button id="gameToggle" class="game-toggle" title="Juego de Memoria">
+    <!-- Games Menu Button -->
+    <button id="gamesMenuToggle" class="games-menu-toggle" title="Juegos">
         🎮
-    </button>
-
-    <!-- Dugtrio Game Button -->
-    <button id="dugtrioToggle" class="dugtrio-toggle" title="Juego de Dugtrío">
-        🔨
     </button>
 
     <div class="container">
@@ -122,6 +117,58 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Games Menu Modal -->
+    <div id="gamesMenuModal" class="games-menu-modal">
+        <div class="games-menu-content">
+            <span class="games-menu-close">&times;</span>
+            <h2 class="games-menu-title">🎮 Selecciona un Juego</h2>
+
+            <div class="games-grid">
+                <!-- Memory Game Card -->
+                <div class="game-card" data-game="memory">
+                    <div class="game-card-icon">🧠</div>
+                    <h3>Memoria Pokémon</h3>
+                    <p>Encuentra los pares de Pokémon</p>
+                </div>
+
+                <!-- Dugtrio Game Card -->
+                <div class="game-card" data-game="dugtrio">
+                    <div class="game-card-icon">🔨</div>
+                    <h3>¡Golpea a Dugtrío!</h3>
+                    <p>Whac-A-Mole con Dugtrío</p>
+                </div>
+
+                <!-- Who's That Pokemon Game Card -->
+                <div class="game-card" data-game="guess">
+                    <div class="game-card-icon">❓</div>
+                    <h3>¿Quién es ese Pokémon?</h3>
+                    <p>Adivina por la silueta</p>
+                </div>
+
+                <!-- Fishing Game Card -->
+                <div class="game-card" data-game="fishing">
+                    <div class="game-card-icon">🎣</div>
+                    <h3>Pesca Pokémon</h3>
+                    <p>Captura Pokémon acuáticos</p>
+                </div>
+
+                <!-- Runner Game Card -->
+                <div class="game-card" data-game="runner">
+                    <div class="game-card-icon">⚡</div>
+                    <h3>Pikachu Runner</h3>
+                    <p>Esquiva obstáculos</p>
+                </div>
+
+                <!-- Puzzle Game Card -->
+                <div class="game-card" data-game="puzzle">
+                    <div class="game-card-icon">🧩</div>
+                    <h3>Puzzle Pokémon</h3>
+                    <p>Resuelve el rompecabezas</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -270,6 +317,69 @@
                     <p>🔨 Dugtrío golpeados: <span id="dugtrioHits"></span></p>
                 </div>
                 <button id="dugtrioPlayAgain" class="dugtrio-play-again-btn">🔨 Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guess Pokemon Game Modal -->
+    <div id="guessModal" class="guess-modal">
+        <div class="guess-modal-content">
+            <span class="guess-close">&times;</span>
+            <h2 class="guess-title">❓ ¿Quién es ese Pokémon?</h2>
+
+            <!-- Game Menu -->
+            <div id="guessMenu" class="guess-menu">
+                <p class="guess-instructions">
+                    ¡Observa la silueta y adivina qué Pokémon es!
+                    <br><br>
+                    ⚡ +100 puntos por respuesta correcta
+                    <br>
+                    ⏱️ Bonificación por velocidad
+                </p>
+                <button id="startGuess" class="start-guess-btn">▶️ ¡Empezar!</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="guessGameBoard" class="guess-game-board" style="display: none;">
+                <!-- Game Stats -->
+                <div class="guess-stats">
+                    <div class="guess-stat-item">
+                        <span class="guess-stat-label">🎯 Puntos</span>
+                        <span id="guessScore" class="guess-stat-value">0</span>
+                    </div>
+                    <div class="guess-stat-item">
+                        <span class="guess-stat-label">❓ Pregunta</span>
+                        <span id="guessQuestion" class="guess-stat-value">1/10</span>
+                    </div>
+                    <div class="guess-stat-item">
+                        <span class="guess-stat-label">⏱️ Tiempo</span>
+                        <span id="guessTime" class="guess-stat-value">10</span>
+                    </div>
+                </div>
+
+                <!-- Pokemon Silhouette -->
+                <div class="silhouette-container">
+                    <img id="guessPokemonImg" src="" alt="Pokemon" class="pokemon-silhouette">
+                </div>
+
+                <!-- Options -->
+                <div class="guess-options">
+                    <button class="guess-option-btn" data-option="0"></button>
+                    <button class="guess-option-btn" data-option="1"></button>
+                    <button class="guess-option-btn" data-option="2"></button>
+                    <button class="guess-option-btn" data-option="3"></button>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="guessVictory" class="guess-victory" style="display: none;">
+                <h3 class="guess-victory-title">🏆 ¡Juego Terminado!</h3>
+                <div class="guess-victory-stats">
+                    <p>🎯 Puntuación Final: <span id="guessFinalScore"></span> puntos</p>
+                    <p>✅ Respuestas Correctas: <span id="guessCorrect"></span>/10</p>
+                    <p>⚡ Precisión: <span id="guessAccuracy"></span>%</p>
+                </div>
+                <button id="guessPlayAgain" class="guess-play-again-btn">🔄 Jugar de Nuevo</button>
             </div>
         </div>
     </div>

@@ -134,8 +134,8 @@ body {
     opacity: 0.6;
 }
 
-/* Game Toggle Button */
-.game-toggle {
+/* Games Menu Toggle Button */
+.games-menu-toggle {
     position: fixed;
     bottom: 30px;
     right: 110px;
@@ -151,39 +151,105 @@ body {
     transition: all 0.3s;
 }
 
-.game-toggle:hover {
+.games-menu-toggle:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-.game-toggle:active {
+.games-menu-toggle:active {
     transform: scale(0.95);
 }
 
-/* Dugtrio Game Toggle Button */
-.dugtrio-toggle {
+/* ==========================================
+   GAMES MENU MODAL
+   ========================================== */
+
+.games-menu-modal {
+    display: none;
     position: fixed;
-    bottom: 30px;
-    right: 190px;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #C9A96E 0%, #8B6F47 100%);
-    border: none;
-    border-radius: 50%;
-    font-size: 1.8rem;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.games-menu-modal.active {
+    display: block;
+}
+
+.games-menu-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 3% auto;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 1000px;
+    position: relative;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.games-menu-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
+    color: white;
     transition: all 0.3s;
 }
 
-.dugtrio-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+.games-menu-close:hover {
+    color: #f5f7fa;
+    transform: scale(1.2) rotate(90deg);
 }
 
-.dugtrio-toggle:active {
-    transform: scale(0.95);
+.games-menu-title {
+    text-align: center;
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.game-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.game-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.game-card-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+.game-card h3 {
+    color: #667eea;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.game-card p {
+    color: #666;
+    font-size: 0.95rem;
 }
 
 .container {
@@ -1605,6 +1671,286 @@ header h1 {
     transform: translateY(-1px);
 }
 
+/* ==========================================
+   GUESS POKEMON GAME
+   ========================================== */
+
+/* Guess Modal */
+.guess-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.guess-modal.active {
+    display: block;
+}
+
+.guess-modal-content {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+    margin: 3% auto;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 700px;
+    position: relative;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.guess-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.guess-close:hover {
+    color: #000;
+    transform: scale(1.2);
+}
+
+.guess-title {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+/* Game Menu */
+.guess-menu {
+    text-align: center;
+}
+
+.guess-instructions {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+.start-guess-btn {
+    padding: 20px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.start-guess-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.start-guess-btn:active {
+    transform: translateY(-2px);
+}
+
+/* Game Board */
+.guess-game-board {
+    margin-top: 20px;
+}
+
+.guess-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    color: white;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.guess-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.guess-stat-label {
+    font-size: 0.9rem;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+.guess-stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Silhouette Container */
+.silhouette-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pokemon-silhouette {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    filter: brightness(0);
+    transition: filter 0.5s ease;
+}
+
+.pokemon-silhouette.revealed {
+    filter: brightness(1);
+    animation: revealPokemon 0.5s ease;
+}
+
+@keyframes revealPokemon {
+    0% {
+        filter: brightness(0) scale(0.8);
+    }
+    100% {
+        filter: brightness(1) scale(1);
+    }
+}
+
+/* Options */
+.guess-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.guess-option-btn {
+    padding: 20px;
+    background: white;
+    border: 3px solid #667eea;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: capitalize;
+}
+
+.guess-option-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.guess-option-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.guess-option-btn.correct {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    border-color: #11998e;
+    animation: correctAnswer 0.5s ease;
+}
+
+.guess-option-btn.incorrect {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+    border-color: #eb3349;
+    animation: incorrectAnswer 0.5s ease;
+}
+
+@keyframes correctAnswer {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes incorrectAnswer {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+/* Victory Screen */
+.guess-victory {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.guess-victory-title {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.guess-victory-stats {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.guess-victory-stats p {
+    font-size: 1.3rem;
+    color: #333;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.guess-victory-stats span {
+    color: #667eea;
+    font-size: 1.5rem;
+}
+
+.guess-play-again-btn {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.guess-play-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.guess-play-again-btn:active {
+    transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -1710,8 +2056,8 @@ header h1 {
         font-size: 0.85rem;
     }
 
-    /* Memory Game Mobile Styles */
-    .game-toggle {
+    /* Games Menu Mobile Styles */
+    .games-menu-toggle {
         right: 90px;
         width: 50px;
         height: 50px;
@@ -1722,6 +2068,33 @@ header h1 {
         width: 50px;
         height: 50px;
         font-size: 1.5rem;
+    }
+
+    .games-menu-content {
+        margin: 5% 10px;
+        padding: 25px;
+    }
+
+    .games-menu-title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+    }
+
+    .games-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .game-card {
+        padding: 20px;
+    }
+
+    .game-card-icon {
+        font-size: 3rem;
+    }
+
+    .game-card h3 {
+        font-size: 1.1rem;
     }
 
     .game-modal-content {
@@ -1880,6 +2253,66 @@ header h1 {
     }
 
     .dugtrio-play-again-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    /* Guess Game Mobile Styles */
+    .guess-modal-content {
+        margin: 5% 10px;
+        padding: 20px;
+    }
+
+    .guess-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .guess-instructions {
+        font-size: 1rem;
+    }
+
+    .start-guess-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+
+    .guess-stat-value {
+        font-size: 1.5rem;
+    }
+
+    .silhouette-container {
+        padding: 30px;
+        min-height: 200px;
+    }
+
+    .pokemon-silhouette {
+        width: 150px;
+        height: 150px;
+    }
+
+    .guess-options {
+        grid-template-columns: 1fr;
+    }
+
+    .guess-option-btn {
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .guess-victory-title {
+        font-size: 2rem;
+    }
+
+    .guess-victory-stats p {
+        font-size: 1.1rem;
+    }
+
+    .guess-victory-stats span {
+        font-size: 1.3rem;
+    }
+
+    .guess-play-again-btn {
         padding: 12px 30px;
         font-size: 1rem;
     }

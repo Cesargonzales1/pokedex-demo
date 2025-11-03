@@ -656,10 +656,68 @@ function updatePagination() {
     nextBtn.disabled = currentPage >= totalPages;
 }
 
+// ==========================================
+// GAMES MENU SYSTEM
+// ==========================================
+
+const gamesMenuToggle = document.getElementById('gamesMenuToggle');
+const gamesMenuModal = document.getElementById('gamesMenuModal');
+const gamesMenuClose = document.querySelector('.games-menu-close');
+const gameCards = document.querySelectorAll('.game-card');
+
+// Open games menu
+gamesMenuToggle.addEventListener('click', () => {
+    gamesMenuModal.classList.add('active');
+});
+
+// Close games menu
+gamesMenuClose.addEventListener('click', () => {
+    gamesMenuModal.classList.remove('active');
+});
+
+// Close when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target === gamesMenuModal) {
+        gamesMenuModal.classList.remove('active');
+    }
+});
+
+// Game card selection
+gameCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const gameName = card.getAttribute('data-game');
+        gamesMenuModal.classList.remove('active');
+
+        switch(gameName) {
+            case 'memory':
+                openGameModal();
+                break;
+            case 'dugtrio':
+                openDugtrioModal();
+                break;
+            case 'guess':
+                openGuessModal();
+                break;
+            case 'fishing':
+                // Will implement later
+                alert('¡Próximamente! 🎣');
+                break;
+            case 'runner':
+                // Will implement later
+                alert('¡Próximamente! ⚡');
+                break;
+            case 'puzzle':
+                // Will implement later
+                alert('¡Próximamente! 🧩');
+                break;
+        }
+    });
+});
+
 // ==================== JUEGO DE MEMORIA ====================
 
 // Variables del juego
-let gameCards = [];
+let memoryGameCards = [];
 let flippedCards = [];
 let matchedPairs = 0;
 let moves = 0;
@@ -668,7 +726,6 @@ let gameSeconds = 0;
 let currentDifficulty = null;
 
 // Elementos del DOM del juego
-const gameToggle = document.getElementById('gameToggle');
 const gameModal = document.getElementById('gameModal');
 const gameClose = document.querySelector('.game-close');
 const gameMenu = document.getElementById('gameMenu');
@@ -682,7 +739,6 @@ const playAgainBtn = document.getElementById('playAgain');
 const difficultyBtns = document.querySelectorAll('.difficulty-btn');
 
 // Event listeners del juego
-gameToggle.addEventListener('click', openGameModal);
 gameClose.addEventListener('click', closeGameModal);
 window.addEventListener('click', (e) => {
     if (e.target === gameModal) closeGameModal();
@@ -1096,7 +1152,6 @@ function resetDugtrioGame() {
 }
 
 // Event listeners
-dugtrioToggle.addEventListener('click', openDugtrioModal);
 dugtrioClose.addEventListener('click', closeDugtrioModal);
 startDugtrioBtn.addEventListener('click', startDugtrioGame);
 dugtrioPlayAgainBtn.addEventListener('click', () => {
@@ -1113,5 +1168,195 @@ document.querySelectorAll('.dugtrio').forEach(dugtrio => {
 window.addEventListener('click', (e) => {
     if (e.target === dugtrioModal) {
         closeDugtrioModal();
+    }
+});
+
+// ==========================================
+// GUESS POKEMON GAME
+// ==========================================
+
+const guessModal = document.getElementById('guessModal');
+const guessClose = document.querySelector('.guess-close');
+const guessMenu = document.getElementById('guessMenu');
+const startGuessBtn = document.getElementById('startGuess');
+const guessGameBoard = document.getElementById('guessGameBoard');
+const guessVictoryScreen = document.getElementById('guessVictory');
+const guessPlayAgainBtn = document.getElementById('guessPlayAgain');
+
+let guessScore = 0;
+let guessCurrentQuestion = 0;
+let guessCorrectAnswers = 0;
+let guessTimeLeft = 10;
+let guessTimer = null;
+let guessCurrentPokemon = null;
+let guessOptions = [];
+
+// Open Guess modal
+function openGuessModal() {
+    guessModal.classList.add('active');
+    guessMenu.style.display = 'block';
+    guessGameBoard.style.display = 'none';
+    guessVictoryScreen.style.display = 'none';
+}
+
+// Close Guess modal
+function closeGuessModal() {
+    guessModal.classList.remove('active');
+    resetGuessGame();
+}
+
+// Start Guess game
+function startGuessGame() {
+    // Reset game state
+    guessScore = 0;
+    guessCurrentQuestion = 0;
+    guessCorrectAnswers = 0;
+
+    // Update UI
+    guessMenu.style.display = 'none';
+    guessGameBoard.style.display = 'block';
+
+    // Load first question
+    loadNextQuestion();
+}
+
+// Load next question
+function loadNextQuestion() {
+    if (guessCurrentQuestion >= 10) {
+        endGuessGame();
+        return;
+    }
+
+    guessCurrentQuestion++;
+    guessTimeLeft = 10;
+
+    // Update question counter
+    document.getElementById('guessQuestion').textContent = `${guessCurrentQuestion}/10`;
+    document.getElementById('guessScore').textContent = guessScore;
+    document.getElementById('guessTime').textContent = guessTimeLeft;
+
+    // Select random Pokemon
+    if (allPokemon.length < 4) return;
+
+    const randomIndex = Math.floor(Math.random() * allPokemon.length);
+    guessCurrentPokemon = allPokemon[randomIndex];
+
+    // Show silhouette
+    const pokemonImg = document.getElementById('guessPokemonImg');
+    pokemonImg.src = guessCurrentPokemon.sprites.other['official-artwork']?.front_default ||
+                     guessCurrentPokemon.sprites.front_default;
+    pokemonImg.classList.remove('revealed');
+
+    // Generate options (1 correct + 3 wrong)
+    guessOptions = [guessCurrentPokemon];
+
+    while (guessOptions.length < 4) {
+        const randomPokemon = allPokemon[Math.floor(Math.random() * allPokemon.length)];
+        if (!guessOptions.find(p => p.id === randomPokemon.id)) {
+            guessOptions.push(randomPokemon);
+        }
+    }
+
+    // Shuffle options
+    for (let i = guessOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [guessOptions[i], guessOptions[j]] = [guessOptions[j], guessOptions[i]];
+    }
+
+    // Display options
+    const optionBtns = document.querySelectorAll('.guess-option-btn');
+    optionBtns.forEach((btn, index) => {
+        btn.textContent = guessOptions[index].name;
+        btn.disabled = false;
+        btn.classList.remove('correct', 'incorrect');
+        btn.onclick = () => selectGuessOption(index);
+    });
+
+    // Start timer
+    clearInterval(guessTimer);
+    guessTimer = setInterval(() => {
+        guessTimeLeft--;
+        document.getElementById('guessTime').textContent = guessTimeLeft;
+
+        if (guessTimeLeft <= 0) {
+            clearInterval(guessTimer);
+            revealAnswer(null);
+        }
+    }, 1000);
+}
+
+// Select option
+function selectGuessOption(optionIndex) {
+    clearInterval(guessTimer);
+
+    const selectedPokemon = guessOptions[optionIndex];
+    const isCorrect = selectedPokemon.id === guessCurrentPokemon.id;
+
+    revealAnswer(optionIndex);
+
+    if (isCorrect) {
+        guessCorrectAnswers++;
+        // Score: base 100 + time bonus (10 per second remaining)
+        const timeBonus = guessTimeLeft * 10;
+        guessScore += 100 + timeBonus;
+        document.getElementById('guessScore').textContent = guessScore;
+    }
+
+    // Load next question after 2 seconds
+    setTimeout(() => {
+        loadNextQuestion();
+    }, 2000);
+}
+
+// Reveal answer
+function revealAnswer(selectedIndex) {
+    const optionBtns = document.querySelectorAll('.guess-option-btn');
+
+    optionBtns.forEach((btn, index) => {
+        btn.disabled = true;
+
+        if (guessOptions[index].id === guessCurrentPokemon.id) {
+            btn.classList.add('correct');
+        } else if (index === selectedIndex) {
+            btn.classList.add('incorrect');
+        }
+    });
+
+    // Reveal Pokemon image
+    const pokemonImg = document.getElementById('guessPokemonImg');
+    pokemonImg.classList.add('revealed');
+}
+
+// End game
+function endGuessGame() {
+    guessGameBoard.style.display = 'none';
+    guessVictoryScreen.style.display = 'block';
+
+    const accuracy = Math.round((guessCorrectAnswers / 10) * 100);
+
+    document.getElementById('guessFinalScore').textContent = guessScore;
+    document.getElementById('guessCorrect').textContent = guessCorrectAnswers;
+    document.getElementById('guessAccuracy').textContent = accuracy;
+}
+
+// Reset game
+function resetGuessGame() {
+    clearInterval(guessTimer);
+    guessScore = 0;
+    guessCurrentQuestion = 0;
+    guessCorrectAnswers = 0;
+}
+
+// Event listeners
+guessClose.addEventListener('click', closeGuessModal);
+startGuessBtn.addEventListener('click', startGuessGame);
+guessPlayAgainBtn.addEventListener('click', () => {
+    guessVictoryScreen.style.display = 'none';
+    guessMenu.style.display = 'block';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === guessModal) {
+        closeGuessModal();
     }
 });
