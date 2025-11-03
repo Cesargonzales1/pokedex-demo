@@ -175,6 +175,13 @@
                     <h3>Batalla Pokémon</h3>
                     <p>Combate por turnos</p>
                 </div>
+
+                <!-- Tower Defense Game Card -->
+                <div class="game-card" data-game="towerdefense">
+                    <div class="game-card-icon">🗼</div>
+                    <h3>Tower Defense</h3>
+                    <p>Defiende el camino</p>
+                </div>
             </div>
         </div>
     </div>
@@ -682,6 +689,105 @@
                     <p>⚔️ Pokémon enemigos derrotados: <span id="enemyDefeated"></span>/3</p>
                 </div>
                 <button id="battleTryAgain" class="battle-try-again-btn">🔄 Intentar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tower Defense Game Modal -->
+    <div id="towerDefenseModal" class="td-modal">
+        <div class="td-modal-content">
+            <span class="td-close">&times;</span>
+            <h2 class="td-title">🗼 Pokémon Tower Defense</h2>
+
+            <!-- Game Menu -->
+            <div id="tdMenu" class="td-menu">
+                <p class="td-instructions">
+                    ¡Defiende el camino colocando Pokémon estratégicamente!
+                    <br><br>
+                    🗼 Coloca torres en las casillas verdes<br>
+                    💰 Gana dinero derrotando enemigos<br>
+                    ❤️ No dejes que lleguen al final<br>
+                    <br>
+                    <strong>Torres Disponibles:</strong><br>
+                    💧 Squirtle - $50 (Rápido, Daño: 10)<br>
+                    🔥 Charmander - $75 (Fuerte, Daño: 25)<br>
+                    🌿 Bulbasaur - $100 (Área, Daño: 15)
+                </p>
+                <button id="startTD" class="start-td-btn">🗼 ¡Comenzar Defensa!</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="tdGameBoard" class="td-game-board" style="display: none;">
+                <!-- Game Stats -->
+                <div class="td-stats">
+                    <div class="td-stat">
+                        <span class="td-stat-icon">❤️</span>
+                        <span class="td-stat-label">Vidas:</span>
+                        <span id="tdLives" class="td-stat-value">20</span>
+                    </div>
+                    <div class="td-stat">
+                        <span class="td-stat-icon">💰</span>
+                        <span class="td-stat-label">Dinero:</span>
+                        <span id="tdMoney" class="td-stat-value">150</span>
+                    </div>
+                    <div class="td-stat">
+                        <span class="td-stat-icon">🌊</span>
+                        <span class="td-stat-label">Oleada:</span>
+                        <span id="tdWave" class="td-stat-value">1</span>
+                    </div>
+                </div>
+
+                <!-- Tower Selection -->
+                <div class="td-tower-select">
+                    <button class="td-tower-btn" data-tower="squirtle" data-cost="50">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png" alt="Squirtle">
+                        <span>Squirtle</span>
+                        <small>$50</small>
+                    </button>
+                    <button class="td-tower-btn" data-tower="charmander" data-cost="75">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png" alt="Charmander">
+                        <span>Charmander</span>
+                        <small>$75</small>
+                    </button>
+                    <button class="td-tower-btn" data-tower="bulbasaur" data-cost="100">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="Bulbasaur">
+                        <span>Bulbasaur</span>
+                        <small>$100</small>
+                    </button>
+                    <button class="td-start-wave-btn" id="tdStartWave">▶️ Iniciar Oleada</button>
+                </div>
+
+                <!-- Game Grid -->
+                <div id="tdGrid" class="td-grid"></div>
+
+                <!-- Game Controls -->
+                <div class="td-controls">
+                    <button id="tdPause" class="td-control-btn">⏸️ Pausar</button>
+                    <button id="tdSpeed" class="td-control-btn">⏩ Velocidad: 1x</button>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="tdVictory" class="td-victory" style="display: none;">
+                <h3 class="td-victory-title">🏆 ¡VICTORIA!</h3>
+                <p class="td-victory-message">¡Has defendido el camino exitosamente!</p>
+                <div class="td-victory-stats">
+                    <p>🌊 Oleadas completadas: <span id="tdFinalWave"></span></p>
+                    <p>💰 Dinero final: <span id="tdFinalMoney"></span></p>
+                    <p>❤️ Vidas restantes: <span id="tdFinalLives"></span></p>
+                </div>
+                <button id="tdPlayAgain" class="td-play-again-btn">🔄 Jugar de Nuevo</button>
+            </div>
+
+            <!-- Defeat Screen -->
+            <div id="tdDefeat" class="td-defeat" style="display: none;">
+                <h3 class="td-defeat-title">💀 DERROTA</h3>
+                <p class="td-defeat-message">Los enemigos han atravesado tus defensas...</p>
+                <div class="td-defeat-stats">
+                    <p>🌊 Oleadas sobrevividas: <span id="tdSurvivedWaves"></span></p>
+                    <p>👾 Enemigos derrotados: <span id="tdEnemiesKilled"></span></p>
+                </div>
+                <button id="tdTryAgain" class="td-try-again-btn">🔄 Intentar de Nuevo</button>
             </div>
         </div>
     </div>

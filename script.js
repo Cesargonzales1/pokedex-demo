@@ -710,6 +710,9 @@ gameCards.forEach(card => {
             case 'battle':
                 openBattleModal();
                 break;
+            case 'towerdefense':
+                openTDModal();
+                break;
         }
     });
 });
@@ -2675,5 +2678,508 @@ battleTryAgainBtn.addEventListener('click', () => {
 window.addEventListener('click', (e) => {
     if (e.target === battleModal) {
         closeBattleModal();
+    }
+});
+
+// ==========================================
+// TOWER DEFENSE GAME
+// ==========================================
+
+const tdModal = document.getElementById('towerDefenseModal');
+const tdClose = document.querySelector('.td-close');
+const tdMenu = document.getElementById('tdMenu');
+const startTDBtn = document.getElementById('startTD');
+const tdGameBoard = document.getElementById('tdGameBoard');
+const tdGrid = document.getElementById('tdGrid');
+const tdVictory = document.getElementById('tdVictory');
+const tdDefeat = document.getElementById('tdDefeat');
+
+// TD State
+let tdLives = 20;
+let tdMoney = 150;
+let tdWave = 1;
+let tdTowers = [];
+let tdEnemies = [];
+let tdProjectiles = [];
+let tdSelectedTower = null;
+let tdGameActive = false;
+let tdPaused = false;
+let tdGameSpeed = 1;
+let tdEnemiesKilled = 0;
+let tdWaveInProgress = false;
+let tdAnimationFrame = null;
+
+// Path (serpentine) - 10x6 grid
+const TD_PATH = [
+    {row: 3, col: 0}, {row: 3, col: 1}, {row: 3, col: 2}, {row: 3, col: 3}, {row: 3, col: 4},
+    {row: 2, col: 4}, {row: 1, col: 4}, {row: 1, col: 5}, {row: 1, col: 6}, {row: 1, col: 7},
+    {row: 2, col: 7}, {row: 3, col: 7}, {row: 4, col: 7}, {row: 4, col: 8}, {row: 4, col: 9}
+];
+
+// Tower types
+const TOWER_TYPES = {
+    squirtle: {
+        name: 'Squirtle',
+        cost: 50,
+        damage: 10,
+        range: 120,
+        fireRate: 800,
+        sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png',
+        projectileColor: 'water'
+    },
+    charmander: {
+        name: 'Charmander',
+        cost: 75,
+        damage: 25,
+        range: 100,
+        fireRate: 1200,
+        sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png',
+        projectileColor: 'fire'
+    },
+    bulbasaur: {
+        name: 'Bulbasaur',
+        cost: 100,
+        damage: 15,
+        range: 150,
+        fireRate: 1500,
+        sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+        projectileColor: 'grass'
+    }
+};
+
+// Open TD modal
+function openTDModal() {
+    tdModal.classList.add('active');
+    resetTDGame();
+}
+
+// Close TD modal
+function closeTDModal() {
+    tdModal.classList.remove('active');
+    if (tdAnimationFrame) {
+        cancelAnimationFrame(tdAnimationFrame);
+    }
+    resetTDGame();
+}
+
+// Reset TD game
+function resetTDGame() {
+    tdLives = 20;
+    tdMoney = 150;
+    tdWave = 1;
+    tdTowers = [];
+    tdEnemies = [];
+    tdProjectiles = [];
+    tdSelectedTower = null;
+    tdGameActive = false;
+    tdPaused = false;
+    tdGameSpeed = 1;
+    tdEnemiesKilled = 0;
+    tdWaveInProgress = false;
+
+    tdMenu.style.display = 'block';
+    tdGameBoard.style.display = 'none';
+    tdVictory.style.display = 'none';
+    tdDefeat.style.display = 'none';
+}
+
+// Start game
+startTDBtn.addEventListener('click', () => {
+    tdMenu.style.display = 'none';
+    tdGameBoard.style.display = 'block';
+    tdGameActive = true;
+
+    initTDGrid();
+    updateTDUI();
+    setupTDControls();
+});
+
+// Initialize grid
+function initTDGrid() {
+    tdGrid.innerHTML = '';
+
+    for (let row = 0; row < 6; row++) {
+        for (let col = 0; col < 10; col++) {
+            const cell = document.createElement('div');
+            cell.className = 'td-cell';
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+
+            // Check if it's on the path
+            const isPath = TD_PATH.some(p => p.row === row && p.col === col);
+
+            if (isPath) {
+                cell.classList.add('path');
+            } else {
+                cell.classList.add('buildable');
+                cell.addEventListener('click', () => placeTower(row, col, cell));
+            }
+
+            tdGrid.appendChild(cell);
+        }
+    }
+}
+
+// Setup controls
+function setupTDControls() {
+    // Tower selection
+    document.querySelectorAll('.td-tower-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const towerType = btn.dataset.tower;
+            const cost = parseInt(btn.dataset.cost);
+
+            if (tdMoney >= cost) {
+                // Deselect all
+                document.querySelectorAll('.td-tower-btn').forEach(b => b.classList.remove('selected'));
+                // Select this
+                btn.classList.add('selected');
+                tdSelectedTower = towerType;
+            }
+        });
+    });
+
+    // Start wave
+    document.getElementById('tdStartWave').addEventListener('click', startWave);
+
+    // Pause
+    document.getElementById('tdPause').addEventListener('click', () => {
+        tdPaused = !tdPaused;
+        document.getElementById('tdPause').textContent = tdPaused ? '▶️ Reanudar' : '⏸️ Pausar';
+    });
+
+    // Speed
+    document.getElementById('tdSpeed').addEventListener('click', () => {
+        tdGameSpeed = tdGameSpeed === 1 ? 2 : 1;
+        document.getElementById('tdSpeed').textContent = `⏩ Velocidad: ${tdGameSpeed}x`;
+    });
+}
+
+// Place tower
+function placeTower(row, col, cell) {
+    if (!tdSelectedTower || cell.classList.contains('occupied')) return;
+
+    const towerType = TOWER_TYPES[tdSelectedTower];
+
+    if (tdMoney < towerType.cost) {
+        return;
+    }
+
+    // Deduct money
+    tdMoney -= towerType.cost;
+
+    // Create tower
+    const tower = {
+        row: row,
+        col: col,
+        type: tdSelectedTower,
+        ...towerType,
+        lastFire: 0
+    };
+
+    tdTowers.push(tower);
+
+    // Render tower on grid
+    const towerDiv = document.createElement('div');
+    towerDiv.className = 'td-tower';
+    towerDiv.innerHTML = `<img src="${towerType.sprite}" alt="${towerType.name}">`;
+    cell.appendChild(towerDiv);
+    cell.classList.add('occupied');
+    cell.classList.remove('buildable');
+
+    // Deselect
+    tdSelectedTower = null;
+    document.querySelectorAll('.td-tower-btn').forEach(b => b.classList.remove('selected'));
+
+    updateTDUI();
+}
+
+// Start wave
+function startWave() {
+    if (tdWaveInProgress) return;
+
+    tdWaveInProgress = true;
+    document.getElementById('tdStartWave').disabled = true;
+
+    const enemiesCount = 5 + tdWave * 2;
+    const enemyHP = 20 + tdWave * 10;
+    const enemySpeed = 0.5 + tdWave * 0.05;
+    const enemyReward = 10 + tdWave * 2;
+
+    // Spawn enemies
+    for (let i = 0; i < enemiesCount; i++) {
+        setTimeout(() => {
+            spawnEnemy(enemyHP, enemySpeed, enemyReward);
+        }, i * 1500);
+    }
+
+    // Start game loop if not already running
+    if (!tdAnimationFrame) {
+        tdGameLoop();
+    }
+}
+
+// Spawn enemy
+function spawnEnemy(hp, speed, reward) {
+    const enemyDiv = document.createElement('div');
+    enemyDiv.className = 'td-enemy';
+
+    // Random Pokemon sprite
+    const pokemonId = Math.floor(Math.random() * 151) + 1;
+    enemyDiv.innerHTML = `
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="Enemy">
+        <div class="td-enemy-hp">
+            <div class="td-enemy-hp-bar" style="width: 100%;"></div>
+        </div>
+    `;
+
+    tdGrid.appendChild(enemyDiv);
+
+    const enemy = {
+        element: enemyDiv,
+        pathIndex: 0,
+        currentHP: hp,
+        maxHP: hp,
+        speed: speed * tdGameSpeed,
+        reward: reward,
+        alive: true
+    };
+
+    tdEnemies.push(enemy);
+    updateEnemyPosition(enemy);
+}
+
+// Update enemy position
+function updateEnemyPosition(enemy) {
+    if (!enemy.alive || enemy.pathIndex >= TD_PATH.length) return;
+
+    const pathPoint = TD_PATH[enemy.pathIndex];
+    const cellSize = tdGrid.offsetWidth / 10;
+
+    const x = pathPoint.col * cellSize + cellSize / 2 - 20;
+    const y = pathPoint.row * cellSize + cellSize / 2 - 20;
+
+    enemy.element.style.left = x + 'px';
+    enemy.element.style.top = y + 'px';
+}
+
+// Game loop
+function tdGameLoop() {
+    if (!tdGameActive) {
+        tdAnimationFrame = null;
+        return;
+    }
+
+    if (!tdPaused) {
+        // Move enemies
+        tdEnemies.forEach(enemy => {
+            if (!enemy.alive) return;
+
+            enemy.pathIndex += enemy.speed * 0.02;
+
+            const index = Math.floor(enemy.pathIndex);
+
+            if (index >= TD_PATH.length) {
+                // Enemy reached end
+                enemy.alive = false;
+                enemy.element.remove();
+                tdLives--;
+                updateTDUI();
+
+                if (tdLives <= 0) {
+                    endTDGame(false);
+                }
+
+                return;
+            }
+
+            updateEnemyPosition(enemy);
+        });
+
+        // Clean up dead enemies
+        tdEnemies = tdEnemies.filter(e => e.alive || e.element.parentNode);
+
+        // Towers shoot
+        const now = Date.now();
+        tdTowers.forEach(tower => {
+            if (now - tower.lastFire < tower.fireRate) return;
+
+            // Find target in range
+            const towerX = (tower.col + 0.5) * (tdGrid.offsetWidth / 10);
+            const towerY = (tower.row + 0.5) * (tdGrid.offsetHeight / 6);
+
+            let closestEnemy = null;
+            let closestDist = Infinity;
+
+            tdEnemies.forEach(enemy => {
+                if (!enemy.alive) return;
+
+                const enemyX = parseFloat(enemy.element.style.left) + 20;
+                const enemyY = parseFloat(enemy.element.style.top) + 20;
+
+                const dist = Math.sqrt((enemyX - towerX) ** 2 + (enemyY - towerY) ** 2);
+
+                if (dist < tower.range && dist < closestDist) {
+                    closestEnemy = enemy;
+                    closestDist = dist;
+                }
+            });
+
+            if (closestEnemy) {
+                tower.lastFire = now;
+                shootProjectile(tower, closestEnemy);
+
+                // Animation
+                const towerCell = document.querySelector(`.td-cell[data-row="${tower.row}"][data-col="${tower.col}"]`);
+                const towerDiv = towerCell?.querySelector('.td-tower');
+                if (towerDiv) {
+                    towerDiv.classList.add('shooting');
+                    setTimeout(() => towerDiv.classList.remove('shooting'), 300);
+                }
+            }
+        });
+
+        // Move projectiles
+        tdProjectiles.forEach((proj, index) => {
+            if (!proj.target.alive) {
+                proj.element.remove();
+                tdProjectiles.splice(index, 1);
+                return;
+            }
+
+            const targetX = parseFloat(proj.target.element.style.left) + 20;
+            const targetY = parseFloat(proj.target.element.style.top) + 20;
+
+            const dx = targetX - proj.x;
+            const dy = targetY - proj.y;
+            const dist = Math.sqrt(dx ** 2 + dy ** 2);
+
+            if (dist < 10) {
+                // Hit!
+                proj.target.currentHP -= proj.damage;
+                proj.target.element.classList.add('hit');
+                setTimeout(() => proj.target.element.classList.remove('hit'), 300);
+
+                // Update HP bar
+                const hpPercent = (proj.target.currentHP / proj.target.maxHP) * 100;
+                const hpBar = proj.target.element.querySelector('.td-enemy-hp-bar');
+                if (hpBar) {
+                    hpBar.style.width = hpPercent + '%';
+                }
+
+                if (proj.target.currentHP <= 0) {
+                    proj.target.alive = false;
+                    proj.target.element.remove();
+                    tdMoney += proj.target.reward;
+                    tdEnemiesKilled++;
+                    updateTDUI();
+                }
+
+                proj.element.remove();
+                tdProjectiles.splice(index, 1);
+            } else {
+                // Move towards target
+                const speed = 5;
+                proj.x += (dx / dist) * speed;
+                proj.y += (dy / dist) * speed;
+                proj.element.style.left = proj.x + 'px';
+                proj.element.style.top = proj.y + 'px';
+            }
+        });
+
+        // Check if wave complete
+        if (tdWaveInProgress && tdEnemies.length === 0) {
+            tdWaveInProgress = false;
+            tdWave++;
+
+            document.getElementById('tdStartWave').disabled = false;
+            updateTDUI();
+
+            // Check for victory (10 waves)
+            if (tdWave > 10) {
+                endTDGame(true);
+                return;
+            }
+        }
+    }
+
+    tdAnimationFrame = requestAnimationFrame(tdGameLoop);
+}
+
+// Shoot projectile
+function shootProjectile(tower, target) {
+    const towerX = (tower.col + 0.5) * (tdGrid.offsetWidth / 10);
+    const towerY = (tower.row + 0.5) * (tdGrid.offsetHeight / 6);
+
+    const projDiv = document.createElement('div');
+    projDiv.className = `td-projectile ${tower.projectileColor}`;
+    projDiv.style.left = towerX + 'px';
+    projDiv.style.top = towerY + 'px';
+
+    tdGrid.appendChild(projDiv);
+
+    tdProjectiles.push({
+        element: projDiv,
+        x: towerX,
+        y: towerY,
+        target: target,
+        damage: tower.damage
+    });
+}
+
+// Update UI
+function updateTDUI() {
+    document.getElementById('tdLives').textContent = tdLives;
+    document.getElementById('tdMoney').textContent = tdMoney;
+    document.getElementById('tdWave').textContent = tdWave;
+
+    // Update tower buttons
+    document.querySelectorAll('.td-tower-btn').forEach(btn => {
+        const cost = parseInt(btn.dataset.cost);
+        if (tdMoney < cost) {
+            btn.classList.add('disabled');
+        } else {
+            btn.classList.remove('disabled');
+        }
+    });
+}
+
+// End game
+function endTDGame(victory) {
+    tdGameActive = false;
+
+    setTimeout(() => {
+        tdGameBoard.style.display = 'none';
+
+        if (victory) {
+            tdVictory.style.display = 'block';
+            document.getElementById('tdFinalWave').textContent = tdWave - 1;
+            document.getElementById('tdFinalMoney').textContent = tdMoney;
+            document.getElementById('tdFinalLives').textContent = tdLives;
+        } else {
+            tdDefeat.style.display = 'block';
+            document.getElementById('tdSurvivedWaves').textContent = tdWave - 1;
+            document.getElementById('tdEnemiesKilled').textContent = tdEnemiesKilled;
+        }
+    }, 1000);
+}
+
+// Event listeners
+tdClose.addEventListener('click', closeTDModal);
+
+document.getElementById('tdPlayAgain').addEventListener('click', () => {
+    tdVictory.style.display = 'none';
+    resetTDGame();
+    tdMenu.style.display = 'block';
+});
+
+document.getElementById('tdTryAgain').addEventListener('click', () => {
+    tdDefeat.style.display = 'none';
+    resetTDGame();
+    tdMenu.style.display = 'block';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === tdModal) {
+        closeTDModal();
     }
 });

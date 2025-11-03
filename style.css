@@ -4000,3 +4000,475 @@ header h1 {
         flex-direction: column;
     }
 }
+
+/* ==========================================
+   TOWER DEFENSE GAME STYLES
+   ========================================== */
+
+/* TD Modal */
+.td-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(5px);
+}
+
+.td-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.td-modal-content {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 1000px;
+    width: 95%;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.td-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s;
+}
+
+.td-close:hover {
+    transform: scale(1.2);
+    color: #ef4444;
+}
+
+.td-title {
+    text-align: center;
+    color: #fbbf24;
+    font-size: 2.5rem;
+    margin: 0 0 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* TD Menu */
+.td-menu {
+    text-align: center;
+}
+
+.td-instructions {
+    color: white;
+    font-size: 1.1rem;
+    line-height: 2;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.start-td-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.start-td-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+}
+
+/* TD Game Board */
+.td-game-board {
+    color: white;
+}
+
+/* TD Stats */
+.td-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.td-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.td-stat-icon {
+    font-size: 1.5rem;
+}
+
+.td-stat-label {
+    font-weight: bold;
+    color: #cbd5e1;
+}
+
+.td-stat-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fbbf24;
+}
+
+/* TD Tower Selection */
+.td-tower-select {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.td-tower-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: 2px solid #60a5fa;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.td-tower-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.5);
+}
+
+.td-tower-btn.selected {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.td-tower-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.td-tower-btn img {
+    width: 50px;
+    height: 50px;
+}
+
+.td-tower-btn small {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.td-start-wave-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.td-start-wave-btn:hover {
+    transform: scale(1.05);
+}
+
+.td-start-wave-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* TD Grid */
+.td-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 2px;
+    background: #1e293b;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    min-height: 360px;
+}
+
+.td-cell {
+    background: #2dd4bf;
+    border-radius: 4px;
+    position: relative;
+    aspect-ratio: 1;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.td-cell.path {
+    background: #71717a;
+    cursor: not-allowed;
+}
+
+.td-cell.buildable:hover {
+    background: #14b8a6;
+    transform: scale(1.05);
+}
+
+.td-cell.occupied {
+    cursor: not-allowed;
+}
+
+/* Tower on cell */
+.td-tower {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.td-tower img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.td-tower.shooting img {
+    animation: towerShoot 0.3s;
+}
+
+@keyframes towerShoot {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* Range indicator */
+.td-range {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px dashed #fbbf24;
+    border-radius: 50%;
+    background: rgba(251, 191, 36, 0.1);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.td-tower:hover .td-range {
+    opacity: 1;
+}
+
+/* Enemy */
+.td-enemy {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    transition: all 0.1s linear;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.td-enemy img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.td-enemy-hp {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #ef4444;
+    border-radius: 2px;
+}
+
+.td-enemy-hp-bar {
+    height: 100%;
+    background: #10b981;
+    border-radius: 2px;
+    transition: width 0.2s;
+}
+
+.td-enemy.hit img {
+    animation: enemyHit 0.3s;
+}
+
+@keyframes enemyHit {
+    0%, 100% { filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5)); }
+    50% { filter: brightness(2) drop-shadow(0 0 10px rgba(255, 255, 255, 1)); }
+}
+
+/* Projectile */
+.td-projectile {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fbbf24;
+    box-shadow: 0 0 10px #fbbf24;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.td-projectile.water {
+    background: #3b82f6;
+    box-shadow: 0 0 10px #3b82f6;
+}
+
+.td-projectile.fire {
+    background: #ef4444;
+    box-shadow: 0 0 10px #ef4444;
+}
+
+.td-projectile.grass {
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+}
+
+/* Controls */
+.td-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.td-control-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 10px 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.td-control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Victory/Defeat */
+.td-victory, .td-defeat {
+    text-align: center;
+    padding: 20px;
+}
+
+.td-victory-title {
+    color: #fbbf24;
+    font-size: 3rem;
+    margin: 0 0 15px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: victoryPulse 1s infinite;
+}
+
+.td-defeat-title {
+    color: #ef4444;
+    font-size: 3rem;
+    margin: 0 0 15px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.td-victory-message, .td-defeat-message {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.td-victory-stats, .td-defeat-stats {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.td-victory-stats p, .td-defeat-stats p {
+    color: white;
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.td-victory-stats span, .td-defeat-stats span {
+    color: #fbbf24;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.td-play-again-btn, .td-try-again-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.td-play-again-btn:hover, .td-try-again-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .td-modal-content {
+        padding: 15px;
+    }
+
+    .td-title {
+        font-size: 2rem;
+    }
+
+    .td-tower-select {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+
+    .td-grid {
+        gap: 1px;
+        padding: 5px;
+        min-height: 240px;
+    }
+
+    .td-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .td-tower-btn img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .td-enemy {
+        width: 30px;
+        height: 30px;
+    }
+}
