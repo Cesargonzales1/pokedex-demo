@@ -503,6 +503,73 @@
         </div>
     </div>
 
+    <!-- Puzzle Pokemon Game Modal -->
+    <div id="puzzleModal" class="puzzle-modal">
+        <div class="puzzle-modal-content">
+            <span class="puzzle-close">&times;</span>
+            <h2 class="puzzle-title">🧩 Puzzle Pokémon</h2>
+
+            <!-- Game Menu -->
+            <div id="puzzleMenu" class="puzzle-menu">
+                <p class="puzzle-instructions">
+                    ¡Reorganiza las piezas para formar la imagen del Pokémon!
+                    <br><br>
+                    🧩 Haz click en las piezas adyacentes al espacio vacío
+                </p>
+                <div class="puzzle-difficulty-selector">
+                    <button class="puzzle-difficulty-btn" data-size="3">
+                        Fácil
+                        <span>3x3 (8 piezas)</span>
+                    </button>
+                    <button class="puzzle-difficulty-btn" data-size="4">
+                        Medio
+                        <span>4x4 (15 piezas)</span>
+                    </button>
+                    <button class="puzzle-difficulty-btn" data-size="5">
+                        Difícil
+                        <span>5x5 (24 piezas)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Board -->
+            <div id="puzzleGameBoard" class="puzzle-game-board" style="display: none;">
+                <!-- Game Stats -->
+                <div class="puzzle-stats">
+                    <div class="puzzle-stat-item">
+                        <span class="puzzle-stat-label">⏱️ Tiempo</span>
+                        <span id="puzzleTime" class="puzzle-stat-value">0:00</span>
+                    </div>
+                    <div class="puzzle-stat-item">
+                        <span class="puzzle-stat-label">🔢 Movimientos</span>
+                        <span id="puzzleMoves" class="puzzle-stat-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Puzzle Grid -->
+                <div id="puzzleGrid" class="puzzle-grid"></div>
+
+                <!-- Controls -->
+                <div class="puzzle-controls">
+                    <button id="puzzleResetBtn" class="puzzle-reset-btn">🔄 Reiniciar</button>
+                    <button id="puzzleNewGameBtn" class="puzzle-new-game-btn">🎲 Nuevo Pokémon</button>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="puzzleVictory" class="puzzle-victory" style="display: none;">
+                <h3 class="puzzle-victory-title">🎉 ¡Puzzle Completado!</h3>
+                <div class="puzzle-victory-image" id="puzzleVictoryImage"></div>
+                <div class="puzzle-victory-stats">
+                    <p>⏱️ Tiempo: <span id="puzzleFinalTime"></span></p>
+                    <p>🔢 Movimientos: <span id="puzzleFinalMoves"></span></p>
+                    <p>🧩 Dificultad: <span id="puzzleFinalDifficulty"></span></p>
+                </div>
+                <button id="puzzlePlayAgain" class="puzzle-play-again-btn">🔄 Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
     <!-- YouTube IFrame API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>

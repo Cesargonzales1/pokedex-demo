@@ -705,8 +705,7 @@ gameCards.forEach(card => {
                 openRunnerModal();
                 break;
             case 'puzzle':
-                // Will implement later
-                alert('¡Próximamente! 🧩');
+                openPuzzleModal();
                 break;
         }
     });
@@ -1811,5 +1810,269 @@ document.addEventListener('keydown', (e) => {
 window.addEventListener('click', (e) => {
     if (e.target === runnerModal) {
         closeRunnerModal();
+    }
+});
+
+// ==========================================
+// PUZZLE POKEMON GAME
+// ==========================================
+
+const puzzleModal = document.getElementById('puzzleModal');
+const puzzleClose = document.querySelector('.puzzle-close');
+const puzzleMenu = document.getElementById('puzzleMenu');
+const puzzleGameBoard = document.getElementById('puzzleGameBoard');
+const puzzleVictoryScreen = document.getElementById('puzzleVictory');
+const puzzlePlayAgainBtn = document.getElementById('puzzlePlayAgain');
+const puzzleGrid = document.getElementById('puzzleGrid');
+const puzzleResetBtn = document.getElementById('puzzleResetBtn');
+const puzzleNewGameBtn = document.getElementById('puzzleNewGameBtn');
+const puzzleDifficultyBtns = document.querySelectorAll('.puzzle-difficulty-btn');
+
+let puzzleSize = 3;
+let puzzlePieces = [];
+let puzzleEmptyIndex = 0;
+let puzzleMoves = 0;
+let puzzleSeconds = 0;
+let puzzleTimer = null;
+let puzzleCurrentPokemon = null;
+let puzzleSolved = false;
+
+// Open Puzzle modal
+function openPuzzleModal() {
+    puzzleModal.classList.add('active');
+    puzzleMenu.style.display = 'block';
+    puzzleGameBoard.style.display = 'none';
+    puzzleVictoryScreen.style.display = 'none';
+}
+
+// Close Puzzle modal
+function closePuzzleModal() {
+    puzzleModal.classList.remove('active');
+    resetPuzzleGame();
+}
+
+// Start Puzzle game
+function startPuzzleGame(size) {
+    puzzleSize = parseInt(size);
+    puzzleMoves = 0;
+    puzzleSeconds = 0;
+    puzzleSolved = false;
+
+    // Select random Pokemon
+    if (allPokemon.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * allPokemon.length);
+    puzzleCurrentPokemon = allPokemon[randomIndex];
+
+    // Update UI
+    document.getElementById('puzzleMoves').textContent = puzzleMoves;
+    document.getElementById('puzzleTime').textContent = '0:00';
+
+    puzzleMenu.style.display = 'none';
+    puzzleGameBoard.style.display = 'block';
+
+    // Initialize puzzle
+    initializePuzzle();
+
+    // Start timer
+    clearInterval(puzzleTimer);
+    puzzleTimer = setInterval(() => {
+        puzzleSeconds++;
+        const mins = Math.floor(puzzleSeconds / 60);
+        const secs = puzzleSeconds % 60;
+        document.getElementById('puzzleTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+// Initialize puzzle
+function initializePuzzle() {
+    const totalPieces = puzzleSize * puzzleSize;
+    puzzlePieces = [];
+
+    // Create ordered pieces
+    for (let i = 0; i < totalPieces; i++) {
+        puzzlePieces.push(i);
+    }
+
+    // Last piece is empty
+    puzzleEmptyIndex = totalPieces - 1;
+
+    // Shuffle
+    shufflePuzzle();
+
+    // Render
+    renderPuzzle();
+}
+
+// Shuffle puzzle
+function shufflePuzzle() {
+    // Make random valid moves
+    const moves = puzzleSize * puzzleSize * 50;
+
+    for (let i = 0; i < moves; i++) {
+        const validMoves = getValidMoves();
+        if (validMoves.length > 0) {
+            const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+            swapPieces(randomMove, puzzleEmptyIndex);
+        }
+    }
+}
+
+// Get valid moves
+function getValidMoves() {
+    const validMoves = [];
+    const row = Math.floor(puzzleEmptyIndex / puzzleSize);
+    const col = puzzleEmptyIndex % puzzleSize;
+
+    // Up
+    if (row > 0) validMoves.push(puzzleEmptyIndex - puzzleSize);
+    // Down
+    if (row < puzzleSize - 1) validMoves.push(puzzleEmptyIndex + puzzleSize);
+    // Left
+    if (col > 0) validMoves.push(puzzleEmptyIndex - 1);
+    // Right
+    if (col < puzzleSize - 1) validMoves.push(puzzleEmptyIndex + 1);
+
+    return validMoves;
+}
+
+// Swap pieces
+function swapPieces(index1, index2) {
+    [puzzlePieces[index1], puzzlePieces[index2]] = [puzzlePieces[index2], puzzlePieces[index1]];
+    puzzleEmptyIndex = index1;
+}
+
+// Render puzzle
+function renderPuzzle() {
+    puzzleGrid.innerHTML = '';
+    puzzleGrid.className = `puzzle-grid size-${puzzleSize}`;
+
+    const imageUrl = puzzleCurrentPokemon.sprites.other['official-artwork']?.front_default ||
+                     puzzleCurrentPokemon.sprites.front_default;
+
+    puzzlePieces.forEach((pieceNum, index) => {
+        const piece = document.createElement('div');
+        piece.className = 'puzzle-piece';
+
+        if (pieceNum === puzzleSize * puzzleSize - 1) {
+            piece.classList.add('empty');
+        } else {
+            const row = Math.floor(pieceNum / puzzleSize);
+            const col = pieceNum % puzzleSize;
+
+            const bgSize = puzzleSize * 100;
+            const bgX = -col * 100;
+            const bgY = -row * 100;
+
+            piece.style.backgroundImage = `url(${imageUrl})`;
+            piece.style.backgroundSize = `${bgSize}% ${bgSize}%`;
+            piece.style.backgroundPosition = `${bgX}% ${bgY}%`;
+
+            piece.addEventListener('click', () => clickPiece(index));
+        }
+
+        puzzleGrid.appendChild(piece);
+    });
+}
+
+// Click piece
+function clickPiece(index) {
+    if (puzzleSolved) return;
+
+    const validMoves = getValidMoves();
+
+    if (validMoves.includes(index)) {
+        swapPieces(index, puzzleEmptyIndex);
+        puzzleMoves++;
+        document.getElementById('puzzleMoves').textContent = puzzleMoves;
+
+        renderPuzzle();
+
+        // Check if solved
+        if (isPuzzleSolved()) {
+            endPuzzleGame();
+        }
+    }
+}
+
+// Check if puzzle is solved
+function isPuzzleSolved() {
+    for (let i = 0; i < puzzlePieces.length; i++) {
+        if (puzzlePieces[i] !== i) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// End game
+function endPuzzleGame() {
+    puzzleSolved = true;
+    clearInterval(puzzleTimer);
+
+    puzzleGameBoard.style.display = 'none';
+    puzzleVictoryScreen.style.display = 'block';
+
+    const mins = Math.floor(puzzleSeconds / 60);
+    const secs = puzzleSeconds % 60;
+    const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+    const difficultyStr = puzzleSize === 3 ? 'Fácil (3x3)' :
+                          puzzleSize === 4 ? 'Medio (4x4)' : 'Difícil (5x5)';
+
+    document.getElementById('puzzleFinalTime').textContent = timeStr;
+    document.getElementById('puzzleFinalMoves').textContent = puzzleMoves;
+    document.getElementById('puzzleFinalDifficulty').textContent = difficultyStr;
+
+    const imageUrl = puzzleCurrentPokemon.sprites.other['official-artwork']?.front_default ||
+                     puzzleCurrentPokemon.sprites.front_default;
+    document.getElementById('puzzleVictoryImage').style.backgroundImage = `url(${imageUrl})`;
+}
+
+// Reset game
+function resetPuzzleGame() {
+    clearInterval(puzzleTimer);
+    puzzleMoves = 0;
+    puzzleSeconds = 0;
+    puzzleSolved = false;
+}
+
+// Event listeners
+puzzleClose.addEventListener('click', closePuzzleModal);
+
+puzzleDifficultyBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const size = btn.getAttribute('data-size');
+        startPuzzleGame(size);
+    });
+});
+
+puzzleResetBtn.addEventListener('click', () => {
+    initializePuzzle();
+    puzzleMoves = 0;
+    puzzleSeconds = 0;
+    document.getElementById('puzzleMoves').textContent = puzzleMoves;
+    document.getElementById('puzzleTime').textContent = '0:00';
+
+    clearInterval(puzzleTimer);
+    puzzleTimer = setInterval(() => {
+        puzzleSeconds++;
+        const mins = Math.floor(puzzleSeconds / 60);
+        const secs = puzzleSeconds % 60;
+        document.getElementById('puzzleTime').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+});
+
+puzzleNewGameBtn.addEventListener('click', () => {
+    startPuzzleGame(puzzleSize);
+});
+
+puzzlePlayAgainBtn.addEventListener('click', () => {
+    puzzleVictoryScreen.style.display = 'none';
+    puzzleMenu.style.display = 'block';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === puzzleModal) {
+        closePuzzleModal();
     }
 });

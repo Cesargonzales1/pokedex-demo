@@ -2557,6 +2557,293 @@ header h1 {
     transform: translateY(-1px);
 }
 
+/* ==========================================
+   PUZZLE POKEMON GAME
+   ========================================== */
+
+.puzzle-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.puzzle-modal.active {
+    display: block;
+}
+
+.puzzle-modal-content {
+    background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%);
+    margin: 3% auto;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 700px;
+    position: relative;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.puzzle-close:hover {
+    color: #000;
+    transform: scale(1.2);
+}
+
+.puzzle-title {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+/* Game Menu */
+.puzzle-menu {
+    text-align: center;
+}
+
+.puzzle-instructions {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+.puzzle-difficulty-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.puzzle-difficulty-btn {
+    padding: 20px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 120px;
+}
+
+.puzzle-difficulty-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-difficulty-btn:active {
+    transform: translateY(-2px);
+}
+
+.puzzle-difficulty-btn span {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: normal;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+/* Game Board */
+.puzzle-game-board {
+    margin-top: 20px;
+}
+
+.puzzle-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    color: white;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.puzzle-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.puzzle-stat-label {
+    font-size: 0.9rem;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+.puzzle-stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Puzzle Grid */
+.puzzle-grid {
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    margin: 0 auto 20px;
+    display: grid;
+    gap: 3px;
+    background: white;
+    border-radius: 15px;
+    padding: 5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.puzzle-grid.size-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.puzzle-grid.size-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.puzzle-grid.size-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.puzzle-piece {
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.puzzle-piece:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-piece.empty {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    cursor: default;
+}
+
+.puzzle-piece.empty:hover {
+    transform: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Puzzle Controls */
+.puzzle-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.puzzle-reset-btn,
+.puzzle-new-game-btn {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.puzzle-reset-btn:hover,
+.puzzle-new-game-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-reset-btn:active,
+.puzzle-new-game-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Victory Screen */
+.puzzle-victory {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.puzzle-victory-title {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.puzzle-victory-image {
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 20px;
+    border-radius: 15px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.puzzle-victory-stats {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.puzzle-victory-stats p {
+    font-size: 1.3rem;
+    color: #333;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.puzzle-victory-stats span {
+    color: #667eea;
+    font-size: 1.5rem;
+}
+
+.puzzle-play-again-btn {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.puzzle-play-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.puzzle-play-again-btn:active {
+    transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -3027,6 +3314,63 @@ header h1 {
     }
 
     .runner-play-again-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    /* Puzzle Game Mobile Styles */
+    .puzzle-modal-content {
+        margin: 5% 10px;
+        padding: 20px;
+    }
+
+    .puzzle-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .puzzle-instructions {
+        font-size: 1rem;
+    }
+
+    .puzzle-difficulty-selector {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .puzzle-difficulty-btn {
+        padding: 15px 25px;
+        font-size: 1rem;
+        min-width: 100%;
+    }
+
+    .puzzle-grid {
+        max-width: 350px;
+    }
+
+    .puzzle-controls {
+        flex-direction: column;
+    }
+
+    .puzzle-reset-btn,
+    .puzzle-new-game-btn {
+        width: 100%;
+    }
+
+    .puzzle-victory-image {
+        width: 200px;
+        height: 200px;
+    }
+
+    .puzzle-victory-stats p {
+        font-size: 1.1rem;
+    }
+
+    .puzzle-victory-stats span {
+        font-size: 1.3rem;
+    }
+
+    .puzzle-play-again-btn {
         padding: 12px 30px;
         font-size: 1rem;
     }
