@@ -780,7 +780,7 @@ function startGame(difficulty) {
     const pairsCount = difficulty === 'easy' ? 6 : 8;
 
     // Resetear variables
-    gameCards = [];
+    memoryGameCards = [];
     flippedCards = [];
     matchedPairs = 0;
     moves = 0;
@@ -837,7 +837,7 @@ function generateGameCards(pairsCount) {
     });
 
     // Barajar cartas
-    gameCards = shuffleArray(cardPairs);
+    memoryGameCards = shuffleArray(cardPairs);
 
     // Renderizar cartas
     renderGameCards();
@@ -859,7 +859,7 @@ function renderGameCards() {
     const gridClass = currentDifficulty === 'easy' ? 'grid-easy' : 'grid-medium';
     cardsGrid.className = `cards-grid ${gridClass}`;
 
-    gameCards.forEach((card, index) => {
+    memoryGameCards.forEach((card, index) => {
         const cardElement = document.createElement('div');
         cardElement.className = 'memory-card';
         cardElement.setAttribute('data-index', index);
@@ -889,7 +889,7 @@ function flipCard(index) {
     // No permitir voltear si ya hay 2 cartas volteadas
     if (flippedCards.length >= 2) return;
 
-    const card = gameCards[index];
+    const card = memoryGameCards[index];
     const cardElement = cardsGrid.children[index];
 
     // No voltear si ya está volteada o ya fue emparejada
@@ -928,7 +928,7 @@ function checkMatch() {
             matchedPairs++;
 
             // Verificar victoria
-            if (matchedPairs === gameCards.length / 2) {
+            if (matchedPairs === memoryGameCards.length / 2) {
                 setTimeout(() => showVictory(), 500);
             }
         }, 600);
