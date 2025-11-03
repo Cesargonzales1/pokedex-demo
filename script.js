@@ -1455,11 +1455,11 @@ function spawnWaterPokemon() {
         // Random Y position (between 40% and 80% of container height)
         const yPosition = 40 + Math.random() * 40;
 
-        // Random speed (pixels per frame)
-        const speed = 2 + Math.random() * 3;
+        // Random speed (pixels per frame) - Reduced for better gameplay
+        const speed = 0.8 + Math.random() * 1.5;
 
         // Calculate points based on speed (faster = more points)
-        const points = Math.round(speed * 20);
+        const points = Math.round(speed * 30);
 
         const pokemonDiv = document.createElement('div');
         pokemonDiv.className = 'swimming-pokemon';
@@ -1482,7 +1482,7 @@ function spawnWaterPokemon() {
 
         swimmingPokemon.push(pokemonData);
 
-    }, 2000); // Spawn every 2 seconds
+    }, 2800); // Spawn every 2.8 seconds
 }
 
 // Update Pokemon positions
@@ -1647,8 +1647,8 @@ function startRunnerGame() {
     // Reset game state
     runnerScore = 0;
     runnerDistance = 0;
-    runnerSpeed = 5;
-    runnerMaxSpeed = 5;
+    runnerSpeed = 2.5;
+    runnerMaxSpeed = 2.5;
     runnerIsJumping = false;
     runnerGameActive = true;
 
@@ -1669,7 +1669,7 @@ function startRunnerGame() {
         if (runnerGameActive) {
             spawnRunnerObstacle();
         }
-    }, 2000);
+    }, 2500);
 
     // Start game loop
     updateRunnerGame();
@@ -1679,7 +1679,7 @@ function startRunnerGame() {
 function spawnRunnerObstacle() {
     const obstacle = document.createElement('div');
     obstacle.className = 'obstacle';
-    obstacle.style.animationDuration = (3000 / runnerSpeed) + 'ms';
+    obstacle.style.animationDuration = (4000 / runnerSpeed) + 'ms';
     obstaclesContainer.appendChild(obstacle);
 
     const obstacleData = {
@@ -1698,7 +1698,7 @@ function spawnRunnerObstacle() {
                 runnerObstacles.splice(index, 1);
             }
         }
-    }, 3000);
+    }, 4000);
 }
 
 // Jump
@@ -1731,7 +1731,7 @@ function checkRunnerCollision() {
 
             // Increase speed every 10 obstacles
             if (runnerDistance % 10 === 0) {
-                runnerSpeed = Math.min(runnerSpeed + 0.5, 15);
+                runnerSpeed = Math.min(runnerSpeed + 0.3, 8);
                 if (runnerSpeed > runnerMaxSpeed) {
                     runnerMaxSpeed = runnerSpeed;
                 }
