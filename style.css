@@ -4472,3 +4472,668 @@ header h1 {
         height: 30px;
     }
 }
+
+/* ==================== Math Evolution Game ==================== */
+
+.mathevo-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    overflow-y: auto;
+}
+
+.mathevo-modal-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 2% auto;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 900px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+    animation: slideDown 0.4s ease;
+}
+
+.mathevo-close {
+    color: white;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+.mathevo-close:hover {
+    transform: scale(1.2) rotate(90deg);
+}
+
+.mathevo-title {
+    color: white;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Menu Styles */
+.mathevo-menu {
+    text-align: center;
+}
+
+.mathevo-instructions {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    font-size: 1.3rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.mathevo-config {
+    margin-bottom: 30px;
+}
+
+.mathevo-config-title {
+    color: white;
+    font-size: 1.5rem;
+    margin: 25px 0 15px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.mathevo-pokemon-select {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.mathevo-pokemon-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 4px solid transparent;
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.mathevo-pokemon-btn:hover {
+    transform: scale(1.05);
+    background: white;
+}
+
+.mathevo-pokemon-btn.selected {
+    border-color: #fbbf24;
+    background: #fffbeb;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+}
+
+.mathevo-pokemon-btn img {
+    width: 80px;
+    height: 80px;
+}
+
+.mathevo-pokemon-btn span {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.mathevo-difficulty-select, .mathevo-operation-select {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.mathevo-operation-select {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.mathevo-difficulty-btn, .mathevo-operation-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 4px solid transparent;
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.mathevo-difficulty-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mathevo-difficulty-btn small {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #6b7280;
+}
+
+.mathevo-difficulty-btn:hover, .mathevo-operation-btn:hover {
+    transform: scale(1.05);
+    background: white;
+}
+
+.mathevo-difficulty-btn.selected, .mathevo-operation-btn.selected {
+    border-color: #10b981;
+    background: #d1fae5;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.start-mathevo-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 20px 50px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+}
+
+.start-mathevo-btn:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+}
+
+.start-mathevo-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Game Board Styles */
+.mathevo-game-board {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.mathevo-pokemon-display {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.mathevo-evolution-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.evolution-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.4;
+    transition: all 0.3s;
+}
+
+.evolution-stage.active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.evolution-stage.completed {
+    opacity: 0.8;
+}
+
+.evolution-stage img {
+    width: 60px;
+    height: 60px;
+    filter: grayscale(70%);
+    transition: filter 0.3s;
+}
+
+.evolution-stage.active img, .evolution-stage.completed img {
+    filter: grayscale(0%);
+}
+
+.evolution-name {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.evolution-arrow {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.mathevo-current-pokemon {
+    text-align: center;
+}
+
+.current-pokemon-sprite {
+    width: 150px;
+    height: 150px;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+    animation: bounce 2s infinite;
+}
+
+.current-pokemon-name {
+    color: white;
+    font-size: 2rem;
+    margin-top: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mathevo-progress-container {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.mathevo-progress-label {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.mathevo-progress-bar {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50px;
+    height: 30px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mathevo-progress-fill {
+    background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.mathevo-problem-area {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mathevo-problem {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 30px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mathevo-answer-section {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.mathevo-answer-input {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #1f2937;
+    text-align: center;
+    padding: 20px;
+    border: 4px solid #e5e7eb;
+    border-radius: 15px;
+    width: 250px;
+    transition: all 0.3s;
+}
+
+.mathevo-answer-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+.mathevo-answer-input.correct {
+    background: #d1fae5;
+    border-color: #10b981;
+    animation: shake 0.5s;
+}
+
+.mathevo-answer-input.wrong {
+    background: #fee2e2;
+    border-color: #ef4444;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.mathevo-submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.mathevo-submit-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+}
+
+.mathevo-numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.mathevo-num-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 25px;
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.mathevo-num-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+}
+
+.mathevo-num-btn:active {
+    transform: scale(0.95);
+}
+
+.mathevo-clear-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.mathevo-negative-btn {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.mathevo-stats {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.mathevo-stat-item {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mathevo-stat-item span {
+    color: #fbbf24;
+}
+
+/* Evolution Animation Screen */
+.mathevo-evolution-screen {
+    text-align: center;
+    padding: 40px;
+}
+
+.mathevo-evolution-animation {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 50px;
+    backdrop-filter: blur(10px);
+}
+
+.mathevo-evolution-text {
+    color: #fbbf24;
+    font-size: 3rem;
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.mathevo-evolution-sprites {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.evolution-old-sprite, .evolution-new-sprite {
+    width: 120px;
+    height: 120px;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+}
+
+.evolution-sparkles {
+    color: #fbbf24;
+    font-size: 2.5rem;
+    animation: sparkle 1s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.mathevo-evolution-message {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.mathevo-continue-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 18px 45px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.mathevo-continue-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+}
+
+/* Victory Screen */
+.mathevo-victory {
+    text-align: center;
+    padding: 40px;
+}
+
+.mathevo-victory-title {
+    color: #fbbf24;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mathevo-victory-message {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.mathevo-final-pokemon {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.mathevo-final-pokemon img {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+    animation: bounce 2s infinite;
+}
+
+.mathevo-final-name {
+    color: white;
+    font-size: 2.5rem;
+    margin-top: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mathevo-victory-stats {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.mathevo-victory-stats p {
+    color: white;
+    font-size: 1.3rem;
+    margin: 12px 0;
+}
+
+.mathevo-victory-stats span {
+    color: #fbbf24;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.mathevo-play-again-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 18px 45px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+.mathevo-play-again-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .mathevo-modal-content {
+        padding: 15px;
+        margin: 5% auto;
+    }
+
+    .mathevo-title {
+        font-size: 1.8rem;
+    }
+
+    .mathevo-pokemon-select {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .mathevo-difficulty-select, .mathevo-operation-select {
+        grid-template-columns: 1fr;
+    }
+
+    .mathevo-problem {
+        font-size: 2.5rem;
+        min-height: 60px;
+    }
+
+    .mathevo-answer-input {
+        font-size: 2rem;
+        width: 180px;
+        padding: 15px;
+    }
+
+    .mathevo-submit-btn {
+        font-size: 2rem;
+        padding: 15px 30px;
+    }
+
+    .mathevo-numpad {
+        gap: 8px;
+        max-width: 300px;
+    }
+
+    .mathevo-num-btn {
+        padding: 20px;
+        font-size: 1.5rem;
+    }
+
+    .current-pokemon-sprite {
+        width: 120px;
+        height: 120px;
+    }
+
+    .evolution-stage img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .mathevo-evolution-text {
+        font-size: 2rem;
+    }
+
+    .evolution-old-sprite, .evolution-new-sprite {
+        width: 100px;
+        height: 100px;
+    }
+
+    .mathevo-final-pokemon img {
+        width: 150px;
+        height: 150px;
+    }
+}

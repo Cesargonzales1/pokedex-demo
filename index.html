@@ -182,6 +182,13 @@
                     <h3>Tower Defense</h3>
                     <p>Defiende el camino</p>
                 </div>
+
+                <!-- Math Evolution Game Card -->
+                <div class="game-card" data-game="mathevo">
+                    <div class="game-card-icon">🧮</div>
+                    <h3>Evolución Matemática</h3>
+                    <p>Resuelve y evoluciona</p>
+                </div>
             </div>
         </div>
     </div>
@@ -788,6 +795,177 @@
                     <p>👾 Enemigos derrotados: <span id="tdEnemiesKilled"></span></p>
                 </div>
                 <button id="tdTryAgain" class="td-try-again-btn">🔄 Intentar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Math Evolution Game Modal -->
+    <div id="mathEvoModal" class="mathevo-modal">
+        <div class="mathevo-modal-content">
+            <span class="mathevo-close">&times;</span>
+            <h2 class="mathevo-title">🧮 Evolución Matemática</h2>
+
+            <!-- Game Menu -->
+            <div id="mathEvoMenu" class="mathevo-menu">
+                <p class="mathevo-instructions">
+                    ¡Resuelve problemas de matemáticas para evolucionar tu Pokémon!
+                    <br><br>
+                    ✨ Cada 5 respuestas correctas = ¡EVOLUCIÓN!
+                    <br>
+                    🎯 Completa 3 evoluciones para ganar
+                </p>
+
+                <div class="mathevo-config">
+                    <h3 class="mathevo-config-title">Elige tu Pokémon:</h3>
+                    <div class="mathevo-pokemon-select">
+                        <button class="mathevo-pokemon-btn" data-pokemon="bulbasaur">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="Bulbasaur">
+                            <span>Bulbasaur</span>
+                        </button>
+                        <button class="mathevo-pokemon-btn" data-pokemon="charmander">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png" alt="Charmander">
+                            <span>Charmander</span>
+                        </button>
+                        <button class="mathevo-pokemon-btn" data-pokemon="squirtle">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png" alt="Squirtle">
+                            <span>Squirtle</span>
+                        </button>
+                    </div>
+
+                    <h3 class="mathevo-config-title">Dificultad:</h3>
+                    <div class="mathevo-difficulty-select">
+                        <button class="mathevo-difficulty-btn" data-difficulty="1">
+                            <span>🟢 Fácil</span>
+                            <small>Números de 1 dígito (1-9)</small>
+                        </button>
+                        <button class="mathevo-difficulty-btn" data-difficulty="2">
+                            <span>🟡 Medio</span>
+                            <small>Números de 2 dígitos (10-99)</small>
+                        </button>
+                    </div>
+
+                    <h3 class="mathevo-config-title">Operación:</h3>
+                    <div class="mathevo-operation-select">
+                        <button class="mathevo-operation-btn" data-operation="addition">
+                            ➕ Suma
+                        </button>
+                        <button class="mathevo-operation-btn" data-operation="subtraction">
+                            ➖ Resta
+                        </button>
+                        <button class="mathevo-operation-btn" data-operation="mixed">
+                            🔀 Mixto
+                        </button>
+                    </div>
+                </div>
+
+                <button id="startMathEvo" class="start-mathevo-btn" disabled>🎮 ¡Comenzar!</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="mathEvoGameBoard" class="mathevo-game-board" style="display: none;">
+                <!-- Pokemon Display -->
+                <div class="mathevo-pokemon-display">
+                    <div class="mathevo-evolution-progress">
+                        <div class="evolution-stage" id="mathEvoStage1">
+                            <img id="mathEvoSprite1" src="" alt="Stage 1">
+                            <span id="mathEvoName1" class="evolution-name"></span>
+                        </div>
+                        <div class="evolution-arrow">→</div>
+                        <div class="evolution-stage" id="mathEvoStage2">
+                            <img id="mathEvoSprite2" src="" alt="Stage 2">
+                            <span id="mathEvoName2" class="evolution-name"></span>
+                        </div>
+                        <div class="evolution-arrow">→</div>
+                        <div class="evolution-stage" id="mathEvoStage3">
+                            <img id="mathEvoSprite3" src="" alt="Stage 3">
+                            <span id="mathEvoName3" class="evolution-name"></span>
+                        </div>
+                    </div>
+
+                    <div class="mathevo-current-pokemon">
+                        <img id="mathEvoCurrentSprite" src="" alt="Current Pokemon" class="current-pokemon-sprite">
+                        <h3 id="mathEvoCurrentName" class="current-pokemon-name"></h3>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mathevo-progress-container">
+                    <div class="mathevo-progress-label">
+                        <span>Progreso a siguiente evolución:</span>
+                        <span id="mathEvoProgressText">0/5</span>
+                    </div>
+                    <div class="mathevo-progress-bar">
+                        <div id="mathEvoProgressFill" class="mathevo-progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Problem Display -->
+                <div class="mathevo-problem-area">
+                    <div id="mathEvoProblem" class="mathevo-problem"></div>
+                    <div class="mathevo-answer-section">
+                        <input type="number" id="mathEvoAnswer" class="mathevo-answer-input" placeholder="?" disabled>
+                        <button id="mathEvoSubmit" class="mathevo-submit-btn">✓</button>
+                    </div>
+                </div>
+
+                <!-- Number Pad -->
+                <div class="mathevo-numpad">
+                    <button class="mathevo-num-btn" data-num="7">7</button>
+                    <button class="mathevo-num-btn" data-num="8">8</button>
+                    <button class="mathevo-num-btn" data-num="9">9</button>
+                    <button class="mathevo-num-btn" data-num="4">4</button>
+                    <button class="mathevo-num-btn" data-num="5">5</button>
+                    <button class="mathevo-num-btn" data-num="6">6</button>
+                    <button class="mathevo-num-btn" data-num="1">1</button>
+                    <button class="mathevo-num-btn" data-num="2">2</button>
+                    <button class="mathevo-num-btn" data-num="3">3</button>
+                    <button class="mathevo-num-btn" data-num="0">0</button>
+                    <button class="mathevo-num-btn mathevo-clear-btn" data-action="clear">⌫</button>
+                    <button class="mathevo-num-btn mathevo-negative-btn" data-action="negative">-</button>
+                </div>
+
+                <!-- Stats -->
+                <div class="mathevo-stats">
+                    <div class="mathevo-stat-item">
+                        <span>✅ Correctas: <span id="mathEvoCorrect">0</span></span>
+                    </div>
+                    <div class="mathevo-stat-item">
+                        <span>❌ Incorrectas: <span id="mathEvoWrong">0</span></span>
+                    </div>
+                    <div class="mathevo-stat-item">
+                        <span>🏆 Evoluciones: <span id="mathEvoEvolutions">0</span>/3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evolution Animation Screen -->
+            <div id="mathEvoEvolutionScreen" class="mathevo-evolution-screen" style="display: none;">
+                <div class="mathevo-evolution-animation">
+                    <h2 class="mathevo-evolution-text">✨ ¡EVOLUCIÓN! ✨</h2>
+                    <div class="mathevo-evolution-sprites">
+                        <img id="mathEvoOldSprite" src="" alt="Old" class="evolution-old-sprite">
+                        <div class="evolution-sparkles">✨→✨</div>
+                        <img id="mathEvoNewSprite" src="" alt="New" class="evolution-new-sprite">
+                    </div>
+                    <p id="mathEvoEvolutionMessage" class="mathevo-evolution-message"></p>
+                    <button id="mathEvoContinue" class="mathevo-continue-btn">¡Continuar!</button>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="mathEvoVictory" class="mathevo-victory" style="display: none;">
+                <h3 class="mathevo-victory-title">🎉 ¡FELICIDADES!</h3>
+                <p class="mathevo-victory-message">¡Has completado todas las evoluciones!</p>
+                <div class="mathevo-final-pokemon">
+                    <img id="mathEvoFinalSprite" src="" alt="Final Evolution">
+                    <h2 id="mathEvoFinalName" class="mathevo-final-name"></h2>
+                </div>
+                <div class="mathevo-victory-stats">
+                    <p>✅ Respuestas correctas: <span id="mathEvoFinalCorrect"></span></p>
+                    <p>❌ Respuestas incorrectas: <span id="mathEvoFinalWrong"></span></p>
+                    <p>🎯 Precisión: <span id="mathEvoAccuracy"></span>%</p>
+                </div>
+                <button id="mathEvoPlayAgain" class="mathevo-play-again-btn">🔄 Jugar de Nuevo</button>
             </div>
         </div>
     </div>

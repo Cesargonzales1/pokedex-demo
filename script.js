@@ -713,6 +713,9 @@ gameCards.forEach(card => {
             case 'towerdefense':
                 openTDModal();
                 break;
+            case 'mathevo':
+                openMathEvoModal();
+                break;
         }
     });
 });
@@ -3183,3 +3186,409 @@ window.addEventListener('click', (e) => {
         closeTDModal();
     }
 });
+
+// ==================== MATH EVOLUTION GAME ====================
+
+// Evolution chains data
+const EVOLUTION_CHAINS = {
+    bulbasaur: [
+        { id: 1, name: 'Bulbasaur', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png' },
+        { id: 2, name: 'Ivysaur', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png' },
+        { id: 3, name: 'Venusaur', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png' }
+    ],
+    charmander: [
+        { id: 4, name: 'Charmander', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png' },
+        { id: 5, name: 'Charmeleon', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png' },
+        { id: 6, name: 'Charizard', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png' }
+    ],
+    squirtle: [
+        { id: 7, name: 'Squirtle', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png' },
+        { id: 8, name: 'Wartortle', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/8.png' },
+        { id: 9, name: 'Blastoise', sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png' }
+    ]
+};
+
+// Game state
+let mathEvoModal;
+let mathEvoMenu;
+let mathEvoGameBoard;
+let mathEvoEvolutionScreen;
+let mathEvoVictory;
+let mathEvoClose;
+
+let selectedPokemon = null;
+let selectedDifficulty = null;
+let selectedOperation = null;
+let currentEvolutionChain = [];
+let currentStage = 0;
+let progressToNextEvolution = 0;
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let currentProblem = null;
+let currentAnswer = null;
+
+// DOM elements
+function initMathEvoDOMElements() {
+    mathEvoModal = document.getElementById('mathEvoModal');
+    mathEvoMenu = document.getElementById('mathEvoMenu');
+    mathEvoGameBoard = document.getElementById('mathEvoGameBoard');
+    mathEvoEvolutionScreen = document.getElementById('mathEvoEvolutionScreen');
+    mathEvoVictory = document.getElementById('mathEvoVictory');
+    mathEvoClose = document.querySelector('.mathevo-close');
+}
+
+// Open modal
+function openMathEvoModal() {
+    if (!mathEvoModal) initMathEvoDOMElements();
+
+    gamesMenuModal.style.display = 'none';
+    mathEvoModal.style.display = 'block';
+    mathEvoMenu.style.display = 'block';
+    mathEvoGameBoard.style.display = 'none';
+    mathEvoEvolutionScreen.style.display = 'none';
+    mathEvoVictory.style.display = 'none';
+}
+
+// Close modal
+function closeMathEvoModal() {
+    mathEvoModal.style.display = 'none';
+    resetMathEvoGame();
+}
+
+// Reset game
+function resetMathEvoGame() {
+    selectedPokemon = null;
+    selectedDifficulty = null;
+    selectedOperation = null;
+    currentEvolutionChain = [];
+    currentStage = 0;
+    progressToNextEvolution = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    currentProblem = null;
+    currentAnswer = null;
+
+    // Reset UI selections
+    document.querySelectorAll('.mathevo-pokemon-btn').forEach(btn => btn.classList.remove('selected'));
+    document.querySelectorAll('.mathevo-difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+    document.querySelectorAll('.mathevo-operation-btn').forEach(btn => btn.classList.remove('selected'));
+    document.getElementById('startMathEvo').disabled = true;
+    document.getElementById('mathEvoAnswer').value = '';
+}
+
+// Pokemon selection
+document.querySelectorAll('.mathevo-pokemon-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.mathevo-pokemon-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedPokemon = btn.dataset.pokemon;
+        checkStartButton();
+    });
+});
+
+// Difficulty selection
+document.querySelectorAll('.mathevo-difficulty-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.mathevo-difficulty-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedDifficulty = parseInt(btn.dataset.difficulty);
+        checkStartButton();
+    });
+});
+
+// Operation selection
+document.querySelectorAll('.mathevo-operation-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.mathevo-operation-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedOperation = btn.dataset.operation;
+        checkStartButton();
+    });
+});
+
+// Check if all selections are made
+function checkStartButton() {
+    const startBtn = document.getElementById('startMathEvo');
+    if (selectedPokemon && selectedDifficulty && selectedOperation) {
+        startBtn.disabled = false;
+    } else {
+        startBtn.disabled = true;
+    }
+}
+
+// Start game
+document.getElementById('startMathEvo').addEventListener('click', startMathEvoGame);
+
+function startMathEvoGame() {
+    // Initialize game
+    currentEvolutionChain = EVOLUTION_CHAINS[selectedPokemon];
+    currentStage = 0;
+    progressToNextEvolution = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+
+    // Hide menu, show game board
+    mathEvoMenu.style.display = 'none';
+    mathEvoGameBoard.style.display = 'block';
+
+    // Setup evolution display
+    setupEvolutionDisplay();
+
+    // Update current Pokemon
+    updateCurrentPokemon();
+
+    // Generate first problem
+    generateProblem();
+
+    // Update stats
+    updateStats();
+}
+
+function setupEvolutionDisplay() {
+    // Display all 3 stages
+    for (let i = 0; i < 3; i++) {
+        const stageEl = document.getElementById(`mathEvoStage${i + 1}`);
+        const sprite = document.getElementById(`mathEvoSprite${i + 1}`);
+        const name = document.getElementById(`mathEvoName${i + 1}`);
+
+        sprite.src = currentEvolutionChain[i].sprite;
+        name.textContent = currentEvolutionChain[i].name;
+
+        if (i === 0) {
+            stageEl.classList.add('active');
+        } else {
+            stageEl.classList.remove('active', 'completed');
+        }
+    }
+}
+
+function updateCurrentPokemon() {
+    const currentPokemon = currentEvolutionChain[currentStage];
+    document.getElementById('mathEvoCurrentSprite').src = currentPokemon.sprite;
+    document.getElementById('mathEvoCurrentName').textContent = currentPokemon.name;
+
+    // Update progress bar
+    updateProgressBar();
+}
+
+function updateProgressBar() {
+    const progressText = document.getElementById('mathEvoProgressText');
+    const progressFill = document.getElementById('mathEvoProgressFill');
+
+    progressText.textContent = `${progressToNextEvolution}/5`;
+    progressFill.style.width = `${(progressToNextEvolution / 5) * 100}%`;
+}
+
+function updateStats() {
+    document.getElementById('mathEvoCorrect').textContent = correctAnswers;
+    document.getElementById('mathEvoWrong').textContent = wrongAnswers;
+    document.getElementById('mathEvoEvolutions').textContent = currentStage;
+}
+
+function generateProblem() {
+    let num1, num2, operation, operationSymbol;
+
+    // Generate numbers based on difficulty
+    if (selectedDifficulty === 1) {
+        num1 = Math.floor(Math.random() * 9) + 1; // 1-9
+        num2 = Math.floor(Math.random() * 9) + 1; // 1-9
+    } else {
+        num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+        num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+    }
+
+    // Determine operation
+    if (selectedOperation === 'addition') {
+        operation = 'addition';
+        operationSymbol = '+';
+        currentAnswer = num1 + num2;
+    } else if (selectedOperation === 'subtraction') {
+        operation = 'subtraction';
+        operationSymbol = '-';
+        // Make sure result is positive
+        if (num1 < num2) {
+            [num1, num2] = [num2, num1];
+        }
+        currentAnswer = num1 - num2;
+    } else { // mixed
+        operation = Math.random() < 0.5 ? 'addition' : 'subtraction';
+        if (operation === 'addition') {
+            operationSymbol = '+';
+            currentAnswer = num1 + num2;
+        } else {
+            operationSymbol = '-';
+            if (num1 < num2) {
+                [num1, num2] = [num2, num1];
+            }
+            currentAnswer = num1 - num2;
+        }
+    }
+
+    // Display problem
+    document.getElementById('mathEvoProblem').textContent = `${num1} ${operationSymbol} ${num2} = ?`;
+
+    // Clear answer input and remove classes
+    const answerInput = document.getElementById('mathEvoAnswer');
+    answerInput.value = '';
+    answerInput.classList.remove('correct', 'wrong');
+    answerInput.disabled = false;
+    answerInput.focus();
+}
+
+// Number pad functionality
+document.querySelectorAll('.mathevo-num-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const answerInput = document.getElementById('mathEvoAnswer');
+
+        if (btn.dataset.num) {
+            // Add number to input
+            answerInput.value += btn.dataset.num;
+        } else if (btn.dataset.action === 'clear') {
+            // Clear input
+            if (answerInput.value.length > 0) {
+                answerInput.value = answerInput.value.slice(0, -1);
+            }
+        } else if (btn.dataset.action === 'negative') {
+            // Toggle negative
+            if (answerInput.value.startsWith('-')) {
+                answerInput.value = answerInput.value.substring(1);
+            } else if (answerInput.value.length > 0) {
+                answerInput.value = '-' + answerInput.value;
+            }
+        }
+    });
+});
+
+// Submit answer
+document.getElementById('mathEvoSubmit').addEventListener('click', checkAnswer);
+document.getElementById('mathEvoAnswer').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        checkAnswer();
+    }
+});
+
+function checkAnswer() {
+    const answerInput = document.getElementById('mathEvoAnswer');
+    const userAnswer = parseInt(answerInput.value);
+
+    if (isNaN(userAnswer)) {
+        return;
+    }
+
+    answerInput.disabled = true;
+
+    if (userAnswer === currentAnswer) {
+        // Correct answer
+        answerInput.classList.add('correct');
+        correctAnswers++;
+        progressToNextEvolution++;
+
+        updateStats();
+        updateProgressBar();
+
+        // Check if evolution is ready
+        if (progressToNextEvolution >= 5) {
+            // Evolve!
+            if (currentStage < 2) {
+                setTimeout(() => {
+                    showEvolutionAnimation();
+                }, 800);
+            } else {
+                // Final stage reached - victory!
+                setTimeout(() => {
+                    showVictory();
+                }, 800);
+            }
+        } else {
+            // Next problem
+            setTimeout(() => {
+                generateProblem();
+            }, 1000);
+        }
+    } else {
+        // Wrong answer
+        answerInput.classList.add('wrong');
+        wrongAnswers++;
+
+        updateStats();
+
+        // Show correct answer briefly, then new problem
+        setTimeout(() => {
+            answerInput.value = currentAnswer;
+        }, 500);
+
+        setTimeout(() => {
+            generateProblem();
+        }, 2000);
+    }
+}
+
+function showEvolutionAnimation() {
+    mathEvoGameBoard.style.display = 'none';
+    mathEvoEvolutionScreen.style.display = 'block';
+
+    const oldPokemon = currentEvolutionChain[currentStage];
+    const newPokemon = currentEvolutionChain[currentStage + 1];
+
+    document.getElementById('mathEvoOldSprite').src = oldPokemon.sprite;
+    document.getElementById('mathEvoNewSprite').src = newPokemon.sprite;
+    document.getElementById('mathEvoEvolutionMessage').textContent =
+        `¡Tu ${oldPokemon.name} evolucionó a ${newPokemon.name}!`;
+}
+
+document.getElementById('mathEvoContinue').addEventListener('click', () => {
+    // Evolve to next stage
+    currentStage++;
+    progressToNextEvolution = 0;
+
+    // Update evolution display
+    const prevStage = document.getElementById(`mathEvoStage${currentStage}`);
+    prevStage.classList.remove('active');
+    prevStage.classList.add('completed');
+
+    const currentStageEl = document.getElementById(`mathEvoStage${currentStage + 1}`);
+    currentStageEl.classList.add('active');
+
+    // Update current Pokemon
+    updateCurrentPokemon();
+    updateStats();
+
+    // Hide evolution screen, show game board
+    mathEvoEvolutionScreen.style.display = 'none';
+    mathEvoGameBoard.style.display = 'block';
+
+    // Generate new problem
+    generateProblem();
+});
+
+function showVictory() {
+    mathEvoGameBoard.style.display = 'none';
+    mathEvoVictory.style.display = 'block';
+
+    const finalPokemon = currentEvolutionChain[2];
+    document.getElementById('mathEvoFinalSprite').src = finalPokemon.sprite;
+    document.getElementById('mathEvoFinalName').textContent = finalPokemon.name;
+    document.getElementById('mathEvoFinalCorrect').textContent = correctAnswers;
+    document.getElementById('mathEvoFinalWrong').textContent = wrongAnswers;
+
+    const accuracy = Math.round((correctAnswers / (correctAnswers + wrongAnswers)) * 100);
+    document.getElementById('mathEvoAccuracy').textContent = accuracy;
+}
+
+// Event listeners
+mathEvoClose.addEventListener('click', closeMathEvoModal);
+
+document.getElementById('mathEvoPlayAgain').addEventListener('click', () => {
+    mathEvoVictory.style.display = 'none';
+    resetMathEvoGame();
+    mathEvoMenu.style.display = 'block';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === mathEvoModal) {
+        closeMathEvoModal();
+    }
+});
+
+// Initialize DOM elements on page load
+initMathEvoDOMElements();
