@@ -18,6 +18,40 @@ const GENERATION_RANGES = {
     '9': { start: 906, end: 1025 }
 };
 
+// Pokémon con formas Gigamax
+const GIGAMAX_POKEMON = [
+    3,   // Venusaur
+    6,   // Charizard
+    9,   // Blastoise
+    12,  // Butterfree
+    25,  // Pikachu
+    52,  // Meowth
+    68,  // Machamp
+    94,  // Gengar
+    99,  // Kingler
+    131, // Lapras
+    133, // Eevee
+    143, // Snorlax
+    569, // Garbodor
+    823, // Corviknight
+    826, // Orbeetle
+    834, // Drednaw
+    839, // Coalossal
+    841, // Flapple
+    842, // Appletun
+    844, // Sandaconda
+    849, // Toxtricity
+    851, // Centiskorch
+    858, // Hatterene
+    861, // Grimmsnarl
+    869, // Alcremie
+    879, // Copperajah
+    884, // Duraludon
+    892  // Urshifu
+];
+
+let isGigamaxMode = false;
+
 // Elementos del DOM
 const pokemonContainer = document.getElementById('pokemonContainer');
 const loading = document.getElementById('loading');
@@ -25,6 +59,7 @@ const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const typeFilter = document.getElementById('typeFilter');
 const generationFilter = document.getElementById('generationFilter');
+const gigamaxBtn = document.getElementById('gigamaxBtn');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
@@ -65,6 +100,7 @@ function setupEventListeners() {
     });
     typeFilter.addEventListener('change', handleTypeFilter);
     generationFilter.addEventListener('change', handleGenerationChange);
+    gigamaxBtn.addEventListener('click', toggleGigamaxMode);
     prevBtn.addEventListener('click', () => changePage(-1));
     nextBtn.addEventListener('click', () => changePage(1));
     closeModal.addEventListener('click', () => modal.classList.remove('active'));
@@ -163,7 +199,65 @@ function handleGenerationChange() {
     currentPage = 1;
     typeFilter.value = ''; // Resetear filtro de tipo
     searchInput.value = ''; // Resetear búsqueda
+    isGigamaxMode = false;
+    gigamaxBtn.classList.remove('active');
+    gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
     loadPokemon(selectedGeneration);
+}
+
+// Toggle Gigamax mode
+async function toggleGigamaxMode() {
+    isGigamaxMode = !isGigamaxMode;
+
+    if (isGigamaxMode) {
+        gigamaxBtn.classList.add('active');
+        gigamaxBtn.textContent = '🔙 Volver a Vista Normal';
+        await loadGigamaxPokemon();
+    } else {
+        gigamaxBtn.classList.remove('active');
+        gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
+        const selectedGeneration = generationFilter.value;
+        loadPokemon(selectedGeneration);
+    }
+}
+
+// Cargar Pokémon Gigamax
+async function loadGigamaxPokemon() {
+    showLoading(true);
+    try {
+        // Resetear filtros
+        typeFilter.value = '';
+        searchInput.value = '';
+        currentPage = 1;
+
+        // Cargar todos los Pokémon Gigamax
+        const pokemonPromises = GIGAMAX_POKEMON.map(id =>
+            fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json())
+        );
+
+        allPokemon = await Promise.all(pokemonPromises);
+
+        // Modificar los Pokémon para mostrar información Gigamax
+        allPokemon = allPokemon.map(pokemon => {
+            // Crear una copia modificada del Pokémon
+            const gigamaxPokemon = { ...pokemon };
+            gigamaxPokemon.name = `${pokemon.name} (Gigamax)`;
+            gigamaxPokemon.isGigamax = true;
+
+            // Intentar obtener sprite Gigamax si está disponible
+            // Nota: La mayoría de sprites Gigamax no están en la API estándar,
+            // pero mantenemos el sprite normal para visualización
+            return gigamaxPokemon;
+        });
+
+        filteredPokemon = [...allPokemon];
+        displayPokemon();
+    } catch (error) {
+        console.error('Error al cargar Pokémon Gigamax:', error);
+        pokemonContainer.innerHTML = '<p style="color: white; text-align: center;">Error al cargar los Pokémon Gigamax. Por favor, intenta de nuevo.</p>';
+    } finally {
+        showLoading(false);
+    }
 }
 
 // Mostrar/ocultar loading
@@ -610,6 +704,13 @@ async function showPokemonDetail(pokemon) {
 function handleSearch() {
     const searchTerm = searchInput.value.toLowerCase().trim();
 
+    // Desactivar modo Gigamax si está activo
+    if (isGigamaxMode && searchTerm !== '') {
+        isGigamaxMode = false;
+        gigamaxBtn.classList.remove('active');
+        gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
+    }
+
     if (searchTerm === '') {
         filteredPokemon = [...allPokemon];
     } else {
@@ -626,6 +727,13 @@ function handleSearch() {
 // Filtrar por tipo
 function handleTypeFilter() {
     const selectedType = typeFilter.value;
+
+    // Desactivar modo Gigamax si se aplica filtro de tipo
+    if (isGigamaxMode && selectedType !== '') {
+        isGigamaxMode = false;
+        gigamaxBtn.classList.remove('active');
+        gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
+    }
 
     if (selectedType === '') {
         filteredPokemon = [...allPokemon];

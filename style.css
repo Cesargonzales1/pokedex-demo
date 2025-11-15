@@ -338,6 +338,63 @@ header h1 {
     background: white;
 }
 
+/* Gigamax Button */
+.gigamax-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.gigamax-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 50%, #c44569 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(238, 90, 111, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.gigamax-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.gigamax-btn:hover::before {
+    left: 100%;
+}
+
+.gigamax-btn:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 25px rgba(238, 90, 111, 0.6);
+}
+
+.gigamax-btn:active {
+    transform: scale(0.98);
+}
+
+.gigamax-btn.active {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+    box-shadow: 0 5px 20px rgba(251, 191, 36, 0.6);
+}
+
+.gigamax-btn.active:hover {
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.8);
+}
+
 .loading {
     display: none;
     flex-direction: column;
