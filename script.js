@@ -230,10 +230,29 @@ async function loadGigamaxPokemon() {
         searchInput.value = '';
         currentPage = 1;
 
-        // Cargar todos los Pokémon Gigamax
-        const pokemonPromises = GIGAMAX_POKEMON.map(id =>
-            fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json())
-        );
+        // Cargar todos los Pokémon Gigamax con sus formas
+        const pokemonPromises = GIGAMAX_POKEMON.map(async (id) => {
+            // Cargar datos base del Pokémon
+            const pokemonData = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json());
+
+            // Intentar cargar la forma Gigamax
+            try {
+                const gigamaxFormName = `${pokemonData.name}-gmax`;
+                const formResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${gigamaxFormName}`);
+
+                if (formResponse.ok) {
+                    const gigamaxForm = await formResponse.json();
+                    // Si existe la forma Gigamax, usar sus sprites
+                    pokemonData.gigamaxSprite = gigamaxForm.sprites.other['official-artwork']?.front_default
+                                              || gigamaxForm.sprites.front_default;
+                }
+            } catch (error) {
+                // Si no hay forma Gigamax disponible, usar sprite normal
+                console.log(`No Gigamax form found for ${pokemonData.name}`);
+            }
+
+            return pokemonData;
+        });
 
         allPokemon = await Promise.all(pokemonPromises);
 
@@ -244,9 +263,19 @@ async function loadGigamaxPokemon() {
             gigamaxPokemon.name = `${pokemon.name} (Gigamax)`;
             gigamaxPokemon.isGigamax = true;
 
-            // Intentar obtener sprite Gigamax si está disponible
-            // Nota: La mayoría de sprites Gigamax no están en la API estándar,
-            // pero mantenemos el sprite normal para visualización
+            // Si hay sprite Gigamax, modificar la estructura de sprites
+            if (pokemon.gigamaxSprite) {
+                gigamaxPokemon.sprites = {
+                    ...pokemon.sprites,
+                    other: {
+                        ...pokemon.sprites.other,
+                        'official-artwork': {
+                            front_default: pokemon.gigamaxSprite
+                        }
+                    }
+                };
+            }
+
             return gigamaxPokemon;
         });
 
