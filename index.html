@@ -917,21 +917,21 @@
                                 <div class="mathevo-header-cell mathevo-header-u">U</div>
                             </div>
 
-                            <!-- Fila para mostrar "llevamos" arriba -->
-                            <div class="mathevo-carry-row" id="mathEvoCarryRow" style="display: none;">
-                                <div class="mathevo-cell mathevo-cell-empty"></div>
-                                <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryD"></div>
-                                <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryU"></div>
-                            </div>
-
-                            <!-- Fila de inputs para números modificados (el niño escribe aquí) -->
+                            <!-- Fila de inputs para RESTA - el niño escribe números modificados aquí -->
                             <div class="mathevo-borrow-input-row" id="mathEvoBorrowInputRow" style="display: none;">
                                 <div class="mathevo-cell mathevo-cell-empty"></div>
                                 <input type="number" class="mathevo-borrow-input" id="mathEvoBorrowInputD" placeholder="?" maxlength="1">
                                 <input type="number" class="mathevo-borrow-input" id="mathEvoBorrowInputU" placeholder="?" maxlength="2">
                             </div>
 
-                            <!-- Primer número (con soporte para tachado) -->
+                            <!-- Fila para SUMA - mostrar "llevamos 1" -->
+                            <div class="mathevo-carry-row" id="mathEvoCarryRow" style="display: none;">
+                                <div class="mathevo-cell mathevo-cell-empty"></div>
+                                <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryD"></div>
+                                <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryU"></div>
+                            </div>
+
+                            <!-- Primer número (se tacha en restas cuando escribes arriba) -->
                             <div class="mathevo-number-row" id="mathEvoRow1">
                                 <div class="mathevo-cell mathevo-cell-empty"></div>
                                 <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1D">
