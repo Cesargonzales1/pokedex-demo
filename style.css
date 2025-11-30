@@ -5050,6 +5050,53 @@ header h1 {
     position: relative;
 }
 
+/* Fila de inputs para préstamo (el niño escribe aquí) */
+.mathevo-borrow-input-row {
+    display: grid;
+    grid-template-columns: 35px 45px 45px;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.mathevo-borrow-input {
+    height: 36px;
+    width: 100%;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #dc2626;
+    text-align: center;
+    border: 2px dashed #f59e0b;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+.mathevo-borrow-input::-webkit-outer-spin-button,
+.mathevo-borrow-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.mathevo-borrow-input:focus {
+    border-style: solid;
+    border-color: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.mathevo-borrow-input.correct {
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+    border-color: #22c55e;
+    border-style: solid;
+}
+
+.mathevo-borrow-input.wrong {
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    border-color: #ef4444;
+    border-style: solid;
+    animation: shake 0.3s;
+}
+
 .mathevo-operator-cell {
     font-size: 1.6rem;
     color: #374151;

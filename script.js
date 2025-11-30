@@ -3608,19 +3608,29 @@ function resetDigitDisplay() {
         }
     });
 
-    // Reset modified digits
-    const modElements = ['mathEvoNum1D-mod', 'mathEvoNum1U-mod'];
-    modElements.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.classList.remove('active');
-            el.textContent = '';
-        }
-    });
-
     // Hide borrow arrow
     const arrow = document.getElementById('mathEvoBorrowArrow');
     if (arrow) arrow.classList.remove('active');
+
+    // Hide and reset borrow input row
+    const borrowInputRow = document.getElementById('mathEvoBorrowInputRow');
+    const borrowInputU = document.getElementById('mathEvoBorrowInputU');
+    const borrowInputD = document.getElementById('mathEvoBorrowInputD');
+
+    if (borrowInputRow) borrowInputRow.style.display = 'none';
+    if (borrowInputU) {
+        borrowInputU.value = '';
+        borrowInputU.classList.remove('correct', 'wrong');
+    }
+    if (borrowInputD) {
+        borrowInputD.value = '';
+        borrowInputD.classList.remove('correct', 'wrong');
+    }
+
+    // Reset borrow state
+    window.expectedBorrowU = null;
+    window.expectedBorrowD = null;
+    window.borrowCompleted = false;
 }
 
 // Show carry/borrow message and indicator in table
@@ -3655,36 +3665,107 @@ function showCarryBorrowIndicator(type, details, num1, num2) {
             Escribimos <span class="highlight">${(details.units1 + details.units2) % 10}</span> y llevamos <span class="highlight">1</span> a las decenas.`;
 
     } else if (type === 'borrow' && details.needsBorrow) {
-        // Cross out original numbers and show modified ones
-        const num1UOrig = document.getElementById('mathEvoNum1U-orig');
-        const num1DOrig = document.getElementById('mathEvoNum1D-orig');
-        const num1UMod = document.getElementById('mathEvoNum1U-mod');
-        const num1DMod = document.getElementById('mathEvoNum1D-mod');
+        // Show borrow input row for child to fill in
+        const borrowInputRow = document.getElementById('mathEvoBorrowInputRow');
+        const borrowInputU = document.getElementById('mathEvoBorrowInputU');
+        const borrowInputD = document.getElementById('mathEvoBorrowInputD');
         const borrowArrow = document.getElementById('mathEvoBorrowArrow');
 
-        // Cross out the units digit and show modified (units + 10)
-        num1UOrig.classList.add('crossed');
-        num1UMod.textContent = details.units1 + 10;
-        num1UMod.classList.add('active');
-
-        // Cross out the tens digit and show modified (tens - 1)
-        num1DOrig.classList.add('crossed');
-        num1DMod.textContent = details.tens1 - 1;
-        num1DMod.classList.add('active');
+        // Show the input row
+        borrowInputRow.style.display = 'grid';
+        borrowInputU.value = '';
+        borrowInputD.value = '';
+        borrowInputU.classList.remove('correct', 'wrong');
+        borrowInputD.classList.remove('correct', 'wrong');
+        borrowInputU.disabled = false;
+        borrowInputD.disabled = false;
 
         // Show borrow arrow
         borrowArrow.classList.add('active');
+
+        // Disable answer inputs until borrow is completed
+        document.getElementById('mathEvoAnswerD').disabled = true;
+        document.getElementById('mathEvoAnswerU').disabled = true;
+
+        // Store expected values for validation
+        window.expectedBorrowU = details.units1 + 10;
+        window.expectedBorrowD = details.tens1 - 1;
+        window.borrowCompleted = false;
 
         // Show message
         carryMessage.style.display = 'flex';
         carryMessage.classList.add('borrowing');
         carryIcon.textContent = '💡';
-        carryText.innerHTML = `<strong>¡Pedimos prestado!</strong><br>
+        carryText.innerHTML = `<strong>¡Pide prestado!</strong><br>
             <span class="highlight">${details.units1}</span> es menor que <span class="highlight">${details.units2}</span><br>
-            Pedimos 1 decena: <span class="highlight">${details.units1} + 10 = ${details.units1 + 10}</span><br>
-            Ahora: <span class="highlight">${details.units1 + 10} - ${details.units2} = ${details.units1 + 10 - details.units2}</span>`;
+            Escribe arriba: ¿cuánto queda en U? ¿cuánto queda en D?`;
+
+        // Focus on units input first
+        borrowInputU.focus();
     }
 }
+
+// Validate borrow inputs when child types
+function setupBorrowValidation() {
+    const borrowInputU = document.getElementById('mathEvoBorrowInputU');
+    const borrowInputD = document.getElementById('mathEvoBorrowInputD');
+
+    if (!borrowInputU || !borrowInputD) return;
+
+    borrowInputU.addEventListener('input', validateBorrowInputs);
+    borrowInputD.addEventListener('input', validateBorrowInputs);
+}
+
+function validateBorrowInputs() {
+    const borrowInputU = document.getElementById('mathEvoBorrowInputU');
+    const borrowInputD = document.getElementById('mathEvoBorrowInputD');
+    const num1UOrig = document.getElementById('mathEvoNum1U-orig');
+    const num1DOrig = document.getElementById('mathEvoNum1D-orig');
+
+    const valueU = parseInt(borrowInputU.value);
+    const valueD = parseInt(borrowInputD.value);
+
+    // Validate units (should be original + 10)
+    if (!isNaN(valueU)) {
+        if (valueU === window.expectedBorrowU) {
+            borrowInputU.classList.remove('wrong');
+            borrowInputU.classList.add('correct');
+            num1UOrig.classList.add('crossed');
+        } else {
+            borrowInputU.classList.remove('correct');
+            borrowInputU.classList.add('wrong');
+            num1UOrig.classList.remove('crossed');
+        }
+    }
+
+    // Validate tens (should be original - 1)
+    if (!isNaN(valueD)) {
+        if (valueD === window.expectedBorrowD) {
+            borrowInputD.classList.remove('wrong');
+            borrowInputD.classList.add('correct');
+            num1DOrig.classList.add('crossed');
+        } else {
+            borrowInputD.classList.remove('correct');
+            borrowInputD.classList.add('wrong');
+            num1DOrig.classList.remove('crossed');
+        }
+    }
+
+    // If both are correct, enable answer inputs
+    if (valueU === window.expectedBorrowU && valueD === window.expectedBorrowD) {
+        window.borrowCompleted = true;
+        document.getElementById('mathEvoAnswerD').disabled = false;
+        document.getElementById('mathEvoAnswerU').disabled = false;
+        document.getElementById('mathEvoAnswerU').focus();
+
+        // Update message
+        const carryText = document.getElementById('mathEvoCarryText');
+        carryText.innerHTML = `<strong>¡Muy bien!</strong> Ahora escribe el resultado.`;
+    }
+}
+
+// Initialize borrow validation on page load
+document.addEventListener('DOMContentLoaded', setupBorrowValidation);
 
 function generateProblem() {
     let num1, num2, operation, operationSymbol;
