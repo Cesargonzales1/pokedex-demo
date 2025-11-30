@@ -4912,6 +4912,311 @@ header h1 {
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
 }
 
+/* ============================================
+   ESTILO HORIZONTAL PARA NIÑOS
+   ============================================ */
+
+.mathevo-problem-horizontal {
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mathevo-problem-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mathevo-number {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #1f2937;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+    padding: 15px 25px;
+    border-radius: 15px;
+    border: 3px solid #667eea;
+    min-width: 80px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+}
+
+.mathevo-operator {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #667eea;
+    padding: 10px;
+}
+
+.mathevo-equals {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #667eea;
+    padding: 10px;
+}
+
+.mathevo-answer-input-inline {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #1f2937;
+    text-align: center;
+    padding: 15px 20px;
+    border: 4px dashed #10b981;
+    border-radius: 15px;
+    width: 150px;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    transition: all 0.3s;
+}
+
+.mathevo-answer-input-inline:focus {
+    outline: none;
+    border-style: solid;
+    border-color: #10b981;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    transform: scale(1.05);
+}
+
+.mathevo-answer-input-inline.correct {
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+    border-color: #22c55e;
+    border-style: solid;
+    animation: correctPulse 0.6s ease-out;
+}
+
+.mathevo-answer-input-inline.wrong {
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    border-color: #ef4444;
+    border-style: solid;
+    animation: shake 0.5s;
+}
+
+@keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ============================================
+   INDICADOR DE LLEVAR / PEDIR PRESTADO
+   ============================================ */
+
+.mathevo-carry-borrow {
+    margin-bottom: 20px;
+    animation: fadeInBounce 0.5s ease-out;
+}
+
+@keyframes fadeInBounce {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    60% {
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carry-borrow-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 30px;
+    border-radius: 20px;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+/* Estilo para LLEVAR (suma) */
+.carry-borrow-indicator.carrying {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 3px solid #f59e0b;
+    color: #92400e;
+    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
+}
+
+.carry-borrow-indicator.carrying .carry-borrow-icon {
+    font-size: 2.5rem;
+    animation: bounce 1s infinite;
+}
+
+/* Estilo para PEDIR PRESTADO (resta) */
+.carry-borrow-indicator.borrowing {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 3px solid #3b82f6;
+    color: #1e40af;
+    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
+}
+
+.carry-borrow-indicator.borrowing .carry-borrow-icon {
+    font-size: 2.5rem;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.carry-borrow-text {
+    line-height: 1.5;
+}
+
+.carry-borrow-text .highlight {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 3px 10px;
+    border-radius: 8px;
+    margin: 0 5px;
+    font-size: 1.6rem;
+}
+
+/* ============================================
+   EXPLICACIÓN VISUAL PARA NIÑOS
+   ============================================ */
+
+.mathevo-explanation {
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.explanation-box {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 3px solid #22c55e;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+}
+
+.explanation-text {
+    font-size: 1.2rem;
+    color: #166534;
+    margin: 0 0 15px 0;
+    font-weight: 500;
+}
+
+.visual-aid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.visual-digit-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.visual-digit-label {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.visual-digit-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: white;
+    border: 3px solid #667eea;
+    border-radius: 12px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.visual-digit-box.carry {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-color: #f59e0b;
+    color: #92400e;
+    position: relative;
+}
+
+.visual-digit-box.carry::after {
+    content: "+1";
+    position: absolute;
+    top: -25px;
+    font-size: 1rem;
+    color: #f59e0b;
+    font-weight: bold;
+}
+
+.visual-digit-box.borrow {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #3b82f6;
+    color: #1e40af;
+    position: relative;
+}
+
+.visual-digit-box.borrow::after {
+    content: "-1";
+    position: absolute;
+    top: -25px;
+    font-size: 1rem;
+    color: #3b82f6;
+    font-weight: bold;
+}
+
+.visual-operator {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+    padding: 0 10px;
+}
+
+/* ============================================
+   RESPONSIVE PARA MÓVILES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .mathevo-number {
+        font-size: 2.5rem;
+        padding: 10px 15px;
+        min-width: 60px;
+    }
+
+    .mathevo-operator,
+    .mathevo-equals {
+        font-size: 2.5rem;
+    }
+
+    .mathevo-answer-input-inline {
+        font-size: 2.2rem;
+        width: 100px;
+        padding: 10px 15px;
+    }
+
+    .carry-borrow-indicator {
+        flex-direction: column;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+    }
+
+    .carry-borrow-text .highlight {
+        font-size: 1.3rem;
+    }
+
+    .visual-digit-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+}
+
 .mathevo-numpad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

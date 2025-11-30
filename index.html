@@ -905,12 +905,37 @@
                     </div>
                 </div>
 
-                <!-- Problem Display -->
+                <!-- Problem Display - Horizontal Layout -->
                 <div class="mathevo-problem-area">
-                    <div id="mathEvoProblem" class="mathevo-problem"></div>
+                    <!-- Indicador de llevar/pedir prestado -->
+                    <div id="mathEvoCarryBorrow" class="mathevo-carry-borrow" style="display: none;">
+                        <div class="carry-borrow-indicator">
+                            <span id="mathEvoCarryBorrowIcon" class="carry-borrow-icon">📝</span>
+                            <span id="mathEvoCarryBorrowText" class="carry-borrow-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Problema horizontal -->
+                    <div id="mathEvoProblem" class="mathevo-problem mathevo-problem-horizontal">
+                        <div class="mathevo-problem-container">
+                            <span id="mathEvoNum1" class="mathevo-number"></span>
+                            <span id="mathEvoOperator" class="mathevo-operator"></span>
+                            <span id="mathEvoNum2" class="mathevo-number"></span>
+                            <span class="mathevo-equals">=</span>
+                            <input type="number" id="mathEvoAnswer" class="mathevo-answer-input-inline" placeholder="?" disabled>
+                        </div>
+                    </div>
+
+                    <!-- Explicación visual para niños -->
+                    <div id="mathEvoExplanation" class="mathevo-explanation" style="display: none;">
+                        <div class="explanation-box">
+                            <p id="mathEvoExplanationText" class="explanation-text"></p>
+                            <div id="mathEvoVisualAid" class="visual-aid"></div>
+                        </div>
+                    </div>
+
                     <div class="mathevo-answer-section">
-                        <input type="number" id="mathEvoAnswer" class="mathevo-answer-input" placeholder="?" disabled>
-                        <button id="mathEvoSubmit" class="mathevo-submit-btn">✓</button>
+                        <button id="mathEvoSubmit" class="mathevo-submit-btn">✓ Comprobar</button>
                     </div>
                 </div>
 

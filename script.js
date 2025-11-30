@@ -3411,6 +3411,19 @@ function resetMathEvoGame() {
     document.querySelectorAll('.mathevo-operation-btn').forEach(btn => btn.classList.remove('selected'));
     document.getElementById('startMathEvo').disabled = true;
     document.getElementById('mathEvoAnswer').value = '';
+
+    // Reset horizontal display elements
+    const num1El = document.getElementById('mathEvoNum1');
+    const num2El = document.getElementById('mathEvoNum2');
+    const operatorEl = document.getElementById('mathEvoOperator');
+    const carryBorrowEl = document.getElementById('mathEvoCarryBorrow');
+    const explanationEl = document.getElementById('mathEvoExplanation');
+
+    if (num1El) num1El.textContent = '';
+    if (num2El) num2El.textContent = '';
+    if (operatorEl) operatorEl.textContent = '';
+    if (carryBorrowEl) carryBorrowEl.style.display = 'none';
+    if (explanationEl) explanationEl.style.display = 'none';
 }
 
 // Pokemon selection
@@ -3522,6 +3535,79 @@ function updateStats() {
     document.getElementById('mathEvoEvolutions').textContent = currentStage;
 }
 
+// Helper function to check if addition needs carrying
+function checkNeedsCarry(num1, num2) {
+    const units1 = num1 % 10;
+    const units2 = num2 % 10;
+    const tens1 = Math.floor(num1 / 10) % 10;
+    const tens2 = Math.floor(num2 / 10) % 10;
+
+    const unitsCarry = units1 + units2 >= 10;
+    const tensCarry = tens1 + tens2 + (unitsCarry ? 1 : 0) >= 10;
+
+    return {
+        needsCarry: unitsCarry || tensCarry,
+        unitsCarry: unitsCarry,
+        tensCarry: tensCarry,
+        units1, units2, tens1, tens2
+    };
+}
+
+// Helper function to check if subtraction needs borrowing
+function checkNeedsBorrow(num1, num2) {
+    const units1 = num1 % 10;
+    const units2 = num2 % 10;
+    const tens1 = Math.floor(num1 / 10) % 10;
+    const tens2 = Math.floor(num2 / 10) % 10;
+
+    const unitsBorrow = units1 < units2;
+    const tensBorrow = (tens1 - (unitsBorrow ? 1 : 0)) < tens2;
+
+    return {
+        needsBorrow: unitsBorrow || tensBorrow,
+        unitsBorrow: unitsBorrow,
+        tensBorrow: tensBorrow,
+        units1, units2, tens1, tens2
+    };
+}
+
+// Show carry/borrow indicator
+function showCarryBorrowIndicator(type, details, num1, num2) {
+    const carryBorrowDiv = document.getElementById('mathEvoCarryBorrow');
+    const indicator = carryBorrowDiv.querySelector('.carry-borrow-indicator');
+    const icon = document.getElementById('mathEvoCarryBorrowIcon');
+    const text = document.getElementById('mathEvoCarryBorrowText');
+
+    indicator.classList.remove('carrying', 'borrowing');
+
+    if (type === 'carry' && details.needsCarry) {
+        indicator.classList.add('carrying');
+        icon.textContent = '📝';
+
+        let message = '¡Vamos a <strong>llevar</strong>! ';
+        if (details.unitsCarry) {
+            message += `<br><span class="highlight">${details.units1} + ${details.units2} = ${details.units1 + details.units2}</span> `;
+            message += `<br>Como es mayor a 9, llevamos <span class="highlight">1</span> a las decenas.`;
+        }
+        text.innerHTML = message;
+        carryBorrowDiv.style.display = 'block';
+    } else if (type === 'borrow' && details.needsBorrow) {
+        indicator.classList.add('borrowing');
+        icon.textContent = '🔄';
+
+        let message = '¡Vamos a <strong>pedir prestado</strong>! ';
+        if (details.unitsBorrow) {
+            message += `<br><span class="highlight">${details.units1}</span> es menor que <span class="highlight">${details.units2}</span>`;
+            message += `<br>Pedimos <span class="highlight">1</span> decena prestada (10 unidades).`;
+            message += `<br>Ahora tenemos: <span class="highlight">${details.units1 + 10} - ${details.units2} = ${details.units1 + 10 - details.units2}</span>`;
+        }
+        text.innerHTML = message;
+        carryBorrowDiv.style.display = 'block';
+    } else {
+        carryBorrowDiv.style.display = 'none';
+    }
+}
+
 function generateProblem() {
     let num1, num2, operation, operationSymbol;
 
@@ -3561,8 +3647,24 @@ function generateProblem() {
         }
     }
 
-    // Display problem
-    document.getElementById('mathEvoProblem').textContent = `${num1} ${operationSymbol} ${num2} = ?`;
+    // Display problem in horizontal format
+    document.getElementById('mathEvoNum1').textContent = num1;
+    document.getElementById('mathEvoOperator').textContent = operationSymbol;
+    document.getElementById('mathEvoNum2').textContent = num2;
+
+    // Check for carry/borrow only for 2-digit numbers (difficulty 2)
+    if (selectedDifficulty === 2) {
+        if (operation === 'addition') {
+            const carryDetails = checkNeedsCarry(num1, num2);
+            showCarryBorrowIndicator('carry', carryDetails, num1, num2);
+        } else {
+            const borrowDetails = checkNeedsBorrow(num1, num2);
+            showCarryBorrowIndicator('borrow', borrowDetails, num1, num2);
+        }
+    } else {
+        // Hide indicator for 1-digit problems
+        document.getElementById('mathEvoCarryBorrow').style.display = 'none';
+    }
 
     // Clear answer input and remove classes
     const answerInput = document.getElementById('mathEvoAnswer');
@@ -3570,6 +3672,9 @@ function generateProblem() {
     answerInput.classList.remove('correct', 'wrong');
     answerInput.disabled = false;
     answerInput.focus();
+
+    // Hide explanation until answer is checked
+    document.getElementById('mathEvoExplanation').style.display = 'none';
 }
 
 // Number pad functionality
