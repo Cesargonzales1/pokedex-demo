@@ -924,18 +924,30 @@
                                 <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryU"></div>
                             </div>
 
-                            <!-- Primer número -->
-                            <div class="mathevo-number-row">
+                            <!-- Primer número (con soporte para tachado y número modificado) -->
+                            <div class="mathevo-number-row" id="mathEvoRow1">
                                 <div class="mathevo-cell mathevo-cell-empty"></div>
-                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1D"></div>
-                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1U"></div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1D">
+                                    <span class="digit-original" id="mathEvoNum1D-orig"></span>
+                                    <span class="digit-modified" id="mathEvoNum1D-mod"></span>
+                                </div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1U">
+                                    <span class="digit-original" id="mathEvoNum1U-orig"></span>
+                                    <span class="digit-modified" id="mathEvoNum1U-mod"></span>
+                                </div>
+                                <!-- Flecha de préstamo -->
+                                <div class="borrow-arrow" id="mathEvoBorrowArrow"></div>
                             </div>
 
                             <!-- Segundo número con operador -->
                             <div class="mathevo-number-row mathevo-operator-row">
                                 <div class="mathevo-cell mathevo-operator-cell" id="mathEvoOperator"></div>
-                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum2D"></div>
-                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum2U"></div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum2D">
+                                    <span class="digit-original" id="mathEvoNum2D-orig"></span>
+                                </div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum2U">
+                                    <span class="digit-original" id="mathEvoNum2U-orig"></span>
+                                </div>
                             </div>
 
                             <!-- Línea separadora -->

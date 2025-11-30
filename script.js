@@ -3596,6 +3596,33 @@ function checkNeedsBorrow(num1, num2) {
     };
 }
 
+// Reset digit display (remove crossed classes and modified numbers)
+function resetDigitDisplay() {
+    // Reset original digits
+    const origElements = ['mathEvoNum1D-orig', 'mathEvoNum1U-orig', 'mathEvoNum2D-orig', 'mathEvoNum2U-orig'];
+    origElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('crossed');
+            el.textContent = '';
+        }
+    });
+
+    // Reset modified digits
+    const modElements = ['mathEvoNum1D-mod', 'mathEvoNum1U-mod'];
+    modElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('active');
+            el.textContent = '';
+        }
+    });
+
+    // Hide borrow arrow
+    const arrow = document.getElementById('mathEvoBorrowArrow');
+    if (arrow) arrow.classList.remove('active');
+}
+
 // Show carry/borrow message and indicator in table
 function showCarryBorrowIndicator(type, details, num1, num2) {
     const carryRow = document.getElementById('mathEvoCarryRow');
@@ -3628,10 +3655,25 @@ function showCarryBorrowIndicator(type, details, num1, num2) {
             Escribimos <span class="highlight">${(details.units1 + details.units2) % 10}</span> y llevamos <span class="highlight">1</span> a las decenas.`;
 
     } else if (type === 'borrow' && details.needsBorrow) {
-        // Show borrow row
-        carryRow.style.display = 'grid';
-        carryD.textContent = '-1';
-        carryD.classList.add('active');
+        // Cross out original numbers and show modified ones
+        const num1UOrig = document.getElementById('mathEvoNum1U-orig');
+        const num1DOrig = document.getElementById('mathEvoNum1D-orig');
+        const num1UMod = document.getElementById('mathEvoNum1U-mod');
+        const num1DMod = document.getElementById('mathEvoNum1D-mod');
+        const borrowArrow = document.getElementById('mathEvoBorrowArrow');
+
+        // Cross out the units digit and show modified (units + 10)
+        num1UOrig.classList.add('crossed');
+        num1UMod.textContent = details.units1 + 10;
+        num1UMod.classList.add('active');
+
+        // Cross out the tens digit and show modified (tens - 1)
+        num1DOrig.classList.add('crossed');
+        num1DMod.textContent = details.tens1 - 1;
+        num1DMod.classList.add('active');
+
+        // Show borrow arrow
+        borrowArrow.classList.add('active');
 
         // Show message
         carryMessage.style.display = 'flex';
@@ -3692,11 +3734,14 @@ function generateProblem() {
     const d1 = getDigits(num1);
     const d2 = getDigits(num2);
 
+    // Reset all digit displays
+    resetDigitDisplay();
+
     // Display in school table format (D | U columns)
-    document.getElementById('mathEvoNum1D').textContent = d1.tens > 0 ? d1.tens : '';
-    document.getElementById('mathEvoNum1U').textContent = d1.units;
-    document.getElementById('mathEvoNum2D').textContent = d2.tens > 0 ? d2.tens : '';
-    document.getElementById('mathEvoNum2U').textContent = d2.units;
+    document.getElementById('mathEvoNum1D-orig').textContent = d1.tens > 0 ? d1.tens : '';
+    document.getElementById('mathEvoNum1U-orig').textContent = d1.units;
+    document.getElementById('mathEvoNum2D-orig').textContent = d2.tens > 0 ? d2.tens : '';
+    document.getElementById('mathEvoNum2U-orig').textContent = d2.units;
     document.getElementById('mathEvoOperator').textContent = operationSymbol;
 
     // Check for carry/borrow only for 2-digit numbers (difficulty 2)

@@ -4921,18 +4921,18 @@ header h1 {
     flex-direction: column;
     align-items: center;
     background: white;
-    border: 3px solid #374151;
-    border-radius: 15px;
-    padding: 10px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 2px solid #374151;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
-    max-width: 280px;
+    max-width: 180px;
 }
 
 /* Encabezado D y U */
 .mathevo-table-header {
     display: grid;
-    grid-template-columns: 60px 70px 70px;
+    grid-template-columns: 35px 45px 45px;
     width: 100%;
 }
 
@@ -4940,11 +4940,11 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 50px;
-    font-size: 1.8rem;
+    height: 32px;
+    font-size: 1.1rem;
     font-weight: bold;
     color: white;
-    border: 2px solid #374151;
+    border: 1px solid #374151;
 }
 
 .mathevo-header-empty {
@@ -4965,7 +4965,7 @@ header h1 {
 /* Filas de números */
 .mathevo-number-row {
     display: grid;
-    grid-template-columns: 60px 70px 70px;
+    grid-template-columns: 35px 45px 45px;
     width: 100%;
 }
 
@@ -4973,11 +4973,11 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 65px;
-    font-size: 2.5rem;
+    height: 42px;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #1f2937;
-    border: 2px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
     background: white;
 }
 
@@ -4988,10 +4988,70 @@ header h1 {
 
 .mathevo-digit-cell {
     background: #f9fafb;
+    position: relative;
+    flex-direction: column;
+}
+
+/* Número original (puede tacharse) */
+.digit-original {
+    display: inline;
+}
+
+.digit-original.crossed {
+    text-decoration: line-through;
+    text-decoration-color: #dc2626;
+    text-decoration-thickness: 2px;
+    color: #9ca3af;
+    font-size: 1.2rem;
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Número modificado (ej: 17 cuando se pide prestado) */
+.digit-modified {
+    display: none;
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.digit-modified.active {
+    display: inline;
+}
+
+/* Flecha curva de préstamo */
+.borrow-arrow {
+    display: none;
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 40px;
+    pointer-events: none;
+}
+
+.borrow-arrow.active {
+    display: block;
+}
+
+.borrow-arrow.active::before {
+    content: "↩";
+    font-size: 1.4rem;
+    color: #dc2626;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.mathevo-number-row {
+    position: relative;
 }
 
 .mathevo-operator-cell {
-    font-size: 2.5rem;
+    font-size: 1.6rem;
     color: #374151;
     border-color: transparent;
     background: transparent;
@@ -5000,16 +5060,16 @@ header h1 {
 /* Fila de "llevamos" */
 .mathevo-carry-row {
     display: grid;
-    grid-template-columns: 60px 70px 70px;
+    grid-template-columns: 35px 45px 45px;
     width: 100%;
 }
 
 .mathevo-carry-cell {
-    height: 40px;
-    font-size: 1.5rem;
+    height: 28px;
+    font-size: 1rem;
     color: #dc2626;
     background: #fef2f2;
-    border: 2px dashed #fca5a5;
+    border: 1px dashed #fca5a5;
     position: relative;
 }
 
@@ -5025,31 +5085,31 @@ header h1 {
 /* Línea separadora */
 .mathevo-separator-row {
     width: 100%;
-    padding: 5px 0;
+    padding: 3px 0;
 }
 
 .mathevo-separator {
-    height: 4px;
+    height: 3px;
     background: linear-gradient(90deg, transparent 0%, #374151 10%, #374151 90%, transparent 100%);
-    margin: 0 10px;
+    margin: 0 8px;
     border-radius: 2px;
 }
 
 /* Fila de respuesta */
 .mathevo-answer-row {
     display: grid;
-    grid-template-columns: 60px 70px 70px;
+    grid-template-columns: 35px 45px 45px;
     width: 100%;
 }
 
 .mathevo-answer-cell {
-    height: 65px;
+    height: 42px;
     width: 100%;
-    font-size: 2.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #1f2937;
     text-align: center;
-    border: 3px dashed #10b981;
+    border: 2px dashed #10b981;
     background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     outline: none;
     transition: all 0.3s;
@@ -5092,24 +5152,25 @@ header h1 {
 
 /* Mensaje de llevar/pedir prestado */
 .mathevo-carry-message {
-    margin-top: 20px;
-    padding: 15px 25px;
-    border-radius: 15px;
+    margin-top: 12px;
+    padding: 10px 15px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     animation: fadeInBounce 0.5s ease-out;
+    max-width: 280px;
 }
 
 .mathevo-carry-message.carrying {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border: 3px solid #f59e0b;
+    border: 2px solid #f59e0b;
     color: #92400e;
 }
 
 .mathevo-carry-message.borrowing {
     background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border: 3px solid #3b82f6;
+    border: 2px solid #3b82f6;
     color: #1e40af;
 }
 
@@ -5128,78 +5189,78 @@ header h1 {
 }
 
 .carry-icon {
-    font-size: 2rem;
+    font-size: 1.4rem;
     animation: bounce 1s infinite;
 }
 
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50% { transform: translateY(-5px); }
 }
 
 .carry-text {
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .carry-text .highlight {
     display: inline-block;
     background: rgba(255, 255, 255, 0.8);
-    padding: 2px 8px;
-    border-radius: 6px;
-    margin: 0 3px;
-    font-size: 1.2rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin: 0 2px;
+    font-size: 0.9rem;
 }
 
 /* ============================================
-   RESPONSIVE PARA MÓVILES
+   RESPONSIVE PARA MÓVILES - Más grande para tocar
    ============================================ */
 
 @media (max-width: 768px) {
     .mathevo-school-table {
-        max-width: 240px;
+        max-width: 200px;
         padding: 8px;
     }
 
     .mathevo-table-header {
-        grid-template-columns: 50px 60px 60px;
+        grid-template-columns: 40px 52px 52px;
     }
 
     .mathevo-header-cell {
-        height: 40px;
-        font-size: 1.4rem;
+        height: 36px;
+        font-size: 1.2rem;
     }
 
     .mathevo-number-row,
     .mathevo-carry-row,
     .mathevo-answer-row {
-        grid-template-columns: 50px 60px 60px;
+        grid-template-columns: 40px 52px 52px;
     }
 
     .mathevo-cell {
-        height: 55px;
-        font-size: 2rem;
+        height: 48px;
+        font-size: 1.8rem;
     }
 
     .mathevo-carry-cell {
-        height: 35px;
-        font-size: 1.2rem;
+        height: 30px;
+        font-size: 1.1rem;
     }
 
     .mathevo-answer-cell {
-        height: 55px;
-        font-size: 2rem;
+        height: 48px;
+        font-size: 1.8rem;
     }
 
     .mathevo-carry-message {
         flex-direction: column;
         text-align: center;
-        padding: 12px 15px;
+        padding: 10px 12px;
     }
 
     .carry-text {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 }
 
