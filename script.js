@@ -3551,6 +3551,61 @@ function updateStats() {
     document.getElementById('mathEvoEvolutions').textContent = currentStage;
 }
 
+// Success sound for celebration
+const successSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1sbHN2cX52eXl5eXt9e318fX1/gIF/gYGBgYKDg4OEhYWGhoaHh4iIiImJiYqKi4uMjIyNjY6Ojo+Pj5CQkZGRkpKSk5OTlJSUlZWVlpaWl5eXmJiYmZmZmpqampubm5ycnJ2dnZ6enp+fn6CgoKGhoaKioqOjo6SkpKWlpaampqenp6ioqKmpqaqqqqurq6ysrK2tra6urq+vr7CwsLGxsbKysrOzs7S0tLW1tba2tre3t7i4uLm5ubq6uru7u7y8vL29vb6+vr+/v8DAwMHBwcLCwsPDw8TExMXFxcbGxsfHx8jIyMnJycrKysvLy8zMzM3Nzc7Ozs/Pz9DQ0NHR0dLS0tPT09TU1NXV1dbW1tfX19jY2NnZ2dra2tvb29zc3N3d3d7e3t/f3+Dg4OHh4eLi4uPj4+Tk5OXl5ebm5ufn5+jo6Onp6erq6uvr6+zs7O3t7e7u7u/v7/Dw8PHx8fLy8vPz8/T09PX19fb29vf39/j4+Pn5+fr6+vv7+/z8/P39/f7+/v///w==');
+
+// Show celebration with Pokemon GIF, confetti and sound
+function showCelebration() {
+    const celebration = document.getElementById('mathEvoCelebration');
+    const sprite = document.getElementById('mathEvoCelebrationSprite');
+    const confettiContainer = document.getElementById('mathEvoCelebrationConfetti');
+
+    if (!celebration || !sprite || !confettiContainer) return;
+
+    // Get current Pokemon name for animated GIF
+    const currentPokemon = currentEvolutionChain[currentStage];
+    const pokemonName = currentPokemon.name.toLowerCase().replace(/[^a-z]/g, '');
+
+    // Use Pokemon Showdown animated sprites
+    const animatedSpriteUrl = `https://play.pokemonshowdown.com/sprites/ani/${pokemonName}.gif`;
+    // Fallback to static sprite if animated fails
+    sprite.onerror = () => {
+        sprite.src = currentPokemon.sprite;
+    };
+    sprite.src = animatedSpriteUrl;
+
+    // Clear previous confetti
+    confettiContainer.innerHTML = '';
+
+    // Create confetti pieces
+    const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#f38181', '#aa96da', '#fcbad3', '#a8d8ea'];
+    for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'celebration-confetti-piece';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confetti.style.width = (Math.random() * 8 + 6) + 'px';
+        confetti.style.height = (Math.random() * 8 + 6) + 'px';
+        confettiContainer.appendChild(confetti);
+    }
+
+    // Play success sound
+    successSound.currentTime = 0;
+    successSound.volume = 0.3;
+    successSound.play().catch(() => {}); // Ignore if autoplay blocked
+
+    // Show celebration
+    celebration.style.display = 'flex';
+
+    // Hide after 3 seconds
+    setTimeout(() => {
+        celebration.style.display = 'none';
+        confettiContainer.innerHTML = '';
+    }, 3000);
+}
+
 // Variables to store current problem details
 let currentNum1 = 0;
 let currentNum2 = 0;
@@ -3967,24 +4022,27 @@ function checkAnswer() {
         updateStats();
         updateProgressBar();
 
-        // Check if evolution is ready
+        // Show celebration with Pokemon GIF, confetti and sound
+        showCelebration();
+
+        // Check if evolution is ready (wait for celebration to finish - 3 seconds)
         if (progressToNextEvolution >= 5) {
             // Evolve!
             if (currentStage < 2) {
                 setTimeout(() => {
                     showEvolutionAnimation();
-                }, 800);
+                }, 3100);
             } else {
                 // Final stage reached - victory!
                 setTimeout(() => {
                     showVictory();
-                }, 800);
+                }, 3100);
             }
         } else {
-            // Next problem
+            // Next problem (wait for celebration to finish - 3 seconds)
             setTimeout(() => {
                 generateProblem();
-            }, 1000);
+            }, 3100);
         }
     } else {
         // Wrong answer
