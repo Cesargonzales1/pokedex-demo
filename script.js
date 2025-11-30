@@ -3404,26 +3404,42 @@ function resetMathEvoGame() {
     wrongAnswers = 0;
     currentProblem = null;
     currentAnswer = null;
+    currentNum1 = 0;
+    currentNum2 = 0;
+    currentOperation = '';
 
     // Reset UI selections
     document.querySelectorAll('.mathevo-pokemon-btn').forEach(btn => btn.classList.remove('selected'));
     document.querySelectorAll('.mathevo-difficulty-btn').forEach(btn => btn.classList.remove('selected'));
     document.querySelectorAll('.mathevo-operation-btn').forEach(btn => btn.classList.remove('selected'));
     document.getElementById('startMathEvo').disabled = true;
-    document.getElementById('mathEvoAnswer').value = '';
 
-    // Reset horizontal display elements
-    const num1El = document.getElementById('mathEvoNum1');
-    const num2El = document.getElementById('mathEvoNum2');
+    // Reset school table elements
+    const num1D = document.getElementById('mathEvoNum1D');
+    const num1U = document.getElementById('mathEvoNum1U');
+    const num2D = document.getElementById('mathEvoNum2D');
+    const num2U = document.getElementById('mathEvoNum2U');
     const operatorEl = document.getElementById('mathEvoOperator');
-    const carryBorrowEl = document.getElementById('mathEvoCarryBorrow');
-    const explanationEl = document.getElementById('mathEvoExplanation');
+    const answerD = document.getElementById('mathEvoAnswerD');
+    const answerU = document.getElementById('mathEvoAnswerU');
+    const carryRow = document.getElementById('mathEvoCarryRow');
+    const carryMessage = document.getElementById('mathEvoCarryMessage');
 
-    if (num1El) num1El.textContent = '';
-    if (num2El) num2El.textContent = '';
+    if (num1D) num1D.textContent = '';
+    if (num1U) num1U.textContent = '';
+    if (num2D) num2D.textContent = '';
+    if (num2U) num2U.textContent = '';
     if (operatorEl) operatorEl.textContent = '';
-    if (carryBorrowEl) carryBorrowEl.style.display = 'none';
-    if (explanationEl) explanationEl.style.display = 'none';
+    if (answerD) {
+        answerD.value = '';
+        answerD.classList.remove('correct', 'wrong');
+    }
+    if (answerU) {
+        answerU.value = '';
+        answerU.classList.remove('correct', 'wrong');
+    }
+    if (carryRow) carryRow.style.display = 'none';
+    if (carryMessage) carryMessage.style.display = 'none';
 }
 
 // Pokemon selection
@@ -3535,76 +3551,96 @@ function updateStats() {
     document.getElementById('mathEvoEvolutions').textContent = currentStage;
 }
 
+// Variables to store current problem details
+let currentNum1 = 0;
+let currentNum2 = 0;
+let currentOperation = '';
+
+// Helper function to get digits
+function getDigits(num) {
+    const units = num % 10;
+    const tens = Math.floor(num / 10) % 10;
+    return { tens, units };
+}
+
 // Helper function to check if addition needs carrying
 function checkNeedsCarry(num1, num2) {
-    const units1 = num1 % 10;
-    const units2 = num2 % 10;
-    const tens1 = Math.floor(num1 / 10) % 10;
-    const tens2 = Math.floor(num2 / 10) % 10;
+    const d1 = getDigits(num1);
+    const d2 = getDigits(num2);
 
-    const unitsCarry = units1 + units2 >= 10;
-    const tensCarry = tens1 + tens2 + (unitsCarry ? 1 : 0) >= 10;
+    const unitsCarry = d1.units + d2.units >= 10;
+    const tensCarry = d1.tens + d2.tens + (unitsCarry ? 1 : 0) >= 10;
 
     return {
-        needsCarry: unitsCarry || tensCarry,
+        needsCarry: unitsCarry,
         unitsCarry: unitsCarry,
         tensCarry: tensCarry,
-        units1, units2, tens1, tens2
+        ...d1,
+        units1: d1.units, tens1: d1.tens,
+        units2: d2.units, tens2: d2.tens
     };
 }
 
 // Helper function to check if subtraction needs borrowing
 function checkNeedsBorrow(num1, num2) {
-    const units1 = num1 % 10;
-    const units2 = num2 % 10;
-    const tens1 = Math.floor(num1 / 10) % 10;
-    const tens2 = Math.floor(num2 / 10) % 10;
+    const d1 = getDigits(num1);
+    const d2 = getDigits(num2);
 
-    const unitsBorrow = units1 < units2;
-    const tensBorrow = (tens1 - (unitsBorrow ? 1 : 0)) < tens2;
+    const unitsBorrow = d1.units < d2.units;
 
     return {
-        needsBorrow: unitsBorrow || tensBorrow,
+        needsBorrow: unitsBorrow,
         unitsBorrow: unitsBorrow,
-        tensBorrow: tensBorrow,
-        units1, units2, tens1, tens2
+        units1: d1.units, tens1: d1.tens,
+        units2: d2.units, tens2: d2.tens
     };
 }
 
-// Show carry/borrow indicator
+// Show carry/borrow message and indicator in table
 function showCarryBorrowIndicator(type, details, num1, num2) {
-    const carryBorrowDiv = document.getElementById('mathEvoCarryBorrow');
-    const indicator = carryBorrowDiv.querySelector('.carry-borrow-indicator');
-    const icon = document.getElementById('mathEvoCarryBorrowIcon');
-    const text = document.getElementById('mathEvoCarryBorrowText');
+    const carryRow = document.getElementById('mathEvoCarryRow');
+    const carryD = document.getElementById('mathEvoCarryD');
+    const carryU = document.getElementById('mathEvoCarryU');
+    const carryMessage = document.getElementById('mathEvoCarryMessage');
+    const carryIcon = document.getElementById('mathEvoCarryIcon');
+    const carryText = document.getElementById('mathEvoCarryText');
 
-    indicator.classList.remove('carrying', 'borrowing');
+    // Reset
+    carryRow.style.display = 'none';
+    carryMessage.style.display = 'none';
+    carryMessage.classList.remove('carrying', 'borrowing');
+    carryD.textContent = '';
+    carryU.textContent = '';
+    carryD.classList.remove('active');
 
     if (type === 'carry' && details.needsCarry) {
-        indicator.classList.add('carrying');
-        icon.textContent = '📝';
+        // Show carry row with "1" in decenas
+        carryRow.style.display = 'grid';
+        carryD.textContent = '1';
+        carryD.classList.add('active');
 
-        let message = '¡Vamos a <strong>llevar</strong>! ';
-        if (details.unitsCarry) {
-            message += `<br><span class="highlight">${details.units1} + ${details.units2} = ${details.units1 + details.units2}</span> `;
-            message += `<br>Como es mayor a 9, llevamos <span class="highlight">1</span> a las decenas.`;
-        }
-        text.innerHTML = message;
-        carryBorrowDiv.style.display = 'block';
+        // Show message
+        carryMessage.style.display = 'flex';
+        carryMessage.classList.add('carrying');
+        carryIcon.textContent = '💡';
+        carryText.innerHTML = `<strong>¡Llevamos 1!</strong><br>
+            <span class="highlight">${details.units1} + ${details.units2} = ${details.units1 + details.units2}</span><br>
+            Escribimos <span class="highlight">${(details.units1 + details.units2) % 10}</span> y llevamos <span class="highlight">1</span> a las decenas.`;
+
     } else if (type === 'borrow' && details.needsBorrow) {
-        indicator.classList.add('borrowing');
-        icon.textContent = '🔄';
+        // Show borrow row
+        carryRow.style.display = 'grid';
+        carryD.textContent = '-1';
+        carryD.classList.add('active');
 
-        let message = '¡Vamos a <strong>pedir prestado</strong>! ';
-        if (details.unitsBorrow) {
-            message += `<br><span class="highlight">${details.units1}</span> es menor que <span class="highlight">${details.units2}</span>`;
-            message += `<br>Pedimos <span class="highlight">1</span> decena prestada (10 unidades).`;
-            message += `<br>Ahora tenemos: <span class="highlight">${details.units1 + 10} - ${details.units2} = ${details.units1 + 10 - details.units2}</span>`;
-        }
-        text.innerHTML = message;
-        carryBorrowDiv.style.display = 'block';
-    } else {
-        carryBorrowDiv.style.display = 'none';
+        // Show message
+        carryMessage.style.display = 'flex';
+        carryMessage.classList.add('borrowing');
+        carryIcon.textContent = '💡';
+        carryText.innerHTML = `<strong>¡Pedimos prestado!</strong><br>
+            <span class="highlight">${details.units1}</span> es menor que <span class="highlight">${details.units2}</span><br>
+            Pedimos 1 decena: <span class="highlight">${details.units1} + 10 = ${details.units1 + 10}</span><br>
+            Ahora: <span class="highlight">${details.units1 + 10} - ${details.units2} = ${details.units1 + 10 - details.units2}</span>`;
     }
 }
 
@@ -3647,10 +3683,21 @@ function generateProblem() {
         }
     }
 
-    // Display problem in horizontal format
-    document.getElementById('mathEvoNum1').textContent = num1;
+    // Store current problem
+    currentNum1 = num1;
+    currentNum2 = num2;
+    currentOperation = operation;
+
+    // Get digits for display
+    const d1 = getDigits(num1);
+    const d2 = getDigits(num2);
+
+    // Display in school table format (D | U columns)
+    document.getElementById('mathEvoNum1D').textContent = d1.tens > 0 ? d1.tens : '';
+    document.getElementById('mathEvoNum1U').textContent = d1.units;
+    document.getElementById('mathEvoNum2D').textContent = d2.tens > 0 ? d2.tens : '';
+    document.getElementById('mathEvoNum2U').textContent = d2.units;
     document.getElementById('mathEvoOperator').textContent = operationSymbol;
-    document.getElementById('mathEvoNum2').textContent = num2;
 
     // Check for carry/borrow only for 2-digit numbers (difficulty 2)
     if (selectedDifficulty === 2) {
@@ -3662,66 +3709,132 @@ function generateProblem() {
             showCarryBorrowIndicator('borrow', borrowDetails, num1, num2);
         }
     } else {
-        // Hide indicator for 1-digit problems
-        document.getElementById('mathEvoCarryBorrow').style.display = 'none';
+        // Hide indicators for 1-digit problems
+        document.getElementById('mathEvoCarryRow').style.display = 'none';
+        document.getElementById('mathEvoCarryMessage').style.display = 'none';
     }
 
-    // Clear answer input and remove classes
-    const answerInput = document.getElementById('mathEvoAnswer');
-    answerInput.value = '';
-    answerInput.classList.remove('correct', 'wrong');
-    answerInput.disabled = false;
-    answerInput.focus();
+    // Clear answer inputs and remove classes
+    const answerD = document.getElementById('mathEvoAnswerD');
+    const answerU = document.getElementById('mathEvoAnswerU');
+    answerD.value = '';
+    answerU.value = '';
+    answerD.classList.remove('correct', 'wrong');
+    answerU.classList.remove('correct', 'wrong');
+    answerD.disabled = false;
+    answerU.disabled = false;
 
-    // Hide explanation until answer is checked
-    document.getElementById('mathEvoExplanation').style.display = 'none';
+    // Focus on units first (rightmost column - like in school!)
+    answerU.focus();
 }
+
+// Track which answer cell is active
+let activeAnswerCell = 'U'; // Start with units
 
 // Number pad functionality
 document.querySelectorAll('.mathevo-num-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        const answerInput = document.getElementById('mathEvoAnswer');
+        const answerD = document.getElementById('mathEvoAnswerD');
+        const answerU = document.getElementById('mathEvoAnswerU');
+
+        // Determine which input to use based on focus or activeAnswerCell
+        let targetInput = document.activeElement;
+        if (targetInput !== answerD && targetInput !== answerU) {
+            targetInput = activeAnswerCell === 'D' ? answerD : answerU;
+        }
 
         if (btn.dataset.num) {
-            // Add number to input
-            answerInput.value += btn.dataset.num;
+            // Add number to input (only allow 1 digit per cell)
+            if (targetInput.value.length < 1) {
+                targetInput.value = btn.dataset.num;
+
+                // Auto-move to next cell
+                if (targetInput === answerU) {
+                    answerD.focus();
+                    activeAnswerCell = 'D';
+                }
+            }
         } else if (btn.dataset.action === 'clear') {
-            // Clear input
-            if (answerInput.value.length > 0) {
-                answerInput.value = answerInput.value.slice(0, -1);
+            // Clear current input
+            if (targetInput.value.length > 0) {
+                targetInput.value = '';
+            } else {
+                // If current is empty, go back to previous cell
+                if (targetInput === answerD) {
+                    answerU.value = '';
+                    answerU.focus();
+                    activeAnswerCell = 'U';
+                }
             }
         } else if (btn.dataset.action === 'negative') {
-            // Toggle negative
-            if (answerInput.value.startsWith('-')) {
-                answerInput.value = answerInput.value.substring(1);
-            } else if (answerInput.value.length > 0) {
-                answerInput.value = '-' + answerInput.value;
-            }
+            // Not needed for school-style table, but keep for compatibility
         }
     });
 });
 
+// Track focus changes
+document.getElementById('mathEvoAnswerU').addEventListener('focus', () => {
+    activeAnswerCell = 'U';
+});
+document.getElementById('mathEvoAnswerD').addEventListener('focus', () => {
+    activeAnswerCell = 'D';
+});
+
 // Submit answer
 document.getElementById('mathEvoSubmit').addEventListener('click', checkAnswer);
-document.getElementById('mathEvoAnswer').addEventListener('keypress', (e) => {
+
+// Add event listeners for both answer inputs
+document.getElementById('mathEvoAnswerU').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        checkAnswer();
+    }
+});
+document.getElementById('mathEvoAnswerD').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         checkAnswer();
     }
 });
 
-function checkAnswer() {
-    const answerInput = document.getElementById('mathEvoAnswer');
-    const userAnswer = parseInt(answerInput.value);
+// Auto-focus: when user types in U, move to D if needed
+document.getElementById('mathEvoAnswerU').addEventListener('input', (e) => {
+    const val = e.target.value;
+    if (val.length >= 1) {
+        // Move focus to decenas
+        document.getElementById('mathEvoAnswerD').focus();
+    }
+});
 
-    if (isNaN(userAnswer)) {
+function checkAnswer() {
+    const answerD = document.getElementById('mathEvoAnswerD');
+    const answerU = document.getElementById('mathEvoAnswerU');
+
+    // Get the user's answer from both columns
+    const tensValue = answerD.value.trim();
+    const unitsValue = answerU.value.trim();
+
+    // At least units must have a value
+    if (unitsValue === '') {
+        answerU.focus();
         return;
     }
 
-    answerInput.disabled = true;
+    // Build the user answer
+    const tens = tensValue === '' ? 0 : parseInt(tensValue);
+    const units = parseInt(unitsValue);
+
+    if (isNaN(units) || (tensValue !== '' && isNaN(tens))) {
+        return;
+    }
+
+    const userAnswer = (tens * 10) + units;
+
+    answerD.disabled = true;
+    answerU.disabled = true;
 
     if (userAnswer === currentAnswer) {
         // Correct answer
-        answerInput.classList.add('correct');
+        answerD.classList.add('correct');
+        answerU.classList.add('correct');
         correctAnswers++;
         progressToNextEvolution++;
 
@@ -3749,14 +3862,17 @@ function checkAnswer() {
         }
     } else {
         // Wrong answer
-        answerInput.classList.add('wrong');
+        answerD.classList.add('wrong');
+        answerU.classList.add('wrong');
         wrongAnswers++;
 
         updateStats();
 
         // Show correct answer briefly, then new problem
+        const correctDigits = getDigits(currentAnswer);
         setTimeout(() => {
-            answerInput.value = currentAnswer;
+            answerD.value = correctDigits.tens > 0 ? correctDigits.tens : '';
+            answerU.value = correctDigits.units;
         }, 500);
 
         setTimeout(() => {

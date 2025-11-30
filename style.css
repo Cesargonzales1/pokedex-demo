@@ -4913,78 +4913,171 @@ header h1 {
 }
 
 /* ============================================
-   ESTILO HORIZONTAL PARA NIÑOS
+   TABLA ESCOLAR DE MATEMÁTICAS (D - U)
    ============================================ */
 
-.mathevo-problem-horizontal {
+.mathevo-school-table {
+    display: flex;
     flex-direction: column;
-    gap: 15px;
+    align-items: center;
+    background: white;
+    border: 3px solid #374151;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin: 0 auto;
+    max-width: 280px;
 }
 
-.mathevo-problem-container {
+/* Encabezado D y U */
+.mathevo-table-header {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-header-cell {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
+    height: 50px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    border: 2px solid #374151;
 }
 
-.mathevo-number {
-    font-size: 4rem;
+.mathevo-header-empty {
+    background: white;
+    border-color: transparent;
+}
+
+.mathevo-header-d {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border-radius: 8px 0 0 0;
+}
+
+.mathevo-header-u {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 0 8px 0 0;
+}
+
+/* Filas de números */
+.mathevo-number-row {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65px;
+    font-size: 2.5rem;
     font-weight: bold;
     color: #1f2937;
-    background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
-    padding: 15px 25px;
-    border-radius: 15px;
-    border: 3px solid #667eea;
-    min-width: 80px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+    border: 2px solid #e5e7eb;
+    background: white;
 }
 
-.mathevo-operator {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #667eea;
-    padding: 10px;
+.mathevo-cell-empty {
+    border-color: transparent;
+    background: transparent;
 }
 
-.mathevo-equals {
-    font-size: 4rem;
-    font-weight: bold;
-    color: #667eea;
-    padding: 10px;
+.mathevo-digit-cell {
+    background: #f9fafb;
 }
 
-.mathevo-answer-input-inline {
-    font-size: 3.5rem;
+.mathevo-operator-cell {
+    font-size: 2.5rem;
+    color: #374151;
+    border-color: transparent;
+    background: transparent;
+}
+
+/* Fila de "llevamos" */
+.mathevo-carry-row {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-carry-cell {
+    height: 40px;
+    font-size: 1.5rem;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 2px dashed #fca5a5;
+    position: relative;
+}
+
+.mathevo-carry-cell.active {
+    animation: carryPulse 1s ease-in-out infinite;
+}
+
+@keyframes carryPulse {
+    0%, 100% { background: #fef2f2; }
+    50% { background: #fecaca; }
+}
+
+/* Línea separadora */
+.mathevo-separator-row {
+    width: 100%;
+    padding: 5px 0;
+}
+
+.mathevo-separator {
+    height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #374151 10%, #374151 90%, transparent 100%);
+    margin: 0 10px;
+    border-radius: 2px;
+}
+
+/* Fila de respuesta */
+.mathevo-answer-row {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-answer-cell {
+    height: 65px;
+    width: 100%;
+    font-size: 2.5rem;
     font-weight: bold;
     color: #1f2937;
     text-align: center;
-    padding: 15px 20px;
-    border: 4px dashed #10b981;
-    border-radius: 15px;
-    width: 150px;
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    transition: all 0.3s;
-}
-
-.mathevo-answer-input-inline:focus {
+    border: 3px dashed #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     outline: none;
+    transition: all 0.3s;
+    -moz-appearance: textfield;
+}
+
+.mathevo-answer-cell::-webkit-outer-spin-button,
+.mathevo-answer-cell::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.mathevo-answer-cell:focus {
     border-style: solid;
     border-color: #10b981;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
     transform: scale(1.05);
 }
 
-.mathevo-answer-input-inline.correct {
+.mathevo-answer-cell.correct {
     background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
     border-color: #22c55e;
     border-style: solid;
     animation: correctPulse 0.6s ease-out;
 }
 
-.mathevo-answer-input-inline.wrong {
+.mathevo-answer-cell.wrong {
     background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
     border-color: #ef4444;
     border-style: solid;
@@ -4993,17 +5086,31 @@ header h1 {
 
 @keyframes correctPulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
-/* ============================================
-   INDICADOR DE LLEVAR / PEDIR PRESTADO
-   ============================================ */
-
-.mathevo-carry-borrow {
-    margin-bottom: 20px;
+/* Mensaje de llevar/pedir prestado */
+.mathevo-carry-message {
+    margin-top: 20px;
+    padding: 15px 25px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
     animation: fadeInBounce 0.5s ease-out;
+}
+
+.mathevo-carry-message.carrying {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 3px solid #f59e0b;
+    color: #92400e;
+}
+
+.mathevo-carry-message.borrowing {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 3px solid #3b82f6;
+    color: #1e40af;
 }
 
 @keyframes fadeInBounce {
@@ -5020,162 +5127,29 @@ header h1 {
     }
 }
 
-.carry-borrow-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    padding: 20px 30px;
-    border-radius: 20px;
-    font-size: 1.4rem;
-    font-weight: bold;
-}
-
-/* Estilo para LLEVAR (suma) */
-.carry-borrow-indicator.carrying {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border: 3px solid #f59e0b;
-    color: #92400e;
-    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);
-}
-
-.carry-borrow-indicator.carrying .carry-borrow-icon {
-    font-size: 2.5rem;
-    animation: bounce 1s infinite;
-}
-
-/* Estilo para PEDIR PRESTADO (resta) */
-.carry-borrow-indicator.borrowing {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border: 3px solid #3b82f6;
-    color: #1e40af;
-    box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
-}
-
-.carry-borrow-indicator.borrowing .carry-borrow-icon {
-    font-size: 2.5rem;
+.carry-icon {
+    font-size: 2rem;
     animation: bounce 1s infinite;
 }
 
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
 }
 
-.carry-borrow-text {
-    line-height: 1.5;
+.carry-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
-.carry-borrow-text .highlight {
+.carry-text .highlight {
     display: inline-block;
     background: rgba(255, 255, 255, 0.8);
-    padding: 3px 10px;
-    border-radius: 8px;
-    margin: 0 5px;
-    font-size: 1.6rem;
-}
-
-/* ============================================
-   EXPLICACIÓN VISUAL PARA NIÑOS
-   ============================================ */
-
-.mathevo-explanation {
-    margin-top: 15px;
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.explanation-box {
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    border: 3px solid #22c55e;
-    border-radius: 20px;
-    padding: 20px;
-    text-align: center;
-}
-
-.explanation-text {
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin: 0 3px;
     font-size: 1.2rem;
-    color: #166534;
-    margin: 0 0 15px 0;
-    font-weight: 500;
-}
-
-.visual-aid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.visual-digit-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.visual-digit-label {
-    font-size: 0.9rem;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.visual-digit-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background: white;
-    border: 3px solid #667eea;
-    border-radius: 12px;
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #1f2937;
-}
-
-.visual-digit-box.carry {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border-color: #f59e0b;
-    color: #92400e;
-    position: relative;
-}
-
-.visual-digit-box.carry::after {
-    content: "+1";
-    position: absolute;
-    top: -25px;
-    font-size: 1rem;
-    color: #f59e0b;
-    font-weight: bold;
-}
-
-.visual-digit-box.borrow {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-color: #3b82f6;
-    color: #1e40af;
-    position: relative;
-}
-
-.visual-digit-box.borrow::after {
-    content: "-1";
-    position: absolute;
-    top: -25px;
-    font-size: 1rem;
-    color: #3b82f6;
-    font-weight: bold;
-}
-
-.visual-operator {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #667eea;
-    padding: 0 10px;
 }
 
 /* ============================================
@@ -5183,37 +5157,49 @@ header h1 {
    ============================================ */
 
 @media (max-width: 768px) {
-    .mathevo-number {
-        font-size: 2.5rem;
-        padding: 10px 15px;
-        min-width: 60px;
+    .mathevo-school-table {
+        max-width: 240px;
+        padding: 8px;
     }
 
-    .mathevo-operator,
-    .mathevo-equals {
-        font-size: 2.5rem;
+    .mathevo-table-header {
+        grid-template-columns: 50px 60px 60px;
     }
 
-    .mathevo-answer-input-inline {
-        font-size: 2.2rem;
-        width: 100px;
-        padding: 10px 15px;
-    }
-
-    .carry-borrow-indicator {
-        flex-direction: column;
-        padding: 15px 20px;
-        font-size: 1.1rem;
-    }
-
-    .carry-borrow-text .highlight {
-        font-size: 1.3rem;
-    }
-
-    .visual-digit-box {
-        width: 40px;
+    .mathevo-header-cell {
         height: 40px;
         font-size: 1.4rem;
+    }
+
+    .mathevo-number-row,
+    .mathevo-carry-row,
+    .mathevo-answer-row {
+        grid-template-columns: 50px 60px 60px;
+    }
+
+    .mathevo-cell {
+        height: 55px;
+        font-size: 2rem;
+    }
+
+    .mathevo-carry-cell {
+        height: 35px;
+        font-size: 1.2rem;
+    }
+
+    .mathevo-answer-cell {
+        height: 55px;
+        font-size: 2rem;
+    }
+
+    .mathevo-carry-message {
+        flex-direction: column;
+        text-align: center;
+        padding: 12px 15px;
+    }
+
+    .carry-text {
+        font-size: 1rem;
     }
 }
 
