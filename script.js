@@ -4045,23 +4045,23 @@ function checkAnswer() {
             }, 3100);
         }
     } else {
-        // Wrong answer
+        // Wrong answer - let them try again
         answerD.classList.add('wrong');
         answerU.classList.add('wrong');
         wrongAnswers++;
 
         updateStats();
 
-        // Show correct answer briefly, then new problem
-        const correctDigits = getDigits(currentAnswer);
+        // Shake animation and clear after a moment, then let them try again
         setTimeout(() => {
-            answerD.value = correctDigits.tens > 0 ? correctDigits.tens : '';
-            answerU.value = correctDigits.units;
-        }, 500);
-
-        setTimeout(() => {
-            generateProblem();
-        }, 2000);
+            answerD.classList.remove('wrong');
+            answerU.classList.remove('wrong');
+            answerD.value = '';
+            answerU.value = '';
+            answerD.disabled = false;
+            answerU.disabled = false;
+            answerU.focus();
+        }, 800);
     }
 }
 
