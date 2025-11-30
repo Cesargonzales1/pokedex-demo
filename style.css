@@ -4912,6 +4912,297 @@ header h1 {
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
 }
 
+/* ============================================
+   TABLA ESCOLAR DE MATEMÁTICAS (D - U)
+   ============================================ */
+
+.mathevo-school-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border: 3px solid #374151;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin: 0 auto;
+    max-width: 280px;
+}
+
+/* Encabezado D y U */
+.mathevo-table-header {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-header-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    border: 2px solid #374151;
+}
+
+.mathevo-header-empty {
+    background: white;
+    border-color: transparent;
+}
+
+.mathevo-header-d {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border-radius: 8px 0 0 0;
+}
+
+.mathevo-header-u {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 0 8px 0 0;
+}
+
+/* Filas de números */
+.mathevo-number-row {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1f2937;
+    border: 2px solid #e5e7eb;
+    background: white;
+}
+
+.mathevo-cell-empty {
+    border-color: transparent;
+    background: transparent;
+}
+
+.mathevo-digit-cell {
+    background: #f9fafb;
+}
+
+.mathevo-operator-cell {
+    font-size: 2.5rem;
+    color: #374151;
+    border-color: transparent;
+    background: transparent;
+}
+
+/* Fila de "llevamos" */
+.mathevo-carry-row {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-carry-cell {
+    height: 40px;
+    font-size: 1.5rem;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 2px dashed #fca5a5;
+    position: relative;
+}
+
+.mathevo-carry-cell.active {
+    animation: carryPulse 1s ease-in-out infinite;
+}
+
+@keyframes carryPulse {
+    0%, 100% { background: #fef2f2; }
+    50% { background: #fecaca; }
+}
+
+/* Línea separadora */
+.mathevo-separator-row {
+    width: 100%;
+    padding: 5px 0;
+}
+
+.mathevo-separator {
+    height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #374151 10%, #374151 90%, transparent 100%);
+    margin: 0 10px;
+    border-radius: 2px;
+}
+
+/* Fila de respuesta */
+.mathevo-answer-row {
+    display: grid;
+    grid-template-columns: 60px 70px 70px;
+    width: 100%;
+}
+
+.mathevo-answer-cell {
+    height: 65px;
+    width: 100%;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1f2937;
+    text-align: center;
+    border: 3px dashed #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    outline: none;
+    transition: all 0.3s;
+    -moz-appearance: textfield;
+}
+
+.mathevo-answer-cell::-webkit-outer-spin-button,
+.mathevo-answer-cell::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.mathevo-answer-cell:focus {
+    border-style: solid;
+    border-color: #10b981;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    transform: scale(1.05);
+}
+
+.mathevo-answer-cell.correct {
+    background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+    border-color: #22c55e;
+    border-style: solid;
+    animation: correctPulse 0.6s ease-out;
+}
+
+.mathevo-answer-cell.wrong {
+    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+    border-color: #ef4444;
+    border-style: solid;
+    animation: shake 0.5s;
+}
+
+@keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Mensaje de llevar/pedir prestado */
+.mathevo-carry-message {
+    margin-top: 20px;
+    padding: 15px 25px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    animation: fadeInBounce 0.5s ease-out;
+}
+
+.mathevo-carry-message.carrying {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 3px solid #f59e0b;
+    color: #92400e;
+}
+
+.mathevo-carry-message.borrowing {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 3px solid #3b82f6;
+    color: #1e40af;
+}
+
+@keyframes fadeInBounce {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    60% {
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carry-icon {
+    font-size: 2rem;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.carry-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.carry-text .highlight {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin: 0 3px;
+    font-size: 1.2rem;
+}
+
+/* ============================================
+   RESPONSIVE PARA MÓVILES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .mathevo-school-table {
+        max-width: 240px;
+        padding: 8px;
+    }
+
+    .mathevo-table-header {
+        grid-template-columns: 50px 60px 60px;
+    }
+
+    .mathevo-header-cell {
+        height: 40px;
+        font-size: 1.4rem;
+    }
+
+    .mathevo-number-row,
+    .mathevo-carry-row,
+    .mathevo-answer-row {
+        grid-template-columns: 50px 60px 60px;
+    }
+
+    .mathevo-cell {
+        height: 55px;
+        font-size: 2rem;
+    }
+
+    .mathevo-carry-cell {
+        height: 35px;
+        font-size: 1.2rem;
+    }
+
+    .mathevo-answer-cell {
+        height: 55px;
+        font-size: 2rem;
+    }
+
+    .mathevo-carry-message {
+        flex-direction: column;
+        text-align: center;
+        padding: 12px 15px;
+    }
+
+    .carry-text {
+        font-size: 1rem;
+    }
+}
+
 .mathevo-numpad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

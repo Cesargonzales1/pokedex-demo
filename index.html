@@ -905,12 +905,61 @@
                     </div>
                 </div>
 
-                <!-- Problem Display -->
+                <!-- Problem Display - Vertical Table Format (School Style) -->
                 <div class="mathevo-problem-area">
-                    <div id="mathEvoProblem" class="mathevo-problem"></div>
+                    <div id="mathEvoProblem" class="mathevo-problem">
+                        <!-- Tabla de operación estilo escolar -->
+                        <div class="mathevo-school-table">
+                            <!-- Encabezado D U -->
+                            <div class="mathevo-table-header">
+                                <div class="mathevo-header-cell mathevo-header-empty"></div>
+                                <div class="mathevo-header-cell mathevo-header-d">D</div>
+                                <div class="mathevo-header-cell mathevo-header-u">U</div>
+                            </div>
+
+                            <!-- Fila para mostrar "llevamos" arriba -->
+                            <div class="mathevo-carry-row" id="mathEvoCarryRow" style="display: none;">
+                                <div class="mathevo-cell mathevo-cell-empty"></div>
+                                <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryD"></div>
+                                <div class="mathevo-cell mathevo-carry-cell" id="mathEvoCarryU"></div>
+                            </div>
+
+                            <!-- Primer número -->
+                            <div class="mathevo-number-row">
+                                <div class="mathevo-cell mathevo-cell-empty"></div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1D"></div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum1U"></div>
+                            </div>
+
+                            <!-- Segundo número con operador -->
+                            <div class="mathevo-number-row mathevo-operator-row">
+                                <div class="mathevo-cell mathevo-operator-cell" id="mathEvoOperator"></div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum2D"></div>
+                                <div class="mathevo-cell mathevo-digit-cell" id="mathEvoNum2U"></div>
+                            </div>
+
+                            <!-- Línea separadora -->
+                            <div class="mathevo-separator-row">
+                                <div class="mathevo-separator"></div>
+                            </div>
+
+                            <!-- Fila de respuesta -->
+                            <div class="mathevo-answer-row">
+                                <div class="mathevo-cell mathevo-cell-empty"></div>
+                                <input type="number" id="mathEvoAnswerD" class="mathevo-answer-cell" placeholder="?" maxlength="1">
+                                <input type="number" id="mathEvoAnswerU" class="mathevo-answer-cell" placeholder="?" maxlength="1">
+                            </div>
+                        </div>
+
+                        <!-- Mensaje de ayuda para llevar/pedir prestado -->
+                        <div id="mathEvoCarryMessage" class="mathevo-carry-message" style="display: none;">
+                            <span id="mathEvoCarryIcon" class="carry-icon">💡</span>
+                            <span id="mathEvoCarryText" class="carry-text"></span>
+                        </div>
+                    </div>
+
                     <div class="mathevo-answer-section">
-                        <input type="number" id="mathEvoAnswer" class="mathevo-answer-input" placeholder="?" disabled>
-                        <button id="mathEvoSubmit" class="mathevo-submit-btn">✓</button>
+                        <button id="mathEvoSubmit" class="mathevo-submit-btn">✓ Comprobar</button>
                     </div>
                 </div>
 
