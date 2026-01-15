@@ -50,7 +50,58 @@ const GIGAMAX_POKEMON = [
     892  // Urshifu
 ];
 
+// Pokémon con Mega Evoluciones
+const MEGA_POKEMON = [
+    { id: 3, forms: ['venusaur-mega'] },
+    { id: 6, forms: ['charizard-mega-x', 'charizard-mega-y'] },
+    { id: 9, forms: ['blastoise-mega'] },
+    { id: 15, forms: ['beedrill-mega'] },
+    { id: 18, forms: ['pidgeot-mega'] },
+    { id: 65, forms: ['alakazam-mega'] },
+    { id: 80, forms: ['slowbro-mega'] },
+    { id: 94, forms: ['gengar-mega'] },
+    { id: 115, forms: ['kangaskhan-mega'] },
+    { id: 127, forms: ['pinsir-mega'] },
+    { id: 130, forms: ['gyarados-mega'] },
+    { id: 142, forms: ['aerodactyl-mega'] },
+    { id: 150, forms: ['mewtwo-mega-x', 'mewtwo-mega-y'] },
+    { id: 181, forms: ['ampharos-mega'] },
+    { id: 208, forms: ['steelix-mega'] },
+    { id: 212, forms: ['scizor-mega'] },
+    { id: 214, forms: ['heracross-mega'] },
+    { id: 229, forms: ['houndoom-mega'] },
+    { id: 248, forms: ['tyranitar-mega'] },
+    { id: 254, forms: ['sceptile-mega'] },
+    { id: 257, forms: ['blaziken-mega'] },
+    { id: 260, forms: ['swampert-mega'] },
+    { id: 282, forms: ['gardevoir-mega'] },
+    { id: 302, forms: ['sableye-mega'] },
+    { id: 303, forms: ['mawile-mega'] },
+    { id: 306, forms: ['aggron-mega'] },
+    { id: 308, forms: ['medicham-mega'] },
+    { id: 310, forms: ['manectric-mega'] },
+    { id: 319, forms: ['sharpedo-mega'] },
+    { id: 323, forms: ['camerupt-mega'] },
+    { id: 334, forms: ['altaria-mega'] },
+    { id: 354, forms: ['banette-mega'] },
+    { id: 359, forms: ['absol-mega'] },
+    { id: 362, forms: ['glalie-mega'] },
+    { id: 373, forms: ['salamence-mega'] },
+    { id: 376, forms: ['metagross-mega'] },
+    { id: 380, forms: ['latias-mega'] },
+    { id: 381, forms: ['latios-mega'] },
+    { id: 384, forms: ['rayquaza-mega'] },
+    { id: 428, forms: ['lopunny-mega'] },
+    { id: 445, forms: ['garchomp-mega'] },
+    { id: 448, forms: ['lucario-mega'] },
+    { id: 460, forms: ['abomasnow-mega'] },
+    { id: 475, forms: ['gallade-mega'] },
+    { id: 531, forms: ['audino-mega'] },
+    { id: 719, forms: ['diancie-mega'] }
+];
+
 let isGigamaxMode = false;
+let isMegaMode = false;
 
 // Elementos del DOM
 const pokemonContainer = document.getElementById('pokemonContainer');
@@ -60,6 +111,7 @@ const searchBtn = document.getElementById('searchBtn');
 const typeFilter = document.getElementById('typeFilter');
 const generationFilter = document.getElementById('generationFilter');
 const gigamaxBtn = document.getElementById('gigamaxBtn');
+const megaBtn = document.getElementById('megaBtn');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
@@ -101,6 +153,7 @@ function setupEventListeners() {
     typeFilter.addEventListener('change', handleTypeFilter);
     generationFilter.addEventListener('change', handleGenerationChange);
     gigamaxBtn.addEventListener('click', toggleGigamaxMode);
+    megaBtn.addEventListener('click', toggleMegaMode);
     prevBtn.addEventListener('click', () => changePage(-1));
     nextBtn.addEventListener('click', () => changePage(1));
     closeModal.addEventListener('click', () => modal.classList.remove('active'));
@@ -202,6 +255,9 @@ function handleGenerationChange() {
     isGigamaxMode = false;
     gigamaxBtn.classList.remove('active');
     gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
+    isMegaMode = false;
+    megaBtn.classList.remove('active');
+    megaBtn.textContent = '🔥 Ver Pokémon Mega 🔥';
     loadPokemon(selectedGeneration);
 }
 
@@ -210,6 +266,12 @@ async function toggleGigamaxMode() {
     isGigamaxMode = !isGigamaxMode;
 
     if (isGigamaxMode) {
+        // Desactivar Mega si está activo
+        if (isMegaMode) {
+            isMegaMode = false;
+            megaBtn.classList.remove('active');
+            megaBtn.textContent = '🔥 Ver Pokémon Mega 🔥';
+        }
         gigamaxBtn.classList.add('active');
         gigamaxBtn.textContent = '🔙 Volver a Vista Normal';
         await loadGigamaxPokemon();
@@ -284,6 +346,80 @@ async function loadGigamaxPokemon() {
     } catch (error) {
         console.error('Error al cargar Pokémon Gigamax:', error);
         pokemonContainer.innerHTML = '<p style="color: white; text-align: center;">Error al cargar los Pokémon Gigamax. Por favor, intenta de nuevo.</p>';
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Toggle Mega mode
+async function toggleMegaMode() {
+    isMegaMode = !isMegaMode;
+
+    if (isMegaMode) {
+        // Desactivar Gigamax si está activo
+        if (isGigamaxMode) {
+            isGigamaxMode = false;
+            gigamaxBtn.classList.remove('active');
+            gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
+        }
+        megaBtn.classList.add('active');
+        megaBtn.textContent = '🔙 Volver a Vista Normal';
+        await loadMegaPokemon();
+    } else {
+        megaBtn.classList.remove('active');
+        megaBtn.textContent = '🔥 Ver Pokémon Mega 🔥';
+        const selectedGeneration = generationFilter.value;
+        loadPokemon(selectedGeneration);
+    }
+}
+
+// Cargar Pokémon Mega
+async function loadMegaPokemon() {
+    showLoading(true);
+    try {
+        // Resetear filtros
+        typeFilter.value = '';
+        searchInput.value = '';
+        currentPage = 1;
+
+        const megaPokemonList = [];
+
+        // Cargar todas las formas Mega
+        for (const pokemon of MEGA_POKEMON) {
+            for (const formName of pokemon.forms) {
+                try {
+                    const formResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${formName}`);
+                    if (formResponse.ok) {
+                        const formData = await formResponse.json();
+
+                        // Formatear nombre para mostrar
+                        let displayName = formData.name
+                            .replace('-mega-x', ' (Mega X)')
+                            .replace('-mega-y', ' (Mega Y)')
+                            .replace('-mega', ' (Mega)');
+                        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
+                        formData.displayName = displayName;
+                        formData.isMega = true;
+                        megaPokemonList.push(formData);
+                    }
+                } catch (error) {
+                    console.log(`No se pudo cargar ${formName}`);
+                }
+            }
+        }
+
+        allPokemon = megaPokemonList.map(pokemon => {
+            const megaPokemon = { ...pokemon };
+            megaPokemon.name = pokemon.displayName || pokemon.name;
+            return megaPokemon;
+        });
+
+        filteredPokemon = [...allPokemon];
+        displayPokemon();
+    } catch (error) {
+        console.error('Error al cargar Pokémon Mega:', error);
+        pokemonContainer.innerHTML = '<p style="color: white; text-align: center;">Error al cargar los Pokémon Mega. Por favor, intenta de nuevo.</p>';
     } finally {
         showLoading(false);
     }
@@ -740,6 +876,13 @@ function handleSearch() {
         gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
     }
 
+    // Desactivar modo Mega si está activo
+    if (isMegaMode && searchTerm !== '') {
+        isMegaMode = false;
+        megaBtn.classList.remove('active');
+        megaBtn.textContent = '🔥 Ver Pokémon Mega 🔥';
+    }
+
     if (searchTerm === '') {
         filteredPokemon = [...allPokemon];
     } else {
@@ -762,6 +905,13 @@ function handleTypeFilter() {
         isGigamaxMode = false;
         gigamaxBtn.classList.remove('active');
         gigamaxBtn.textContent = '⚡ Ver Pokémon Gigamax ⚡';
+    }
+
+    // Desactivar modo Mega si se aplica filtro de tipo
+    if (isMegaMode && selectedType !== '') {
+        isMegaMode = false;
+        megaBtn.classList.remove('active');
+        megaBtn.textContent = '🔥 Ver Pokémon Mega 🔥';
     }
 
     if (selectedType === '') {
