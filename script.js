@@ -382,32 +382,34 @@ async function loadMegaPokemon() {
         searchInput.value = '';
         currentPage = 1;
 
-        const megaPokemonList = [];
+        // Crear lista plana de todas las formas Mega para cargar en paralelo
+        const allMegaForms = MEGA_POKEMON.flatMap(pokemon => pokemon.forms);
 
-        // Cargar todas las formas Mega
-        for (const pokemon of MEGA_POKEMON) {
-            for (const formName of pokemon.forms) {
-                try {
-                    const formResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${formName}`);
-                    if (formResponse.ok) {
-                        const formData = await formResponse.json();
+        // Cargar todas las formas Mega en paralelo
+        const megaPromises = allMegaForms.map(async (formName) => {
+            try {
+                const formResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${formName}`);
+                if (formResponse.ok) {
+                    const formData = await formResponse.json();
 
-                        // Formatear nombre para mostrar
-                        let displayName = formData.name
-                            .replace('-mega-x', ' (Mega X)')
-                            .replace('-mega-y', ' (Mega Y)')
-                            .replace('-mega', ' (Mega)');
-                        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+                    // Formatear nombre para mostrar
+                    let displayName = formData.name
+                        .replace('-mega-x', ' (Mega X)')
+                        .replace('-mega-y', ' (Mega Y)')
+                        .replace('-mega', ' (Mega)');
+                    displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
 
-                        formData.displayName = displayName;
-                        formData.isMega = true;
-                        megaPokemonList.push(formData);
-                    }
-                } catch (error) {
-                    console.log(`No se pudo cargar ${formName}`);
+                    formData.displayName = displayName;
+                    formData.isMega = true;
+                    return formData;
                 }
+            } catch (error) {
+                console.log(`No se pudo cargar ${formName}`);
             }
-        }
+            return null;
+        });
+
+        const megaPokemonList = (await Promise.all(megaPromises)).filter(p => p !== null);
 
         allPokemon = megaPokemonList.map(pokemon => {
             const megaPokemon = { ...pokemon };
