@@ -382,32 +382,34 @@ async function loadMegaPokemon() {
         searchInput.value = '';
         currentPage = 1;
 
-        const megaPokemonList = [];
+        // Crear lista plana de todas las formas Mega para cargar en paralelo
+        const allMegaForms = MEGA_POKEMON.flatMap(pokemon => pokemon.forms);
 
-        // Cargar todas las formas Mega
-        for (const pokemon of MEGA_POKEMON) {
-            for (const formName of pokemon.forms) {
-                try {
-                    const formResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${formName}`);
-                    if (formResponse.ok) {
-                        const formData = await formResponse.json();
+        // Cargar todas las formas Mega en paralelo
+        const megaPromises = allMegaForms.map(async (formName) => {
+            try {
+                const formResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${formName}`);
+                if (formResponse.ok) {
+                    const formData = await formResponse.json();
 
-                        // Formatear nombre para mostrar
-                        let displayName = formData.name
-                            .replace('-mega-x', ' (Mega X)')
-                            .replace('-mega-y', ' (Mega Y)')
-                            .replace('-mega', ' (Mega)');
-                        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+                    // Formatear nombre para mostrar
+                    let displayName = formData.name
+                        .replace('-mega-x', ' (Mega X)')
+                        .replace('-mega-y', ' (Mega Y)')
+                        .replace('-mega', ' (Mega)');
+                    displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
 
-                        formData.displayName = displayName;
-                        formData.isMega = true;
-                        megaPokemonList.push(formData);
-                    }
-                } catch (error) {
-                    console.log(`No se pudo cargar ${formName}`);
+                    formData.displayName = displayName;
+                    formData.isMega = true;
+                    return formData;
                 }
+            } catch (error) {
+                console.log(`No se pudo cargar ${formName}`);
             }
-        }
+            return null;
+        });
+
+        const megaPokemonList = (await Promise.all(megaPromises)).filter(p => p !== null);
 
         allPokemon = megaPokemonList.map(pokemon => {
             const megaPokemon = { ...pokemon };
@@ -1002,6 +1004,9 @@ gameCards.forEach(card => {
                 break;
             case 'mathevo':
                 openMathEvoModal();
+                break;
+            case 'pokemon-adjectives':
+                openAdjectivesModal();
                 break;
         }
     });
@@ -4284,3 +4289,223 @@ window.addEventListener('click', (e) => {
 
 // Initialize DOM elements on page load
 initMathEvoDOMElements();
+
+// ==========================================
+// POKEMON ADJECTIVES GAME
+// ==========================================
+
+const adjectivesModal = document.getElementById('adjectivesModal');
+const adjectivesClose = document.querySelector('.adjectives-close');
+const adjectivesMenu = document.getElementById('adjectivesMenu');
+const adjectivesGameBoard = document.getElementById('adjectivesGameBoard');
+const adjectivesVictory = document.getElementById('adjectivesVictory');
+const startAdjectivesBtn = document.getElementById('startAdjectives');
+const adjectivesPlayAgainBtn = document.getElementById('adjectivesPlayAgain');
+
+// Game state
+let adjScore = 0;
+let adjQuestionNum = 0;
+let adjPokemon1Data = null;
+let adjPokemon2Data = null;
+let adjCurrentAdjective = null;
+const ADJ_TOTAL_QUESTIONS = 10;
+
+// Adjectives data with translations
+const ADJECTIVES = [
+    { en: 'bigger', es: 'más grande', stat: 'height', compare: 'greater' },
+    { en: 'smaller', es: 'más pequeño', stat: 'height', compare: 'lesser' },
+    { en: 'heavier', es: 'más pesado', stat: 'weight', compare: 'greater' },
+    { en: 'lighter', es: 'más ligero', stat: 'weight', compare: 'lesser' },
+    { en: 'faster', es: 'más rápido', stat: 'speed', compare: 'greater' },
+    { en: 'slower', es: 'más lento', stat: 'speed', compare: 'lesser' },
+    { en: 'stronger', es: 'más fuerte', stat: 'attack', compare: 'greater' },
+    { en: 'weaker', es: 'más débil', stat: 'attack', compare: 'lesser' },
+    { en: 'tougher', es: 'más resistente', stat: 'defense', compare: 'greater' },
+    { en: 'more fragile', es: 'más frágil', stat: 'defense', compare: 'lesser' }
+];
+
+// Common Pokemon IDs for the game (popular ones kids know)
+const COMMON_POKEMON = [
+    1, 4, 7, 25, 39, 52, 54, 63, 66, 74, 92, 129, 133, 143, 147,
+    152, 155, 158, 175, 183, 196, 197, 246, 252, 255, 258, 280,
+    304, 328, 371, 387, 390, 393, 403, 418, 443, 447, 495, 498,
+    501, 532, 540, 574, 607, 633, 650, 653, 656, 679, 704, 722
+];
+
+function openAdjectivesModal() {
+    adjectivesModal.classList.add('active');
+    adjectivesMenu.style.display = 'block';
+    adjectivesGameBoard.style.display = 'none';
+    adjectivesVictory.style.display = 'none';
+}
+
+function closeAdjectivesModal() {
+    adjectivesModal.classList.remove('active');
+}
+
+adjectivesClose.addEventListener('click', closeAdjectivesModal);
+window.addEventListener('click', (e) => {
+    if (e.target === adjectivesModal) closeAdjectivesModal();
+});
+
+startAdjectivesBtn.addEventListener('click', startAdjectivesGame);
+adjectivesPlayAgainBtn.addEventListener('click', () => {
+    adjectivesVictory.style.display = 'none';
+    adjectivesMenu.style.display = 'block';
+});
+
+async function startAdjectivesGame() {
+    adjScore = 0;
+    adjQuestionNum = 0;
+
+    adjectivesMenu.style.display = 'none';
+    adjectivesGameBoard.style.display = 'block';
+
+    updateAdjScore();
+    await loadNextAdjQuestion();
+}
+
+function updateAdjScore() {
+    document.getElementById('adjectivesScoreValue').textContent = adjScore;
+    document.getElementById('adjectivesQuestionNum').textContent = adjQuestionNum + 1;
+}
+
+async function loadNextAdjQuestion() {
+    if (adjQuestionNum >= ADJ_TOTAL_QUESTIONS) {
+        showAdjVictory();
+        return;
+    }
+
+    // Hide feedback
+    document.getElementById('adjectivesFeedback').style.display = 'none';
+
+    // Reset card states
+    const card1 = document.getElementById('adjPokemon1');
+    const card2 = document.getElementById('adjPokemon2');
+    card1.className = 'adjectives-pokemon-card';
+    card2.className = 'adjectives-pokemon-card';
+
+    // Pick random adjective
+    adjCurrentAdjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+
+    document.getElementById('adjectiveWord').textContent = adjCurrentAdjective.en;
+    document.getElementById('adjectiveWordEs').textContent = adjCurrentAdjective.es;
+
+    // Pick two different random Pokemon
+    const shuffled = [...COMMON_POKEMON].sort(() => Math.random() - 0.5);
+    const id1 = shuffled[0];
+    const id2 = shuffled[1];
+
+    try {
+        // Fetch Pokemon data in parallel
+        const [data1, data2] = await Promise.all([
+            fetch(`https://pokeapi.co/api/v2/pokemon/${id1}`).then(r => r.json()),
+            fetch(`https://pokeapi.co/api/v2/pokemon/${id2}`).then(r => r.json())
+        ]);
+
+        adjPokemon1Data = data1;
+        adjPokemon2Data = data2;
+
+        // Update UI
+        const img1 = data1.sprites.other['official-artwork'].front_default || data1.sprites.front_default;
+        const img2 = data2.sprites.other['official-artwork'].front_default || data2.sprites.front_default;
+
+        document.getElementById('adjPokemon1Img').src = img1;
+        document.getElementById('adjPokemon1Name').textContent = data1.name;
+        document.getElementById('adjPokemon2Img').src = img2;
+        document.getElementById('adjPokemon2Name').textContent = data2.name;
+
+    } catch (error) {
+        console.error('Error loading Pokemon:', error);
+    }
+}
+
+function getStatValue(pokemon, statName) {
+    if (statName === 'height') return pokemon.height;
+    if (statName === 'weight') return pokemon.weight;
+    if (statName === 'speed') return pokemon.stats[5].base_stat;
+    if (statName === 'attack') return pokemon.stats[1].base_stat;
+    if (statName === 'defense') return pokemon.stats[2].base_stat;
+    return 0;
+}
+
+function getStatLabel(statName) {
+    const labels = {
+        'height': 'Height / Altura',
+        'weight': 'Weight / Peso',
+        'speed': 'Speed / Velocidad',
+        'attack': 'Attack / Ataque',
+        'defense': 'Defense / Defensa'
+    };
+    return labels[statName] || statName;
+}
+
+function handleAdjPokemonClick(selectedNum) {
+    const card1 = document.getElementById('adjPokemon1');
+    const card2 = document.getElementById('adjPokemon2');
+
+    // Disable cards
+    card1.classList.add('disabled');
+    card2.classList.add('disabled');
+
+    // Get stat values
+    const stat1 = getStatValue(adjPokemon1Data, adjCurrentAdjective.stat);
+    const stat2 = getStatValue(adjPokemon2Data, adjCurrentAdjective.stat);
+
+    // Determine correct answer
+    let correctNum;
+    if (adjCurrentAdjective.compare === 'greater') {
+        correctNum = stat1 > stat2 ? 1 : 2;
+    } else {
+        correctNum = stat1 < stat2 ? 1 : 2;
+    }
+
+    // Handle ties
+    if (stat1 === stat2) {
+        correctNum = selectedNum; // Accept either answer on tie
+    }
+
+    const feedback = document.getElementById('adjectivesFeedback');
+    const feedbackText = document.getElementById('adjectivesFeedbackText');
+    const feedbackInfo = document.getElementById('adjectivesFeedbackInfo');
+
+    const statLabel = getStatLabel(adjCurrentAdjective.stat);
+    const name1 = adjPokemon1Data.name;
+    const name2 = adjPokemon2Data.name;
+
+    if (selectedNum === correctNum) {
+        // Correct!
+        adjScore++;
+        updateAdjScore();
+
+        (selectedNum === 1 ? card1 : card2).classList.add('correct');
+        feedback.className = 'adjectives-feedback correct';
+        feedbackText.textContent = '✅ Correct! / ¡Correcto!';
+    } else {
+        // Wrong
+        (selectedNum === 1 ? card1 : card2).classList.add('wrong');
+        (correctNum === 1 ? card1 : card2).classList.add('correct');
+        feedback.className = 'adjectives-feedback wrong';
+        feedbackText.textContent = '❌ Incorrect / Incorrecto';
+    }
+
+    feedbackInfo.textContent = `${name1}: ${stat1} | ${name2}: ${stat2} (${statLabel})`;
+    feedback.style.display = 'block';
+
+    adjQuestionNum++;
+
+    // Next question after delay
+    setTimeout(() => {
+        loadNextAdjQuestion();
+    }, 2000);
+}
+
+function showAdjVictory() {
+    adjectivesGameBoard.style.display = 'none';
+    adjectivesVictory.style.display = 'block';
+    document.getElementById('adjectivesFinalScore').textContent = adjScore;
+}
+
+// Event listeners for Pokemon cards
+document.getElementById('adjPokemon1').addEventListener('click', () => handleAdjPokemonClick(1));
+document.getElementById('adjPokemon2').addEventListener('click', () => handleAdjPokemonClick(2));
