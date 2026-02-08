@@ -5767,3 +5767,336 @@ header h1 {
         font-size: 1.5rem;
     }
 }
+
+/* ==========================================
+   POKEMON ADJECTIVES GAME
+   ========================================== */
+
+.adjectives-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.adjectives-modal.active {
+    display: flex;
+}
+
+.adjectives-modal-content {
+    background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 3px solid #4a90d9;
+}
+
+.adjectives-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.adjectives-close:hover {
+    transform: scale(1.2);
+}
+
+.adjectives-title {
+    text-align: center;
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.adjectives-menu {
+    text-align: center;
+}
+
+.adjectives-instructions {
+    color: #4a90d9;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.adjectives-instructions-es {
+    color: #aaa;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.adjectives-examples {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.adj-example {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.adjectives-start-btn {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(34, 197, 94, 0.4);
+}
+
+.adjectives-start-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.6);
+}
+
+.adjectives-game-board {
+    text-align: center;
+}
+
+.adjectives-score {
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.adjectives-question {
+    margin-bottom: 25px;
+}
+
+.adjectives-question p {
+    color: #fff;
+    font-size: 1.4rem;
+    margin: 5px 0;
+}
+
+.adjectives-question-es {
+    color: #aaa !important;
+    font-size: 1rem !important;
+    font-style: italic;
+}
+
+.adjective-highlight {
+    color: #fbbf24;
+    font-weight: bold;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+}
+
+.adjective-highlight-es {
+    color: #fbbf24;
+}
+
+.adjectives-pokemon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.adjectives-pokemon-card {
+    background: linear-gradient(135deg, #2d4a6f 0%, #1a3a5c 100%);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 3px solid transparent;
+    min-width: 140px;
+}
+
+.adjectives-pokemon-card:hover {
+    transform: scale(1.05);
+    border-color: #4a90d9;
+    box-shadow: 0 10px 30px rgba(74, 144, 217, 0.4);
+}
+
+.adjectives-pokemon-card.correct {
+    border-color: #22c55e;
+    background: linear-gradient(135deg, #166534 0%, #14532d 100%);
+    animation: correctPulse 0.5s ease;
+}
+
+.adjectives-pokemon-card.wrong {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+    animation: wrongShake 0.5s ease;
+}
+
+.adjectives-pokemon-card.disabled {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+@keyframes correctPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.adjectives-pokemon-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.adjectives-pokemon-card p {
+    color: #fff;
+    font-weight: bold;
+    margin-top: 10px;
+    text-transform: capitalize;
+    font-size: 1.1rem;
+}
+
+.adjectives-vs {
+    color: #fbbf24;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.adjectives-feedback {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.adjectives-feedback.correct {
+    background: rgba(34, 197, 94, 0.2);
+    border: 2px solid #22c55e;
+}
+
+.adjectives-feedback.wrong {
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid #ef4444;
+}
+
+#adjectivesFeedbackText {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.feedback-info {
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+.adjectives-victory {
+    text-align: center;
+}
+
+.adjectives-victory h2 {
+    color: #fbbf24;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.adjectives-final-score {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.adjectives-final-score p {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.adjectives-learned {
+    margin-bottom: 25px;
+}
+
+.adjectives-learned h3 {
+    color: #4a90d9;
+    margin-bottom: 15px;
+}
+
+.adjectives-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.adjectives-list span {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.adjectives-play-again-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.adjectives-play-again-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .adjectives-pokemon-container {
+        flex-direction: column;
+    }
+
+    .adjectives-vs {
+        font-size: 1.5rem;
+    }
+
+    .adjectives-pokemon-card img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .adjective-highlight {
+        font-size: 1.3rem;
+    }
+}

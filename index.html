@@ -198,6 +198,13 @@
                     <h3>Evolución Matemática</h3>
                     <p>Resuelve y evoluciona</p>
                 </div>
+
+                <!-- English Adjectives Game Card -->
+                <div class="game-card" data-game="pokemon-adjectives">
+                    <div class="game-card-icon">📚</div>
+                    <h3>Pokemon Adjectives</h3>
+                    <p>Learn English comparing Pokemon</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1050,6 +1057,82 @@
                     <p>🎯 Precisión: <span id="mathEvoAccuracy"></span>%</p>
                 </div>
                 <button id="mathEvoPlayAgain" class="mathevo-play-again-btn">🔄 Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pokemon Adjectives Game Modal -->
+    <div id="adjectivesModal" class="adjectives-modal">
+        <div class="adjectives-modal-content">
+            <span class="adjectives-close">&times;</span>
+            <h2 class="adjectives-title">📚 Pokemon Adjectives</h2>
+
+            <!-- Game Menu -->
+            <div id="adjectivesMenu" class="adjectives-menu">
+                <p class="adjectives-instructions">Compare two Pokemon and learn English adjectives!</p>
+                <p class="adjectives-instructions-es">¡Compara dos Pokemon y aprende adjetivos en inglés!</p>
+
+                <div class="adjectives-examples">
+                    <span class="adj-example">Big / Small</span>
+                    <span class="adj-example">Heavy / Light</span>
+                    <span class="adj-example">Fast / Slow</span>
+                    <span class="adj-example">Strong / Weak</span>
+                </div>
+
+                <button id="startAdjectives" class="adjectives-start-btn">🎮 Start Game / Iniciar Juego</button>
+            </div>
+
+            <!-- Game Board -->
+            <div id="adjectivesGameBoard" class="adjectives-game-board" style="display: none;">
+                <!-- Score -->
+                <div class="adjectives-score">
+                    <span>⭐ Score: <span id="adjectivesScoreValue">0</span></span>
+                    <span>❓ Question: <span id="adjectivesQuestionNum">1</span>/10</span>
+                </div>
+
+                <!-- Question -->
+                <div class="adjectives-question">
+                    <p>Which Pokemon is <span id="adjectiveWord" class="adjective-highlight">bigger</span>?</p>
+                    <p class="adjectives-question-es">¿Cuál Pokemon es <span id="adjectiveWordEs" class="adjective-highlight-es">más grande</span>?</p>
+                </div>
+
+                <!-- Pokemon Cards -->
+                <div class="adjectives-pokemon-container">
+                    <div class="adjectives-pokemon-card" id="adjPokemon1">
+                        <img id="adjPokemon1Img" src="" alt="Pokemon 1">
+                        <p id="adjPokemon1Name"></p>
+                    </div>
+                    <div class="adjectives-vs">VS</div>
+                    <div class="adjectives-pokemon-card" id="adjPokemon2">
+                        <img id="adjPokemon2Img" src="" alt="Pokemon 2">
+                        <p id="adjPokemon2Name"></p>
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div id="adjectivesFeedback" class="adjectives-feedback" style="display: none;">
+                    <p id="adjectivesFeedbackText"></p>
+                    <p id="adjectivesFeedbackInfo" class="feedback-info"></p>
+                </div>
+            </div>
+
+            <!-- Victory Screen -->
+            <div id="adjectivesVictory" class="adjectives-victory" style="display: none;">
+                <h2>🎉 Great Job! / ¡Buen Trabajo! 🎉</h2>
+                <div class="adjectives-final-score">
+                    <p>Final Score: <span id="adjectivesFinalScore"></span>/10</p>
+                </div>
+                <div class="adjectives-learned">
+                    <h3>Adjectives Learned / Adjetivos Aprendidos:</h3>
+                    <div class="adjectives-list">
+                        <span>Big (grande) / Small (pequeño)</span>
+                        <span>Heavy (pesado) / Light (ligero)</span>
+                        <span>Fast (rápido) / Slow (lento)</span>
+                        <span>Strong (fuerte) / Weak (débil)</span>
+                        <span>Tough (resistente) / Fragile (frágil)</span>
+                    </div>
+                </div>
+                <button id="adjectivesPlayAgain" class="adjectives-play-again-btn">🔄 Play Again / Jugar de Nuevo</button>
             </div>
         </div>
     </div>
